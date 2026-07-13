@@ -47,10 +47,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/tenants/{tenant}/ktp', [\App\Http\Controllers\TenantController::class, 'deleteKtp'])->name('tenants.ktp.destroy');
     Route::delete('/tenants/{tenant}/photo', [\App\Http\Controllers\TenantController::class, 'deletePhoto'])->name('tenants.photo.destroy');
 
+    // Modul Kontrak
+    Route::resource('contracts', \App\Http\Controllers\ContractController::class);
+    Route::post('/contracts/{contract}/renew', [\App\Http\Controllers\ContractController::class, 'renew'])->name('contracts.renew');
+    Route::post('/contracts/{contract}/terminate', [\App\Http\Controllers\ContractController::class, 'terminate'])->name('contracts.terminate');
+
     /*
     |------------------------------------------------------------------
     | Placeholder untuk modul operasional (akan diisi di Tahap 4+):
-    |   - /kontrak        (ContractController)
     |   - /tagihan        (InvoiceController)
     |   - /pembayaran     (PaymentController)
     |   - /pengeluaran    (ExpenseController)
