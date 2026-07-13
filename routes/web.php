@@ -63,11 +63,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Modul Pengeluaran
     Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
 
-    /*
-    |------------------------------------------------------------------
-    | Placeholder untuk modul laporan (akan diisi di Tahap Akhir):
-    |------------------------------------------------------------------
-    */
+    // Modul Laporan (Tahap 5b)
+    Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
+    Route::post('/reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
 });
 
 // ── Manajemen User — HANYA Owner ─────────────────────────────────────────

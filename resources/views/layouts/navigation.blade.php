@@ -40,6 +40,10 @@
                         {{ __('Pengeluaran') }}
                     </x-nav-link>
 
+                    <x-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                        {{ __('Laporan') }}
+                    </x-nav-link>
+
                     @can('viewAny', App\Models\User::class)
                     <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
                         {{ __('Manajemen User') }}
@@ -123,6 +127,10 @@
 
             <x-responsive-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.*')">
                 {{ __('Pengeluaran') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('reports.index')" :active="request()->routeIs('reports.*')">
+                {{ __('Laporan') }}
             </x-responsive-nav-link>
 
             @can('viewAny', App\Models\User::class)
