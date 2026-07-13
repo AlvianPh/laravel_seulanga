@@ -52,10 +52,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/contracts/{contract}/renew', [\App\Http\Controllers\ContractController::class, 'renew'])->name('contracts.renew');
     Route::post('/contracts/{contract}/terminate', [\App\Http\Controllers\ContractController::class, 'terminate'])->name('contracts.terminate');
 
+    // Modul Tagihan
+    Route::post('/invoices/generate-manual', [\App\Http\Controllers\InvoiceController::class, 'generateManual'])->name('invoices.generate-manual');
+    Route::resource('invoices', \App\Http\Controllers\InvoiceController::class)->except(['create', 'store']);
+
     /*
     |------------------------------------------------------------------
     | Placeholder untuk modul operasional (akan diisi di Tahap 4+):
-    |   - /tagihan        (InvoiceController)
     |   - /pembayaran     (PaymentController)
     |   - /pengeluaran    (ExpenseController)
     |------------------------------------------------------------------
