@@ -61,10 +61,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/payments/{payment}/verify', [\App\Http\Controllers\PaymentController::class, 'processVerification'])->name('payments.process-verification');
     Route::resource('payments', \App\Http\Controllers\PaymentController::class)->except(['edit', 'update', 'destroy']);
 
+    // Modul Pengeluaran
+    Route::resource('expenses', \App\Http\Controllers\ExpenseController::class);
+
     /*
     |------------------------------------------------------------------
-    | Placeholder untuk modul operasional (akan diisi di Tahap 4+):
-    |   - /pengeluaran    (ExpenseController)
+    | Placeholder untuk modul laporan (akan diisi di Tahap Akhir):
     |------------------------------------------------------------------
     */
 });
