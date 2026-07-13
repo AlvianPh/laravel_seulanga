@@ -56,10 +56,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/invoices/generate-manual', [\App\Http\Controllers\InvoiceController::class, 'generateManual'])->name('invoices.generate-manual');
     Route::resource('invoices', \App\Http\Controllers\InvoiceController::class)->except(['create', 'store']);
 
+    // Modul Pembayaran
+    Route::get('/payments/{payment}/verify', [\App\Http\Controllers\PaymentController::class, 'verifyForm'])->name('payments.verify');
+    Route::post('/payments/{payment}/verify', [\App\Http\Controllers\PaymentController::class, 'processVerification'])->name('payments.process-verification');
+    Route::resource('payments', \App\Http\Controllers\PaymentController::class)->except(['edit', 'update', 'destroy']);
+
     /*
     |------------------------------------------------------------------
     | Placeholder untuk modul operasional (akan diisi di Tahap 4+):
-    |   - /pembayaran     (PaymentController)
     |   - /pengeluaran    (ExpenseController)
     |------------------------------------------------------------------
     */
