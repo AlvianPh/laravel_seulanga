@@ -37,10 +37,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // Modul Kamar
+    Route::resource('rooms', \App\Http\Controllers\RoomController::class);
+    Route::delete('/rooms/{room}/photos/{photo}', [\App\Http\Controllers\RoomController::class, 'deletePhoto'])->name('rooms.photos.destroy');
+    Route::patch('/rooms/{room}/photos/{photo}/primary', [\App\Http\Controllers\RoomController::class, 'setPrimaryPhoto'])->name('rooms.photos.primary');
+
     /*
     |------------------------------------------------------------------
     | Placeholder untuk modul operasional (akan diisi di Tahap 4+):
-    |   - /kamar          (RoomController)
     |   - /penghuni       (TenantController)
     |   - /kontrak        (ContractController)
     |   - /tagihan        (InvoiceController)
