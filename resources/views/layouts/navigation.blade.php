@@ -15,6 +15,36 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         {{ __('Dashboard') }}
                     </x-nav-link>
+
+                    <x-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.*')">
+                        {{ __('Kamar') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('tenants.index')" :active="request()->routeIs('tenants.*')">
+                        {{ __('Penghuni') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('contracts.index')" :active="request()->routeIs('contracts.*')">
+                        {{ __('Kontrak') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
+                        {{ __('Tagihan') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('payments.index')" :active="request()->routeIs('payments.*')">
+                        {{ __('Pembayaran') }}
+                    </x-nav-link>
+
+                    <x-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.*')">
+                        {{ __('Pengeluaran') }}
+                    </x-nav-link>
+
+                    @can('viewAny', App\Models\User::class)
+                    <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                        {{ __('Manajemen User') }}
+                    </x-nav-link>
+                    @endcan
                 </div>
             </div>
 
@@ -70,6 +100,36 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('Dashboard') }}
             </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('rooms.index')" :active="request()->routeIs('rooms.*')">
+                {{ __('Kamar') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('tenants.index')" :active="request()->routeIs('tenants.*')">
+                {{ __('Penghuni') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('contracts.index')" :active="request()->routeIs('contracts.*')">
+                {{ __('Kontrak') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('invoices.index')" :active="request()->routeIs('invoices.*')">
+                {{ __('Tagihan') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('payments.index')" :active="request()->routeIs('payments.*')">
+                {{ __('Pembayaran') }}
+            </x-responsive-nav-link>
+
+            <x-responsive-nav-link :href="route('expenses.index')" :active="request()->routeIs('expenses.*')">
+                {{ __('Pengeluaran') }}
+            </x-responsive-nav-link>
+
+            @can('viewAny', App\Models\User::class)
+            <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')">
+                {{ __('Manajemen User') }}
+            </x-responsive-nav-link>
+            @endcan
         </div>
 
         <!-- Responsive Settings Options -->

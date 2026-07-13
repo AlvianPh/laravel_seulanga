@@ -28,8 +28,7 @@ Route::get('/', function () {
 // ── Modul yang bisa diakses Owner DAN Admin ──────────────────────────────
 Route::middleware(['auth', 'verified'])->group(function () {
 
-    // Dashboard
-    Route::get('/dashboard', [DashboardController::class, 'index'])
+    Route::get('/dashboard', [\App\Http\Controllers\DashboardController::class, 'index'])
         ->name('dashboard');
 
     // Profile (bawaan Breeze — edit profil diri sendiri)

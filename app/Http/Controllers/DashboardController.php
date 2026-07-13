@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\DashboardMetricsService;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
 
@@ -11,9 +12,20 @@ use Illuminate\View\View;
  */
 class DashboardController extends Controller
 {
+    protected DashboardMetricsService $dashboardService;
+
+    public function __construct(DashboardMetricsService $dashboardService)
+    {
+        $this->dashboardService = $dashboardService;
+    }
+
     /** Tampilkan halaman dashboard. */
     public function index(): View
     {
-        return view('dashboard');
+        $stats = $this->dashboardService->getSummaryStats();
+        $financials = $this->dashboardService->getMonthlyFinancials();
+        $chartData = $this->dashboardService->getChartData();
+
+        return view('dashboard', compact('stats', 'financials', 'chartData'));
     }
 }
