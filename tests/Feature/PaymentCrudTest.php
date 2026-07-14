@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Enums\MetodePembayaran;
+
 use App\Enums\StatusPembayaran;
 use App\Enums\StatusTagihan;
 use App\Models\Contract;
@@ -51,7 +51,7 @@ class PaymentCrudTest extends TestCase
             'invoice_id'   => $invoice->id,
             'amount'       => 500000,
             'payment_date' => '2026-07-13',
-            'method'       => MetodePembayaran::Cash->value,
+            'payment_method_id' => \App\Models\PaymentMethod::firstOrCreate(['name'=>'Tunai'])->id,
         ]);
 
         $response->assertRedirect('/payments');
@@ -72,7 +72,7 @@ class PaymentCrudTest extends TestCase
             'invoice_id'   => $invoice->id,
             'amount'       => 500000,
             'payment_date' => '2026-07-13',
-            'method'       => MetodePembayaran::Cash->value,
+            'payment_method_id' => \App\Models\PaymentMethod::firstOrCreate(['name'=>'Tunai'])->id,
         ]);
 
         $response->assertSessionHasErrors('invoice_id');
@@ -87,7 +87,7 @@ class PaymentCrudTest extends TestCase
             'invoice_id'   => $invoice->id,
             'amount'       => 500000,
             'payment_date' => '2026-07-13',
-            'method'       => MetodePembayaran::Transfer->value,
+            'payment_method_id' => \App\Models\PaymentMethod::firstOrCreate(['name'=>'Transfer Bank'])->id,
         ]);
 
         $response->assertSessionHasErrors('proof_photo');

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\MetodePembayaran;
+use App\Models\PaymentMethod;
 use App\Enums\StatusPembayaran;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -20,16 +20,16 @@ class PaymentFactory extends Factory
     /** @return array<string, mixed> */
     public function definition(): array
     {
-        $method = fake()->randomElement(MetodePembayaran::cases());
+        $method = PaymentMethod::inRandomOrder()->first() ?? PaymentMethod::factory()->create();
 
         return [
             'invoice_id'   => Invoice::factory(),
             'tenant_id'    => Tenant::factory(),
             'amount'       => 0, // diisi oleh seeder sesuai total_amount invoice
             'payment_date' => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),
-            'method'       => $method,
+            'payment_method_id' => $method->id,
             'status'       => StatusPembayaran::Verified,
-            'proof_path'   => $method !== MetodePembayaran::Cash
+            'proof_path'   => $method->name !== 'Tunai'
                 ? 'payments/bukti-' . fake()->uuid() . '.jpg'
                 : null,
             'notes'        => null,

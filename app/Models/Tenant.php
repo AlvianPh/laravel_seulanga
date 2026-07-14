@@ -26,8 +26,9 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  */
 class Tenant extends Model
 {
+    use \Illuminate\Database\Eloquent\SoftDeletes;
     /** @use HasFactory<TenantFactory> */
-    use HasFactory;
+    use HasFactory, \Illuminate\Database\Eloquent\SoftDeletes;
 
     protected $fillable = [
         'name',

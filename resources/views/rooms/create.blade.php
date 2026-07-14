@@ -33,19 +33,22 @@
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipe Kamar <span class="text-red-500">*</span></label>
-                                <select name="type" required class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                    <option value="" disabled selected>Pilih Tipe</option>
-                                    @foreach ($types as $type)
-                                        <option value="{{ $type->value }}" {{ old('type') === $type->value ? 'selected' : '' }}>
-                                            {{ $type->label() }}
+                                <select name="room_type_id" required class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <option value="" disabled selected>-- Pilih Tipe --</option>
+                                    @foreach ($roomTypes as $roomType)
+                                        <option value="{{ $roomType->id }}" {{ old('room_type_id') == $roomType->id ? 'selected' : '' }}>
+                                            {{ $roomType->name }}
+                                            @if ($roomType->default_price)
+                                                (Ref: Rp {{ number_format($roomType->default_price, 0, ',', '.') }})
+                                            @endif
                                         </option>
                                     @endforeach
                                 </select>
-                                @error('type') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
+                                @error('room_type_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Luas Kamar (m2) <span class="text-red-500">*</span></label>
+                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Luas Kamar (m²) <span class="text-red-500">*</span></label>
                                 <input type="number" step="0.01" name="size_m2" value="{{ old('size_m2') }}" min="0" required
                                        class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 @error('size_m2') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
@@ -86,23 +89,26 @@
 
                     <!-- Fasilitas & Foto -->
                     <div class="mt-8 border-t pt-6">
-                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Fasilitas Tambahan</h3>
+                        <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Fasilitas Kamar</h3>
                         
-                        <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
-                            @php
-                                $commonFacilities = ['AC', 'Kipas Angin', 'Kamar Mandi Dalam', 'Kamar Mandi Luar', 'Kasur', 'Lemari Pakaian', 'Meja Belajar', 'Kursi', 'WiFi', 'Jendela Luar'];
-                                $oldFacilities = old('facilities', []);
-                            @endphp
-                            
-                            @foreach($commonFacilities as $fac)
-                                <label class="inline-flex items-center">
-                                    <input type="checkbox" name="facilities[]" value="{{ $fac }}"
-                                           class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
-                                           {{ in_array($fac, $oldFacilities) ? 'checked' : '' }}>
-                                    <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $fac }}</span>
-                                </label>
-                            @endforeach
-                        </div>
+                        @if ($facilities->isEmpty())
+                            <p class="text-gray-400 italic text-sm mb-4">
+                                Belum ada fasilitas tersedia.
+                                <a href="{{ route('facilities.create') }}" class="text-indigo-600 hover:underline">Tambah fasilitas</a> terlebih dahulu.
+                            </p>
+                        @else
+                            <div class="mb-6 grid grid-cols-2 md:grid-cols-4 gap-3">
+                                @php $oldFacilities = old('facilities', []); @endphp
+                                @foreach($facilities as $facility)
+                                    <label class="inline-flex items-center">
+                                        <input type="checkbox" name="facilities[]" value="{{ $facility->id }}"
+                                               class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500"
+                                               {{ in_array($facility->id, array_map('intval', $oldFacilities)) ? 'checked' : '' }}>
+                                        <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">{{ $facility->name }}</span>
+                                    </label>
+                                @endforeach
+                            </div>
+                        @endif
                         @error('facilities') <p class="text-red-500 text-sm mt-1 mb-4">{{ $message }}</p> @enderror
 
                         <div class="mb-6">

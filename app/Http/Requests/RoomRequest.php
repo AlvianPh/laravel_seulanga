@@ -3,10 +3,12 @@
 namespace App\Http\Requests;
 
 use App\Enums\StatusKamar;
-use App\Enums\TipeKamar;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
+/**
+ * RoomRequest — validasi input untuk create/update data kamar.
+ */
 class RoomRequest extends FormRequest
 {
     /**
@@ -35,14 +37,14 @@ class RoomRequest extends FormRequest
                 Rule::unique('rooms')->ignore($roomId),
             ],
             'floor'         => ['required', 'integer', 'min:1'],
-            'type'          => ['required', Rule::enum(TipeKamar::class)],
+            'room_type_id'  => ['required', 'integer', 'exists:room_types,id'],
             'size_m2'       => ['required', 'numeric', 'min:0'],
             'monthly_price' => ['required', 'numeric', 'min:0'],
             'deposit_price' => ['required', 'numeric', 'min:0'],
             'status'        => ['required', Rule::enum(StatusKamar::class)],
             'facilities'    => ['nullable', 'array'],
-            'facilities.*'  => ['string', 'max:255'],
-            
+            'facilities.*'  => ['integer', 'exists:facilities,id'],
+
             // Validasi upload foto (multiple)
             'photos'        => ['nullable', 'array', 'max:5'], // Maksimal 5 foto per upload
             'photos.*'      => ['image', 'mimes:jpeg,png,jpg,webp', 'max:2048'], // Maksimal 2MB per foto
@@ -57,7 +59,7 @@ class RoomRequest extends FormRequest
         return [
             'room_number'   => 'Nomor Kamar',
             'floor'         => 'Lantai',
-            'type'          => 'Tipe Kamar',
+            'room_type_id'  => 'Tipe Kamar',
             'size_m2'       => 'Luas (m2)',
             'monthly_price' => 'Harga Sewa per Bulan',
             'deposit_price' => 'Harga Deposit',

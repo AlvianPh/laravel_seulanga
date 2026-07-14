@@ -10,43 +10,45 @@
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
 
                 <form method="POST" action="{{ route('payments.store') }}" enctype="multipart/form-data" x-data="{
-                    method: '{{ old('method', 'transfer') }}',
+                    methodId: '{{ old('payment_method_id', '') }}',
+                    methodsData: @json($paymentMethods->pluck('name', 'id')),
                     isPhotoRequired() {
-                        return this.method === 'transfer' || this.method === 'qris';
+                        if (!this.methodId || !this.methodsData[this.methodId]) return false;
+                        let name = this.methodsData[this.methodId];
+                        return name === 'Transfer Bank' || name === 'QRIS';
                     }
                 }">
                     @csrf
 
-                    <!-- Pilihan Tagihan -->
+                    <!-- Pilih Tagihan (Hanya yg pending/overdue) -->
                     <div class="mb-4">
-                        <label for="invoice_id" class="block font-medium text-gray-700 dark:text-gray-300">Pilih Tagihan (Hanya yang menunggak)</label>
+                        <label for="invoice_id" class="block font-medium text-gray-700 dark:text-gray-300">Pilih Tagihan</label>
                         <select name="invoice_id" id="invoice_id" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                             <option value="">-- Pilih Tagihan --</option>
                             @foreach($invoices as $inv)
-                                <option value="{{ $inv->id }}" {{ old('invoice_id') == $inv->id ? 'selected' : '' }}>
-                                    INV-{{ $inv->id }} | {{ $inv->tenant->name ?? '?' }} | Rp {{ number_format($inv->total_amount, 0, ',', '.') }} | {{ $inv->month }}/{{ $inv->year }}
+                                <option value="{{ $inv->id }}" {{ old('invoice_id', $selectedInvoiceId ?? null) == $inv->id ? 'selected' : '' }}>
+                                    #{{ $inv->id }} - {{ $inv->tenant->name ?? '?' }} ({{ $inv->room->room_number ?? '?' }}) - Rp{{ number_format($inv->total_amount, 0, ',', '.') }}
                                 </option>
                             @endforeach
                         </select>
                         @error('invoice_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         @if($invoices->isEmpty())
-                            <p class="text-sm text-gray-500 mt-1">Tidak ada tagihan yang pending/overdue saat ini.</p>
+                            <p class="text-yellow-600 text-xs mt-2 italic">Semua tagihan sudah lunas atau belum ada tagihan dibuat.</p>
                         @endif
                     </div>
 
-                    <!-- Nominal Bayar -->
+                    <!-- Jumlah Bayar -->
                     <div class="mb-4">
-                        <label for="amount" class="block font-medium text-gray-700 dark:text-gray-300">Nominal Pembayaran (Rp)</label>
+                        <label for="amount" class="block font-medium text-gray-700 dark:text-gray-300">Jumlah Bayar (Rp)</label>
                         <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="1"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                               placeholder="Contoh: 1500000">
-                        <p class="text-xs text-gray-500 mt-1">Bisa dicicil, bayar sesuai yang diserahkan penghuni.</p>
+                               class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <p class="text-xs text-gray-500 mt-1">Isi sesuai nominal yang ditransfer/dibayar. Jika ada denda, sertakan juga.</p>
                         @error('amount') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <!-- Tanggal Bayar -->
+                    <!-- Tanggal Pembayaran -->
                     <div class="mb-4">
-                        <label for="payment_date" class="block font-medium text-gray-700 dark:text-gray-300">Tanggal Bayar</label>
+                        <label for="payment_date" class="block font-medium text-gray-700 dark:text-gray-300">Tanggal Pembayaran</label>
                         <input type="date" name="payment_date" id="payment_date" value="{{ old('payment_date', date('Y-m-d')) }}" required
                                class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         @error('payment_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
@@ -54,13 +56,14 @@
 
                     <!-- Metode Pembayaran -->
                     <div class="mb-4">
-                        <label for="method" class="block font-medium text-gray-700 dark:text-gray-300">Metode Pembayaran</label>
-                        <select name="method" id="method" x-model="method" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
-                            @foreach($methods as $met)
-                                <option value="{{ $met->value }}">{{ $met->label() }}</option>
+                        <label for="payment_method_id" class="block font-medium text-gray-700 dark:text-gray-300">Metode Pembayaran</label>
+                        <select name="payment_method_id" id="payment_method_id" x-model="methodId" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                            <option value="">-- Pilih Metode --</option>
+                            @foreach($paymentMethods as $method)
+                                <option value="{{ $method->id }}">{{ $method->name }}</option>
                             @endforeach
                         </select>
-                        @error('method') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('payment_method_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Upload Bukti (Required if Transfer/QRIS) -->

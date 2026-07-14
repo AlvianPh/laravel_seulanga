@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Enums\KategoriPengeluaran;
+
 use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -40,7 +40,7 @@ class ExpenseCrudTest extends TestCase
         $admin = $this->authenticate('admin');
 
         $response = $this->post('/expenses', [
-            'category'     => KategoriPengeluaran::Electricity->value,
+            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Listrik'])->id,
             'description'  => 'Bayar token PLN 500k',
             'amount'       => 500000,
             'expense_date' => '2026-07-13',
@@ -49,7 +49,7 @@ class ExpenseCrudTest extends TestCase
         $response->assertRedirect('/expenses');
         
         $this->assertDatabaseHas('expenses', [
-            'category'    => KategoriPengeluaran::Electricity->value,
+            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Listrik'])->id,
             'description' => 'Bayar token PLN 500k',
             'amount'      => 500000,
             'created_by'  => $admin->id,
@@ -61,13 +61,13 @@ class ExpenseCrudTest extends TestCase
         $this->authenticate('admin');
 
         $response = $this->post('/expenses', [
-            'category'     => 'kategori_bodong', // Invalid
+            'expense_category_id' => 99999, // Invalid
             'description'  => 'Test',
             'amount'       => -1000, // Invalid
             'expense_date' => '2026-07-13',
         ]);
 
-        $response->assertSessionHasErrors(['category', 'amount']);
+        $response->assertSessionHasErrors(['expense_category_id', 'amount']);
     }
 
     public function test_can_upload_receipt_photo()
@@ -78,7 +78,7 @@ class ExpenseCrudTest extends TestCase
         $file = UploadedFile::fake()->image('struk_pln.jpg');
 
         $response = $this->post('/expenses', [
-            'category'     => KategoriPengeluaran::Electricity->value,
+            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Listrik'])->id,
             'description'  => 'Test Upload',
             'amount'       => 100000,
             'expense_date' => '2026-07-13',
@@ -101,14 +101,14 @@ class ExpenseCrudTest extends TestCase
         $oldPath = $oldFile->store('expenses/receipts', 'public');
 
         $expense = Expense::factory()->create([
-            'category' => KategoriPengeluaran::Internet->value,
+            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Internet'])->id,
             'receipt_path' => $oldPath,
         ]);
 
         $newFile = UploadedFile::fake()->image('new.jpg');
 
         $response = $this->patch("/expenses/{$expense->id}", [
-            'category'     => KategoriPengeluaran::Water->value, // ubah kategori
+            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Air'])->id, // ubah kategori
             'description'  => 'Ubah deskripsi',
             'amount'       => 150000,
             'expense_date' => '2026-07-14',
@@ -118,7 +118,7 @@ class ExpenseCrudTest extends TestCase
         $response->assertRedirect('/expenses');
         $expense->refresh();
 
-        $this->assertEquals(KategoriPengeluaran::Water->value, $expense->category->value);
+        $this->assertEquals(\App\Models\ExpenseCategory::where('name', 'Air')->first()->id, $expense->expense_category_id);
         
         // Cek file lama dihapus, file baru disimpan
         Storage::disk('public')->assertMissing($oldPath);

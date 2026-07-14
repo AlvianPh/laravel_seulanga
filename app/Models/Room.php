@@ -3,11 +3,13 @@
 namespace App\Models;
 
 use App\Enums\StatusKamar;
-use App\Enums\TipeKamar;
 use Database\Factories\RoomFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 /**
  * Model Room — data kamar kost.
@@ -15,35 +17,31 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int         $id
  * @property string      $room_number
  * @property int         $floor
- * @property TipeKamar   $type
+ * @property int         $room_type_id
  * @property float|null  $size_m2
  * @property float       $monthly_price
  * @property float       $deposit_price
  * @property StatusKamar $status
- * @property array|null  $facilities
  */
 class Room extends Model
 {
     /** @use HasFactory<RoomFactory> */
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'room_number',
         'floor',
-        'type',
+        'room_type_id',
         'size_m2',
         'monthly_price',
         'deposit_price',
         'status',
-        'facilities',
     ];
 
     protected function casts(): array
     {
         return [
-            'type'          => TipeKamar::class,
             'status'        => StatusKamar::class,
-            'facilities'    => 'array',
             'monthly_price' => 'decimal:2',
             'deposit_price' => 'decimal:2',
             'size_m2'       => 'decimal:2',
@@ -51,6 +49,18 @@ class Room extends Model
     }
 
     // ─── Relasi ──────────────────────────────────────────────────────────────
+
+    /** Tipe kamar yang dipilih untuk kamar ini. */
+    public function roomType(): BelongsTo
+    {
+        return $this->belongsTo(RoomType::class);
+    }
+
+    /** Fasilitas-fasilitas yang dimiliki kamar ini. */
+    public function facilities(): BelongsToMany
+    {
+        return $this->belongsToMany(Facility::class, 'room_facilities');
+    }
 
     /** Foto-foto kamar ini. */
     public function photos(): HasMany

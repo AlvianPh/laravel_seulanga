@@ -32,11 +32,11 @@
                                    class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div class="w-full md:w-48">
-                            <select name="type" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <select name="room_type_id" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 <option value="">Semua Tipe</option>
-                                @foreach ($types as $type)
-                                    <option value="{{ $type->value }}" {{ request('type') === $type->value ? 'selected' : '' }}>
-                                        {{ $type->label() }}
+                                @foreach ($roomTypes as $roomType)
+                                    <option value="{{ $roomType->id }}" {{ request('room_type_id') == $roomType->id ? 'selected' : '' }}>
+                                        {{ $roomType->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -55,7 +55,7 @@
                             <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
                                 Cari
                             </button>
-                            @if(request()->anyFilled(['search', 'type', 'status']))
+                            @if(request()->anyFilled(['search', 'room_type_id', 'status']))
                                 <a href="{{ route('rooms.index') }}" class="ml-2 text-sm text-indigo-600 hover:underline">Reset</a>
                             @endif
                         </div>
@@ -92,7 +92,7 @@
                                         </td>
                                         <td class="px-4 py-3 font-semibold text-lg">{{ $room->room_number }}</td>
                                         <td class="px-4 py-3">{{ $room->floor }}</td>
-                                        <td class="px-4 py-3">{{ $room->type->label() }}</td>
+                                        <td class="px-4 py-3">{{ $room->roomType?->name ?? '-' }}</td>
                                         <td class="px-4 py-3">Rp {{ number_format($room->monthly_price, 0, ',', '.') }}</td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-1 rounded text-xs font-semibold

@@ -2,7 +2,7 @@
 
 namespace Database\Factories;
 
-use App\Enums\KategoriPengeluaran;
+use App\Models\ExpenseCategory;
 use App\Models\Expense;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -15,35 +15,38 @@ use Illuminate\Database\Eloquent\Factories\Factory;
 class ExpenseFactory extends Factory
 {
     private array $deskripsiPerKategori = [
-        'electricity' => ['Tagihan PLN bulan ini', 'Tagihan listrik kos', 'Pembayaran rekening listrik'],
-        'water'       => ['Tagihan PDAM bulan ini', 'Pembayaran air bulan ini', 'Rekening air'],
-        'internet'    => ['Tagihan Indihome', 'Tagihan First Media', 'Pembayaran WiFi bulanan'],
-        'repair'      => ['Perbaikan AC kamar 101', 'Ganti kran bocor', 'Cat ulang tembok', 'Perbaikan pompa air', 'Ganti bola lampu lorong'],
-        'cleaning'    => ['Jasa bersih-bersih bulanan', 'Pembelian alat kebersihan', 'Jasa cuci tangki air'],
-        'salary'      => ['Gaji penjaga kos bulan ini', 'Honor petugas kebersihan', 'Upah tukang'],
-        'other'       => ['Pembelian peralatan kantor', 'Biaya administrasi', 'Pembelian CCTV', 'Servis lift'],
+        'Listrik'    => ['Tagihan PLN bulan ini', 'Tagihan listrik kos', 'Pembayaran rekening listrik'],
+        'Air'        => ['Tagihan PDAM bulan ini', 'Pembayaran air bulan ini', 'Rekening air'],
+        'Internet'   => ['Tagihan Indihome', 'Tagihan First Media', 'Pembayaran WiFi bulanan'],
+        'Perbaikan'  => ['Perbaikan AC kamar 101', 'Ganti kran bocor', 'Cat ulang tembok', 'Perbaikan pompa air', 'Ganti bola lampu lorong'],
+        'Kebersihan' => ['Jasa bersih-bersih bulanan', 'Pembelian alat kebersihan', 'Jasa cuci tangki air'],
+        'Gaji'       => ['Gaji penjaga kos bulan ini', 'Honor petugas kebersihan', 'Upah tukang'],
+        'Lainnya'    => ['Pembelian peralatan kantor', 'Biaya administrasi', 'Pembelian CCTV', 'Servis lift'],
     ];
 
     /** @return array<string, mixed> */
     public function definition(): array
     {
-        $kategori    = fake()->randomElement(KategoriPengeluaran::cases());
-        $deskripsiList = $this->deskripsiPerKategori[$kategori->value];
+        $kategoriList = ['Listrik', 'Air', 'Internet', 'Perbaikan', 'Kebersihan', 'Gaji', 'Lainnya'];
+        $kategoriName = fake()->randomElement($kategoriList);
+        $kategori = ExpenseCategory::firstOrCreate(['name' => $kategoriName]);
+
+        $deskripsiList = $this->deskripsiPerKategori[$kategoriName];
 
         $nominalMap = [
-            'electricity' => [300_000, 1_500_000],
-            'water'       => [100_000, 500_000],
-            'internet'    => [300_000, 700_000],
-            'repair'      => [50_000, 2_000_000],
-            'cleaning'    => [100_000, 500_000],
-            'salary'      => [500_000, 2_000_000],
-            'other'       => [50_000, 1_000_000],
+            'Listrik'    => [300_000, 1_500_000],
+            'Air'        => [100_000, 500_000],
+            'Internet'   => [300_000, 700_000],
+            'Perbaikan'  => [50_000, 2_000_000],
+            'Kebersihan' => [100_000, 500_000],
+            'Gaji'       => [500_000, 2_000_000],
+            'Lainnya'    => [50_000, 1_000_000],
         ];
 
-        [$min, $max] = $nominalMap[$kategori->value];
+        [$min, $max] = $nominalMap[$kategoriName];
 
         return [
-            'category'     => $kategori,
+            'expense_category_id' => $kategori->id,
             'description'  => fake()->randomElement($deskripsiList),
             'amount'       => fake()->numberBetween($min / 1000, $max / 1000) * 1000,
             'expense_date' => fake()->dateTimeBetween('-3 months', 'now')->format('Y-m-d'),

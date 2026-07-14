@@ -56,13 +56,13 @@ class Contract extends Model
     /** Penghuni yang menyewa. */
     public function tenant(): BelongsTo
     {
-        return $this->belongsTo(Tenant::class);
+        return $this->belongsTo(Tenant::class)->withTrashed();
     }
 
     /** Kamar yang disewa. */
     public function room(): BelongsTo
     {
-        return $this->belongsTo(Room::class);
+        return $this->belongsTo(Room::class)->withTrashed();
     }
 
     /** User yang membuat kontrak ini. */

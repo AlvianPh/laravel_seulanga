@@ -59,7 +59,7 @@
                                                 data-rent="{{ (int)$room->monthly_price }}" 
                                                 data-deposit="{{ (int)$room->deposit_price }}"
                                                 {{ old('room_id') == $room->id ? 'selected' : '' }}>
-                                            Kamar {{ $room->room_number }} - {{ $room->type->label() }}
+                                            Kamar {{ $room->room_number }} - {{ $room->roomType?->name ?? '-' }}
                                         </option>
                                     @endforeach
                                 </select>

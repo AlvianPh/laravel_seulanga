@@ -66,7 +66,7 @@ class ReportGeneratorService
     {
         [$start, $end] = $this->parseDateRange($filterType, $startDate, $endDate);
 
-        return Expense::with(['creator'])
+        return Expense::with(['creator', 'expenseCategory'])
             ->whereBetween('expense_date', [$start->toDateString(), $end->toDateString()])
             ->orderBy('expense_date', 'asc')
             ->get();
@@ -132,9 +132,9 @@ class ReportGeneratorService
         $totalExpense = $expenses->sum('amount');
 
         // Breakdown expense by category
-        $expenseBreakdown = $expenses->groupBy('category.value')->map(function ($group) {
+        $expenseBreakdown = $expenses->groupBy('expense_category_id')->map(function ($group) {
             return [
-                'label' => $group->first()->category->label(),
+                'label' => $group->first()->expenseCategory->name ?? '-',
                 'total' => $group->sum('amount')
             ];
         });

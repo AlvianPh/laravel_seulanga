@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Enums\KategoriPengeluaran;
+use App\Models\ExpenseCategory;
 use App\Http\Requests\ExpenseRequest;
 use App\Models\Expense;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,9 +23,10 @@ class ExpenseController extends Controller
         $this->authorize('viewAny', Expense::class);
 
         $query = Expense::with(['creator']);
+        $query = Expense::with(['creator', 'expenseCategory']);
 
-        if ($request->filled('category')) {
-            $query->where('category', $request->category);
+        if ($request->filled('category_id')) {
+            $query->where('expense_category_id', $request->category_id);
         }
 
         if ($request->filled('start_date') && $request->filled('end_date')) {
@@ -42,7 +43,7 @@ class ExpenseController extends Controller
         }
 
         $expenses = $query->latest('expense_date')->latest('id')->paginate(10)->withQueryString();
-        $categories = KategoriPengeluaran::cases();
+        $categories = ExpenseCategory::all();
 
         return view('expenses.index', compact('expenses', 'categories'));
     }
@@ -53,7 +54,7 @@ class ExpenseController extends Controller
     public function create(): View
     {
         $this->authorize('create', Expense::class);
-        $categories = KategoriPengeluaran::cases();
+        $categories = ExpenseCategory::all();
 
         return view('expenses.create', compact('categories'));
     }
@@ -86,7 +87,7 @@ class ExpenseController extends Controller
     public function show(Expense $expense): View
     {
         $this->authorize('view', $expense);
-        $expense->load(['creator']);
+        $expense->load(['creator', 'expenseCategory']);
 
         return view('expenses.show', compact('expense'));
     }
@@ -97,7 +98,7 @@ class ExpenseController extends Controller
     public function edit(Expense $expense): View
     {
         $this->authorize('update', $expense);
-        $categories = KategoriPengeluaran::cases();
+        $categories = ExpenseCategory::all();
 
         return view('expenses.edit', compact('expense', 'categories'));
     }

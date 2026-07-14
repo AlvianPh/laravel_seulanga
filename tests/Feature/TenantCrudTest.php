@@ -147,7 +147,7 @@ class TenantCrudTest extends TestCase
         ]);
     }
 
-    public function test_user_can_delete_tenant_and_files_are_deleted()
+    public function test_user_can_delete_tenant_without_active_contract()
     {
         Storage::fake('public');
         $this->authenticate('admin');
@@ -165,9 +165,34 @@ class TenantCrudTest extends TestCase
         $response = $this->delete("/tenants/{$tenant->id}");
         
         $response->assertRedirect('/tenants');
-        $this->assertDatabaseMissing('tenants', ['id' => $tenant->id]);
         
-        // File fisik KTP harus terhapus
-        Storage::disk('public')->assertMissing($ktpPath);
+        // Tenant should be soft deleted
+        $this->assertSoftDeleted('tenants', ['id' => $tenant->id]);
+        
+        // File fisik KTP tidak dihapus
+        Storage::disk('public')->assertExists($ktpPath);
+    }
+
+    public function test_user_cannot_delete_tenant_with_active_contract()
+    {
+        $this->authenticate('admin');
+        
+        $tenant = Tenant::factory()->create();
+        $room = \App\Models\Room::factory()->create(['room_number' => 'R101']);
+        
+        // Create an active contract for the tenant
+        \App\Models\Contract::factory()->create([
+            'tenant_id' => $tenant->id,
+            'room_id' => $room->id,
+            'status' => \App\Enums\StatusKontrak::Active->value,
+        ]);
+
+        $response = $this->delete("/tenants/{$tenant->id}");
+        
+        // Should return back with error
+        $response->assertSessionHas('error', 'Penghuni ini masih memiliki kontrak aktif dan tidak dapat dihapus. Akhiri kontrak terlebih dahulu.');
+        
+        // Tenant should NOT be deleted
+        $this->assertDatabaseHas('tenants', ['id' => $tenant->id, 'deleted_at' => null]);
     }
 }

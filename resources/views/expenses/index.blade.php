@@ -37,11 +37,11 @@
 
                             <div class="md:col-span-1">
                                 <label class="block text-xs text-gray-500 mb-1">Kategori</label>
-                                <select name="category" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <select name="category_id" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
                                     <option value="">Semua Kategori</option>
                                     @foreach ($categories as $cat)
-                                        <option value="{{ $cat->value }}" {{ request('category') === $cat->value ? 'selected' : '' }}>
-                                            {{ $cat->label() }}
+                                        <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
+                                            {{ $cat->name }}
                                         </option>
                                     @endforeach
                                 </select>
@@ -89,7 +89,7 @@
                                         <td class="px-4 py-3 font-medium whitespace-nowrap">{{ $expense->expense_date->format('d/m/Y') }}</td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-1 bg-gray-100 text-gray-700 rounded text-xs font-semibold">
-                                                {{ $expense->category->label() }}
+                                                {{ $expense->expenseCategory->name }}
                                             </span>
                                         </td>
                                         <td class="px-4 py-3 max-w-xs truncate" title="{{ $expense->description }}">{{ $expense->description }}</td>

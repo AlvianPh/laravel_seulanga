@@ -135,24 +135,20 @@ class TenantController extends Controller
     }
 
     /**
-     * Menghapus penghuni dan file yang terkait.
+     * Menghapus penghuni (soft delete).
      */
     public function destroy(Tenant $tenant): RedirectResponse
     {
         $this->authorize('delete', $tenant);
 
-        if ($tenant->ktp_photo_path && Storage::disk('public')->exists($tenant->ktp_photo_path)) {
-            Storage::disk('public')->delete($tenant->ktp_photo_path);
-        }
-
-        if ($tenant->tenant_photo_path && Storage::disk('public')->exists($tenant->tenant_photo_path)) {
-            Storage::disk('public')->delete($tenant->tenant_photo_path);
+        if ($tenant->contracts()->where('status', 'active')->exists()) {
+            return back()->with('error', 'Penghuni ini masih memiliki kontrak aktif dan tidak dapat dihapus. Akhiri kontrak terlebih dahulu.');
         }
 
         $tenant->delete();
 
         return redirect()->route('tenants.index')
-            ->with('success', 'Data penghuni beserta berkas lampirannya berhasil dihapus.');
+            ->with('success', 'Data penghuni berhasil dihapus.');
     }
 
     /**

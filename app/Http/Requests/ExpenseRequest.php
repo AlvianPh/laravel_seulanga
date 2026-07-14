@@ -2,9 +2,7 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\KategoriPengeluaran;
 use Illuminate\Foundation\Http\FormRequest;
-use Illuminate\Validation\Rule;
 
 class ExpenseRequest extends FormRequest
 {
@@ -24,11 +22,11 @@ class ExpenseRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'category'     => ['required', Rule::enum(KategoriPengeluaran::class)],
-            'description'  => ['required', 'string', 'max:255'],
-            'amount'       => ['required', 'numeric', 'min:1'],
-            'expense_date' => ['required', 'date'],
-            'receipt_photo'=> ['nullable', 'image', 'max:2048'], // Maks 2MB
+            'expense_category_id' => ['required', 'exists:expense_categories,id'],
+            'description'         => ['required', 'string', 'max:255'],
+            'amount'              => ['required', 'numeric', 'min:1'],
+            'expense_date'        => ['required', 'date'],
+            'receipt_photo'       => ['nullable', 'image', 'max:2048'], // Maks 2MB
         ];
     }
 }

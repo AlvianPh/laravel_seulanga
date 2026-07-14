@@ -32,11 +32,11 @@
                                    class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                         </div>
                         <div class="w-full md:w-48">
-                            <select name="method" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <select name="payment_method_id" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                 <option value="">Semua Metode</option>
-                                @foreach ($methods as $method)
-                                    <option value="{{ $method->value }}" {{ request('method') === $method->value ? 'selected' : '' }}>
-                                        {{ $method->label() }}
+                                @foreach ($paymentMethods as $method)
+                                    <option value="{{ $method->id }}" {{ request('payment_method_id') == $method->id ? 'selected' : '' }}>
+                                        {{ $method->name }}
                                     </option>
                                 @endforeach
                             </select>
@@ -85,7 +85,7 @@
                                             <div class="text-xs text-gray-500">{{ $payment->tenant->name ?? 'Dihapus' }}</div>
                                         </td>
                                         <td class="px-4 py-3 font-bold text-indigo-600">Rp {{ number_format($payment->amount, 0, ',', '.') }}</td>
-                                        <td class="px-4 py-3">{{ $payment->method->label() }}</td>
+                                        <td class="px-4 py-3">{{ $payment->paymentMethod->name }}</td>
                                         <td class="px-4 py-3">
                                             <span class="px-2 py-1 rounded text-xs font-semibold
                                                 @if($payment->status->value === 'verified') bg-green-100 text-green-700
