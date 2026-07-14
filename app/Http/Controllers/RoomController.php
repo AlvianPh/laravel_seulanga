@@ -3,10 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Enums\StatusKamar;
-use App\Enums\TipeKamar;
 use App\Http\Requests\RoomRequest;
+use App\Models\Facility;
 use App\Models\Room;
 use App\Models\RoomPhoto;
+use App\Models\RoomType;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -28,16 +29,16 @@ class RoomController extends Controller
     {
         $this->authorize('viewAny', Room::class);
 
-        $query = Room::query()->with('photos'); // Eager load foto utama jika ada
+        $query = Room::query()->with(['roomType', 'photos']); // Eager load tipe & foto
 
         // Filter status
         if ($request->filled('status')) {
             $query->where('status', $request->status);
         }
 
-        // Filter tipe
-        if ($request->filled('type')) {
-            $query->where('type', $request->type);
+        // Filter tipe kamar
+        if ($request->filled('room_type_id')) {
+            $query->where('room_type_id', $request->room_type_id);
         }
 
         // Search berdasarkan nomor kamar
@@ -46,12 +47,11 @@ class RoomController extends Controller
             $query->where('room_number', 'like', "%{$search}%");
         }
 
-        $rooms = $query->orderBy('room_number')->paginate(10)->withQueryString();
+        $rooms     = $query->orderBy('room_number')->paginate(10)->withQueryString();
+        $statuses  = StatusKamar::cases();
+        $roomTypes = RoomType::orderBy('name')->get();
 
-        $statuses = StatusKamar::cases();
-        $types    = TipeKamar::cases();
-
-        return view('rooms.index', compact('rooms', 'statuses', 'types'));
+        return view('rooms.index', compact('rooms', 'statuses', 'roomTypes'));
     }
 
     /**
@@ -61,39 +61,42 @@ class RoomController extends Controller
     {
         $this->authorize('create', Room::class);
 
-        $statuses = StatusKamar::cases();
-        $types    = TipeKamar::cases();
+        $statuses   = StatusKamar::cases();
+        $roomTypes  = RoomType::orderBy('name')->get();
+        $facilities = Facility::orderBy('name')->get();
 
-        return view('rooms.create', compact('statuses', 'types'));
+        return view('rooms.create', compact('statuses', 'roomTypes', 'facilities'));
     }
 
     /**
-     * Menyimpan data kamar baru beserta foto.
+     * Menyimpan data kamar baru beserta foto dan fasilitas.
      */
     public function store(RoomRequest $request): RedirectResponse
     {
         $this->authorize('create', Room::class);
 
         $validated = $request->validated();
-        
+
         // Simpan data kamar
         $room = Room::create([
             'room_number'   => $validated['room_number'],
             'floor'         => $validated['floor'],
-            'type'          => $validated['type'],
+            'room_type_id'  => $validated['room_type_id'],
             'size_m2'       => $validated['size_m2'],
             'monthly_price' => $validated['monthly_price'],
             'deposit_price' => $validated['deposit_price'],
             'status'        => $validated['status'],
-            'facilities'    => $validated['facilities'] ?? [],
         ]);
+
+        // Sync fasilitas via pivot
+        $room->facilities()->sync($validated['facilities'] ?? []);
 
         // Proses upload foto jika ada
         if ($request->hasFile('photos')) {
             $isFirst = true;
             foreach ($request->file('photos') as $photo) {
                 $path = $photo->store('rooms', 'public');
-                
+
                 RoomPhoto::create([
                     'room_id'    => $room->id,
                     'file_path'  => $path,
@@ -113,7 +116,7 @@ class RoomController extends Controller
     public function show(Room $room): View
     {
         $this->authorize('view', $room);
-        $room->load(['photos', 'contracts' => function ($q) {
+        $room->load(['roomType', 'facilities', 'photos', 'contracts' => function ($q) {
             $q->latest()->limit(5); // Tampilkan 5 kontrak terakhir di detail
         }]);
 
@@ -126,12 +129,13 @@ class RoomController extends Controller
     public function edit(Room $room): View
     {
         $this->authorize('update', $room);
-        $room->load('photos');
+        $room->load(['photos', 'facilities']);
 
-        $statuses = StatusKamar::cases();
-        $types    = TipeKamar::cases();
+        $statuses   = StatusKamar::cases();
+        $roomTypes  = RoomType::orderBy('name')->get();
+        $facilities = Facility::orderBy('name')->get();
 
-        return view('rooms.edit', compact('room', 'statuses', 'types'));
+        return view('rooms.edit', compact('room', 'statuses', 'roomTypes', 'facilities'));
     }
 
     /**
@@ -146,23 +150,25 @@ class RoomController extends Controller
         $room->update([
             'room_number'   => $validated['room_number'],
             'floor'         => $validated['floor'],
-            'type'          => $validated['type'],
+            'room_type_id'  => $validated['room_type_id'],
             'size_m2'       => $validated['size_m2'],
             'monthly_price' => $validated['monthly_price'],
             'deposit_price' => $validated['deposit_price'],
             'status'        => $validated['status'],
-            'facilities'    => $validated['facilities'] ?? [],
         ]);
+
+        // Sync fasilitas via pivot
+        $room->facilities()->sync($validated['facilities'] ?? []);
 
         // Proses penambahan foto baru
         if ($request->hasFile('photos')) {
             // Jika kamar belum punya foto sama sekali, set foto baru pertama sebagai primary
             $hasPrimary = $room->photos()->where('is_primary', true)->exists();
-            $isFirst = !$hasPrimary;
+            $isFirst    = ! $hasPrimary;
 
             foreach ($request->file('photos') as $photo) {
                 $path = $photo->store('rooms', 'public');
-                
+
                 RoomPhoto::create([
                     'room_id'    => $room->id,
                     'file_path'  => $path,
@@ -177,28 +183,20 @@ class RoomController extends Controller
     }
 
     /**
-     * Menghapus kamar (termasuk foto secara cascade/manual file delete).
+     * Menghapus kamar (soft delete).
      */
     public function destroy(Room $room): RedirectResponse
     {
         $this->authorize('delete', $room);
 
-        // Hapus file foto dari storage
-        $photos = $room->photos;
-        foreach ($photos as $photo) {
-            if (Storage::disk('public')->exists($photo->file_path)) {
-                Storage::disk('public')->delete($photo->file_path);
-            }
+        if ($room->contracts()->where('status', 'active')->exists()) {
+            return back()->with('error', 'Kamar ini masih memiliki kontrak aktif dan tidak dapat dihapus. Akhiri kontrak terlebih dahulu.');
         }
 
-        // Cascade delete room_photos biasanya ada di DB, tapi kita juga bisa hapus via eloquent
-        // jika foreign key tidak onDelete('cascade')
-        $room->photos()->delete(); 
-        
         $room->delete();
 
         return redirect()->route('rooms.index')
-            ->with('success', 'Kamar beserta foto berhasil dihapus.');
+            ->with('success', 'Kamar berhasil dihapus.');
     }
 
     /**

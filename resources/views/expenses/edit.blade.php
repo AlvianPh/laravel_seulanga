@@ -24,12 +24,12 @@
                     <!-- Kategori -->
                     <div class="mb-4">
                         <label for="category" class="block font-medium text-gray-700 dark:text-gray-300">Kategori</label>
-                        <select name="category" id="category" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
-                            @foreach($categories as $cat)
-                                <option value="{{ $cat->value }}" {{ old('category', $expense->category->value) === $cat->value ? 'selected' : '' }}>{{ $cat->label() }}</option>
+                        <select name="expense_category_id" id="expense_category_id" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                            @foreach($expenseCategories as $cat)
+                                <option value="{{ $cat->id }}" {{ old('expense_category_id', $expense->expense_category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                             @endforeach
                         </select>
-                        @error('category') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('expense_category_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Keterangan -->

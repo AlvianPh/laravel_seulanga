@@ -76,7 +76,7 @@ class DashboardTest extends TestCase
         // Expense Today = 400.000
         Expense::factory()->create([
             'amount' => 400000,
-            'category' => KategoriPengeluaran::Electricity->value,
+            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Listrik'])->id,
             'expense_date' => Carbon::now()->toDateString()
         ]);
 

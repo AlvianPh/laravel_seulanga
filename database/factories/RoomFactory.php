@@ -3,8 +3,8 @@
 namespace Database\Factories;
 
 use App\Enums\StatusKamar;
-use App\Enums\TipeKamar;
 use App\Models\Room;
+use App\Models\RoomType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,46 +17,49 @@ class RoomFactory extends Factory
     /** @return array<string, mixed> */
     public function definition(): array
     {
-        $tipe = fake()->randomElement(TipeKamar::cases());
+        // Ambil atau buat tipe kamar secara acak
+        $tipeNama  = fake()->randomElement(['Standard', 'Deluxe', 'Suite']);
+        $roomType  = RoomType::firstOrCreate(
+            ['name' => $tipeNama],
+            [
+                'description'   => match ($tipeNama) {
+                    'Standard' => 'Kamar standar dengan fasilitas dasar',
+                    'Deluxe'   => 'Kamar deluxe dengan fasilitas lebih lengkap',
+                    'Suite'    => 'Kamar suite premium dengan fasilitas terlengkap',
+                },
+                'default_price' => match ($tipeNama) {
+                    'Standard' => 800000,
+                    'Deluxe'   => 1500000,
+                    'Suite'    => 2000000,
+                },
+            ]
+        );
 
         $hargaMap = [
-            TipeKamar::Standard->value => [800_000, 1_200_000],
-            TipeKamar::Deluxe->value   => [1_200_000, 1_800_000],
-            TipeKamar::Suite->value    => [1_800_000, 2_500_000],
+            'Standard' => [800_000, 1_200_000],
+            'Deluxe'   => [1_200_000, 1_800_000],
+            'Suite'    => [1_800_000, 2_500_000],
         ];
 
         $luasMap = [
-            TipeKamar::Standard->value => [9, 12],
-            TipeKamar::Deluxe->value   => [12, 16],
-            TipeKamar::Suite->value    => [16, 25],
+            'Standard' => [9, 12],
+            'Deluxe'   => [12, 16],
+            'Suite'    => [16, 25],
         ];
 
-        [$minHarga, $maxHarga] = $hargaMap[$tipe->value];
-        [$minLuas, $maxLuas]   = $luasMap[$tipe->value];
+        [$minHarga, $maxHarga] = $hargaMap[$tipeNama];
+        [$minLuas, $maxLuas]   = $luasMap[$tipeNama];
 
         $hargaBulanan = fake()->numberBetween($minHarga / 100, $maxHarga / 100) * 100;
 
-        $fasilitasStandard = ['Kasur', 'Lemari', 'Meja Belajar', 'Kursi'];
-        $fasilitasExtra    = ['AC', 'WiFi', 'Kamar Mandi Dalam', 'Kulkas Mini', 'TV', 'Microwave'];
-
-        $fasilitas = $fasilitasStandard;
-        if ($tipe !== TipeKamar::Standard) {
-            $fasilitas = array_merge($fasilitas, fake()->randomElements($fasilitasExtra, 3));
-        }
-        if ($tipe === TipeKamar::Suite) {
-            $fasilitas = array_merge($fasilitas, fake()->randomElements($fasilitasExtra, 2));
-            $fasilitas = array_unique($fasilitas);
-        }
-
         return [
-            'room_number'   => null, // diisi di seeder agar unik & berurutan
+            'room_number'   => fake()->unique()->bothify('R-###'), // default faker, seeder akan menimpa
             'floor'         => fake()->numberBetween(1, 3),
-            'type'          => $tipe,
+            'room_type_id'  => $roomType->id,
             'size_m2'       => fake()->numberBetween($minLuas * 10, $maxLuas * 10) / 10,
             'monthly_price' => $hargaBulanan,
             'deposit_price' => $hargaBulanan,
             'status'        => StatusKamar::Available,
-            'facilities'    => array_values(array_unique($fasilitas)),
         ];
     }
 

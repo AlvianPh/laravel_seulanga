@@ -59,7 +59,7 @@
                         </tr>
                         <tr>
                             <td class="py-3 text-sm text-gray-500">Metode Bayar</td>
-                            <td class="py-3 font-semibold">{{ $payment->method->label() }}</td>
+                            <td class="py-3 font-semibold">{{ $payment->paymentMethod->name }}</td>
                         </tr>
                         @if($payment->notes)
                             <tr>

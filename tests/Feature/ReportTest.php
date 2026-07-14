@@ -72,7 +72,7 @@ class ReportTest extends TestCase
         // 4. Expense
         Expense::factory()->create([
             'amount' => 500000,
-            'category' => KategoriPengeluaran::Electricity->value,
+            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Listrik'])->id,
             'expense_date' => Carbon::now()->startOfMonth()->addDays(5)
         ]);
     }

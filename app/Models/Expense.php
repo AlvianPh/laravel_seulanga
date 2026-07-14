@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\KategoriPengeluaran;
 use Database\Factories\ExpenseFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -12,7 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * Model Expense — pengeluaran operasional kost.
  *
  * @property int                  $id
- * @property KategoriPengeluaran  $category
+ * @property int                  $expense_category_id
  * @property string               $description
  * @property float                $amount
  * @property string               $expense_date
@@ -25,7 +24,7 @@ class Expense extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category',
+        'expense_category_id',
         'description',
         'amount',
         'expense_date',
@@ -36,13 +35,18 @@ class Expense extends Model
     protected function casts(): array
     {
         return [
-            'category'     => KategoriPengeluaran::class,
             'expense_date' => 'date',
             'amount'       => 'decimal:2',
         ];
     }
 
     // ─── Relasi ──────────────────────────────────────────────────────────────
+
+    /** Kategori pengeluaran. */
+    public function expenseCategory(): BelongsTo
+    {
+        return $this->belongsTo(ExpenseCategory::class);
+    }
 
     /** User yang menginput pengeluaran ini. */
     public function creator(): BelongsTo

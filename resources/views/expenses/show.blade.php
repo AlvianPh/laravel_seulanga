@@ -21,7 +21,7 @@
                         <div class="sm:col-span-1">
                             <dt class="font-medium text-gray-500">Kategori</dt>
                             <dd class="mt-1 font-semibold text-gray-900 dark:text-gray-100">
-                                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-bold">{{ $expense->category->label() }}</span>
+                                <span class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-bold">{{ $expense->expenseCategory->name }}</span>
                             </dd>
                         </div>
                         <div class="sm:col-span-1">

@@ -25,7 +25,7 @@
                         </div>
                         <div class="sm:col-span-1">
                             <dt class="font-medium text-gray-500">Metode</dt>
-                            <dd class="mt-1 font-semibold text-gray-900 dark:text-gray-100">{{ $payment->method->label() }}</dd>
+                            <dd class="mt-1 font-semibold text-gray-900 dark:text-gray-100">{{ $payment->paymentMethod->name }}</dd>
                         </div>
                         <div class="sm:col-span-1">
                             <dt class="font-medium text-gray-500">Nominal yang Diakui User</dt>

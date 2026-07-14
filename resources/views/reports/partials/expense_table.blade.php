@@ -16,7 +16,7 @@
             <tr class="border-b dark:border-gray-600">
                 <td>{{ $index + 1 }}</td>
                 <td>{{ $row->expense_date->format('d/m/Y') }}</td>
-                <td>{{ $row->category->label() }}</td>
+                <td>{{ $row->expenseCategory->name ?? '-' }}</td>
                 <td>{{ $row->description }}</td>
                 <td>{{ $row->creator->name ?? '-' }}</td>
                 <td class="text-right">{{ number_format($row->amount, 0, ',', '.') }}</td>

@@ -72,7 +72,7 @@
                                 </div>
                                 <div class="flex justify-between">
                                     <dt class="text-gray-500 dark:text-gray-400">Tipe</dt>
-                                    <dd class="font-medium text-gray-900 dark:text-gray-100">{{ $room->type->label() }}</dd>
+                                    <dd class="font-medium text-gray-900 dark:text-gray-100">{{ $room->roomType?->name ?? '-' }}</dd>
                                 </div>
                                 <div class="flex justify-between">
                                     <dt class="text-gray-500 dark:text-gray-400">Luas (m²)</dt>
@@ -100,14 +100,14 @@
                         <div class="p-6">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Fasilitas</h3>
                             
-                            @if(is_array($room->facilities) && count($room->facilities) > 0)
+                            @if($room->facilities->isNotEmpty())
                                 <ul class="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
                                     @foreach($room->facilities as $facility)
                                         <li class="flex items-center">
                                             <svg class="h-4 w-4 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
                                             </svg>
-                                            {{ $facility }}
+                                            {{ $facility->name }}
                                         </li>
                                     @endforeach
                                 </ul>

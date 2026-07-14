@@ -2,8 +2,8 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\MetodePembayaran;
 use App\Models\Invoice;
+use App\Models\PaymentMethod;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -25,15 +25,18 @@ class PaymentRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'invoice_id'   => ['required', 'exists:invoices,id'],
-            'amount'       => ['required', 'numeric', 'min:1'],
-            'payment_date' => ['required', 'date'],
-            'method'       => ['required', Rule::enum(MetodePembayaran::class)],
-            'notes'        => ['nullable', 'string', 'max:1000'],
-            'proof_photo'  => [
+            'invoice_id'        => ['required', 'exists:invoices,id'],
+            'amount'            => ['required', 'numeric', 'min:1'],
+            'payment_date'      => ['required', 'date'],
+            'payment_method_id' => ['required', 'exists:payment_methods,id'],
+            'notes'             => ['nullable', 'string', 'max:1000'],
+            'proof_photo'       => [
                 // Wajib upload bukti jika metodenya Transfer Bank atau QRIS
                 Rule::requiredIf(function () {
-                    return in_array($this->input('method'), [MetodePembayaran::Transfer->value, MetodePembayaran::Qris->value]);
+                    $methodId = $this->input('payment_method_id');
+                    if (!$methodId) return false;
+                    $method = PaymentMethod::find($methodId);
+                    return $method && in_array($method->name, ['Transfer Bank', 'QRIS']);
                 }),
                 'nullable', // Jika cash, boleh null
                 'image',

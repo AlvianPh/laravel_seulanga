@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Enums\MetodePembayaran;
 use App\Enums\StatusPembayaran;
 use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int               $tenant_id
  * @property float             $amount
  * @property string            $payment_date
- * @property MetodePembayaran  $method
+ * @property int               $payment_method_id
  * @property StatusPembayaran  $status
  * @property string|null       $proof_path
  * @property string|null       $notes
@@ -33,7 +32,7 @@ class Payment extends Model
         'tenant_id',
         'amount',
         'payment_date',
-        'method',
+        'payment_method_id',
         'status',
         'proof_path',
         'notes',
@@ -43,7 +42,6 @@ class Payment extends Model
     protected function casts(): array
     {
         return [
-            'method'       => MetodePembayaran::class,
             'status'       => StatusPembayaran::class,
             'payment_date' => 'date',
             'amount'       => 'decimal:2',
@@ -62,6 +60,12 @@ class Payment extends Model
     public function tenant(): BelongsTo
     {
         return $this->belongsTo(Tenant::class);
+    }
+
+    /** Metode pembayaran. */
+    public function paymentMethod(): BelongsTo
+    {
+        return $this->belongsTo(PaymentMethod::class);
     }
 
     /** User yang memverifikasi pembayaran ini. */
