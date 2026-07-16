@@ -46,6 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('facilities', \App\Http\Controllers\FacilityController::class);
     Route::resource('payment_methods', \App\Http\Controllers\PaymentMethodController::class)->except(['show']);
     Route::resource('expense_categories', \App\Http\Controllers\ExpenseCategoryController::class)->except(['show']);
+    Route::resource('bank_accounts', \App\Http\Controllers\BankAccountController::class)->except(['show']);
+    Route::resource('additional_fee_types', \App\Http\Controllers\AdditionalFeeTypeController::class)->except(['show']);
 
     // Modul Penghuni
     Route::resource('tenants', \App\Http\Controllers\TenantController::class)->withTrashed(['show']);
