@@ -14,11 +14,27 @@
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-8 print:p-0 print:shadow-none print:bg-white print:text-black">
+                @php
+                    $setting = \App\Models\Setting::getInstance();
+                @endphp
+
+                <!-- KOP KOST -->
+                <div class="flex items-center gap-4 border-b-2 border-gray-900 dark:border-gray-700 pb-4 mb-6">
+                    @if($setting->kost_logo)
+                        <img src="{{ Storage::url($setting->kost_logo) }}" alt="Logo Kost" class="h-16 w-16 object-cover rounded-lg">
+                    @endif
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-900 dark:text-gray-100 print:text-gray-900">{{ $setting->kost_name }}</h1>
+                        @if($setting->kost_address)
+                            <p class="text-gray-600 dark:text-gray-400 mt-1 print:text-gray-600">{{ $setting->kost_address }}</p>
+                        @endif
+                    </div>
+                </div>
 
                 <!-- Header Invoice -->
                 <div class="flex justify-between items-start border-b pb-6 mb-6 border-gray-200 dark:border-gray-700">
                     <div>
-                        <h1 class="text-3xl font-bold text-gray-900 dark:text-gray-100 print:text-gray-900">INVOICE</h1>
+                        <h2 class="text-3xl font-bold text-gray-900 dark:text-gray-100 print:text-gray-900">INVOICE</h2>
                         <p class="text-gray-500 text-sm mt-1">Periode: {{ $invoice->month }} / {{ $invoice->year }}</p>
                         <p class="text-gray-500 text-sm font-mono mt-1">#INV-{{ $invoice->id }}</p>
                     </div>
@@ -51,7 +67,7 @@
                     </div>
                     <div class="text-right">
                         <h4 class="text-xs text-gray-500 uppercase tracking-wide mb-2">Penerima (Manajemen):</h4>
-                        <p class="font-bold text-gray-900 dark:text-gray-100 text-lg">{{ config('app.name', 'Kost Management') }}</p>
+                        <p class="font-bold text-gray-900 dark:text-gray-100 text-lg">{{ $setting->kost_name }}</p>
                         <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">Sistem Administrasi Kost</p>
                     </div>
                 </div>
@@ -107,6 +123,18 @@
                         </tr>
                     </tfoot>
                 </table>
+
+                <!-- Info Rekening -->
+                @if($setting->defaultBankAccount)
+                <div class="mt-8 p-4 bg-gray-50 dark:bg-gray-700/50 rounded-lg print:bg-white print:border print:border-gray-300">
+                    <h4 class="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-2">Instruksi Pembayaran (Transfer Bank)</h4>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">
+                        Pembayaran tagihan dapat ditransfer ke rekening <strong class="text-gray-900 dark:text-white">{{ $setting->defaultBankAccount->nama_bank }}</strong> berikut:<br>
+                        No. Rekening: <strong class="text-lg text-gray-900 dark:text-white tracking-wider">{{ $setting->defaultBankAccount->nomor_rekening }}</strong><br>
+                        Atas Nama: <strong class="text-gray-900 dark:text-white">{{ $setting->defaultBankAccount->nama_pemilik_rekening }}</strong>
+                    </p>
+                </div>
+                @endif
 
                 <!-- Action Button (Tidak tampil saat di-print) -->
                 <div class="mt-8 pt-4 border-t border-gray-100 dark:border-gray-800 flex justify-between items-center print:hidden">
