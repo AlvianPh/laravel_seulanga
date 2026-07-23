@@ -74,6 +74,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Modul Laporan (Tahap 5b)
     Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
+
+    // Modul Pengaturan (Tahap 5c / D)
+    Route::get('/settings', [\App\Http\Controllers\SettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings', [\App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
 });
 
 // ── Manajemen User — HANYA Owner ─────────────────────────────────────────
