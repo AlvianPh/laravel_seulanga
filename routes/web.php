@@ -78,6 +78,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Modul Pengaturan (Tahap 5c / D)
     Route::get('/settings', [\App\Http\Controllers\SettingController::class, 'edit'])->name('settings.edit');
     Route::put('/settings', [\App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
+
+    // Modul Notifikasi
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
 // ── Manajemen User — HANYA Owner ─────────────────────────────────────────

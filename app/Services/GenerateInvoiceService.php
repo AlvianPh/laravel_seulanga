@@ -8,6 +8,9 @@ use App\Models\Contract;
 use App\Models\Invoice;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Notification;
+use App\Models\User;
+use App\Notifications\InvoiceCreatedNotification;
 
 class GenerateInvoiceService
 {
@@ -38,7 +41,7 @@ class GenerateInvoiceService
             // Tentukan due_date: tanggal 10 bulan berjalan
             $dueDate = Carbon::create($year, $month, 10)->format('Y-m-d');
 
-            Invoice::create([
+            $invoice = Invoice::create([
                 'contract_id'     => $contract->id,
                 'tenant_id'       => $contract->tenant_id,
                 'room_id'         => $contract->room_id,
@@ -56,6 +59,10 @@ class GenerateInvoiceService
             ]);
 
             $generatedCount++;
+
+            // Send Notification to admin and owner
+            $admins = User::whereIn('role', ['admin', 'owner'])->get();
+            Notification::send($admins, new InvoiceCreatedNotification($invoice));
         }
 
         Log::info("Generated {$generatedCount} invoices for {$month}/{$year}.");

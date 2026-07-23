@@ -99,10 +99,7 @@
                                             <a href="{{ route('expenses.show', $expense) }}" class="text-blue-600 hover:underline">Detail</a>
                                             <a href="{{ route('expenses.edit', $expense) }}" class="text-indigo-600 hover:underline">Edit</a>
                                             
-                                            <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="inline" onsubmit="return confirm('Hapus data pengeluaran ini?')">
-                                                @csrf @method('DELETE')
-                                                <button type="submit" class="text-red-600 hover:underline">Hapus</button>
-                                            </form>
+                                            <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expenses.destroy', $expense) }}', name: 'data pengeluaran ini' })" class="text-red-600 hover:underline">Hapus</button>
                                         </td>
                                     </tr>
                                 @empty

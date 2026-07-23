@@ -96,12 +96,9 @@
                                         <td class="px-4 py-3 space-x-2">
                                             <a href="{{ route('contracts.show', $contract) }}" class="text-blue-600 hover:underline">Detail</a>
                                             <a href="{{ route('contracts.edit', $contract) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            <form method="POST" action="{{ route('contracts.destroy', $contract) }}" class="inline">
-                                                @csrf @method('DELETE')
-                                                <button type="submit"
-                                                        onclick="return confirm('Yakin ingin menghapus data kontrak secara permanen?')"
-                                                        class="text-red-600 hover:underline">Hapus</button>
-                                            </form>
+                                            <button type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('contracts.destroy', $contract) }}', name: 'kontrak ini' })"
+                                                    class="text-red-600 hover:underline">Hapus</button>
                                         </td>
                                     </tr>
                                 @empty

@@ -1,3 +1,4 @@
+@php $setting = \App\Models\Setting::getInstance(); @endphp
 <table>
     <tr>
         <td colspan="5" style="font-weight: bold; font-size: 16px;">{{ $setting->kost_name }}</td>

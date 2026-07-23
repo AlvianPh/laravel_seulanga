@@ -106,12 +106,9 @@
                                         <td class="px-4 py-3 space-x-2">
                                             <a href="{{ route('rooms.show', $room) }}" class="text-blue-600 hover:underline">Detail</a>
                                             <a href="{{ route('rooms.edit', $room) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            <form method="POST" action="{{ route('rooms.destroy', $room) }}" class="inline">
-                                                @csrf @method('DELETE')
-                                                <button type="submit"
-                                                        onclick="return confirm('Yakin ingin menghapus kamar ini? Semua riwayat yang terhubung mungkin akan error jika belum di-handle.')"
-                                                        class="text-red-600 hover:underline">Hapus</button>
-                                            </form>
+                                            <button type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('rooms.destroy', $room) }}', name: 'Kamar {{ $room->room_number }}', softDelete: true })"
+                                                    class="text-red-600 hover:underline">Hapus</button>
                                         </td>
                                     </tr>
                                 @empty

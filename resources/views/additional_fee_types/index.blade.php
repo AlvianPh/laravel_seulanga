@@ -69,10 +69,7 @@
                                             <td class="py-3">
                                                 <div class="flex items-center gap-2">
                                                     <a href="{{ route('additional_fee_types.edit', $type) }}" class="text-xs px-3 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300 rounded hover:bg-yellow-200 transition-colors">Edit</a>
-                                                    <form action="{{ route('additional_fee_types.destroy', $type) }}" method="POST" onsubmit="return confirm('Hapus jenis ini?')">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit" class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">Hapus</button>
-                                                    </form>
+                                                    <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('additional_fee_types.destroy', $type) }}', name: 'jenis {{ addslashes($type->nama) }}' })" class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">Hapus</button>
                                                 </div>
                                             </td>
                                         </tr>

@@ -66,14 +66,11 @@
                                                        class="text-xs px-3 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300 rounded hover:bg-yellow-200 transition-colors">
                                                         Edit
                                                     </a>
-                                                    <form action="{{ route('expense_categories.destroy', $expense_category) }}" method="POST"
-                                                          onsubmit="return confirm('Hapus Kategori Pengeluaran {{ $expense_category->name }}?')">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit"
-                                                                class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">
-                                                            Hapus
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                            @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expense_categories.destroy', $expense_category) }}', name: 'Kategori Pengeluaran {{ addslashes($expense_category->name) }}' })"
+                                                            class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">
+                                                        Hapus
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

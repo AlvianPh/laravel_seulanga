@@ -169,13 +169,11 @@
                                             </form>
                                         @endif
                                         
-                                        <form action="{{ route('rooms.photos.destroy', [$room, $photo]) }}" method="POST"
-                                              onsubmit="return confirm('Hapus foto ini?');">
-                                            @csrf @method('DELETE')
-                                            <button type="submit" class="w-full text-xs bg-red-100 text-red-700 py-1 rounded hover:bg-red-200">
-                                                Hapus
-                                            </button>
-                                        </form>
+                                        <button type="button" 
+                                                @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('rooms.photos.destroy', [$room, $photo]) }}', name: 'foto ini' })"
+                                                class="w-full text-xs bg-red-100 text-red-700 py-1 rounded hover:bg-red-200">
+                                            Hapus
+                                        </button>
                                     </div>
                                 </div>
                             @endforeach
