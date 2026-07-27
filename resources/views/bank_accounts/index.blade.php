@@ -29,8 +29,7 @@
                 </nav>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card>
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Rekening Bank</h3>
                         <a href="{{ route('bank_accounts.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
@@ -80,8 +79,7 @@
                             {{ $bankAccounts->links() }}
                         </div>
                     @endif
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

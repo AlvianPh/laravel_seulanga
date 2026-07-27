@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <x-ui.card>
 
                 @if ($errors->has('error'))
                     <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
@@ -124,7 +124,7 @@
                     </div>
                 </form>
 
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

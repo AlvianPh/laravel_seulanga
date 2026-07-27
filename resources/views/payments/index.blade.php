@@ -7,8 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+            <x-ui.card>
 
                     @if (session('success'))
                         <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
@@ -115,8 +114,7 @@
                         {{ $payments->links() }}
                     </div>
 
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

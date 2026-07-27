@@ -13,8 +13,7 @@
                 </div>
             @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card>
                     <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -105,8 +104,7 @@
                             <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">Simpan Pengaturan</button>
                         </div>
                     </form>
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

@@ -28,7 +28,7 @@
                 
                 <!-- Detail Utama -->
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <x-ui.card>
                         <div class="flex justify-between items-center border-b pb-4 mb-4">
                             <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Informasi Kontrak</h3>
                             <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
@@ -89,12 +89,12 @@
                         <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('contracts.edit', $contract) }}" class="text-indigo-600 hover:underline text-sm">Edit Data Dasar Kontrak</a>
                         </div>
-                    </div>
+                    </x-ui.card>
                 </div>
 
                 <!-- Aksi Khusus -->
                 <div class="space-y-6">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <x-ui.card>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Tindakan Kontrak</h3>
                         
                         @if($contract->isActive())
@@ -143,7 +143,7 @@
                         @else
                             <p class="text-gray-500 italic text-sm">Kontrak ini sudah selesai/diakhiri. Tidak ada tindakan yang dapat dilakukan.</p>
                         @endif
-                    </div>
+                    </x-ui.card>
                 </div>
 
             </div>

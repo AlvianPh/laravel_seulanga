@@ -7,8 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+            <x-ui.card>
 
                     @if (session('success'))
                         <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
@@ -24,50 +23,57 @@
                         </a>
                     </div>
 
-                    <!-- Filter & Search -->
-                    <form method="GET" action="{{ route('rooms.index') }}" class="mb-6 flex flex-col md:flex-row gap-4" x-data x-ref="form">
-                        <div class="flex-1">
+                    <!-- Toolbar Filter -->
+                    <form method="GET" action="{{ route('rooms.index') }}" class="mb-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex flex-wrap gap-4 items-end">
+                        <div class="flex-1 min-w-[200px]">
+                            <label class="block text-xs text-gray-500 dark:text-gray-300 mb-1">Cari Kamar / Lantai</label>
                             <input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="Cari no kamar..."
-                                   class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                   placeholder="Contoh: 101, Lantai 1..."
+                                   class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded shadow-sm focus:ring-indigo-500">
                         </div>
-                        <div class="w-full md:w-48">
-                            <select name="room_type_id" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
+                        <div class="w-48">
+                            <label class="block text-xs text-gray-500 dark:text-gray-300 mb-1">Tipe Kamar</label>
+                            <select name="room_type_id" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded shadow-sm focus:ring-indigo-500">
                                 <option value="">Semua Tipe</option>
-                                @foreach ($roomTypes as $roomType)
-                                    <option value="{{ $roomType->id }}" {{ request('room_type_id') == $roomType->id ? 'selected' : '' }}>
-                                        {{ $roomType->name }}
+                                @foreach($roomTypes as $type)
+                                    <option value="{{ $type->id }}" {{ request('room_type_id') == $type->id ? 'selected' : '' }}>
+                                        {{ $type->name }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        <div class="w-full md:w-48">
-                            <select name="status" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+
+                        <div class="w-40">
+                            <label class="block text-xs text-gray-500 dark:text-gray-300 mb-1">Status</label>
+                            <select name="status" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded shadow-sm focus:ring-indigo-500">
                                 <option value="">Semua Status</option>
-                                @foreach ($statuses as $status)
+                                @foreach($statuses as $status)
                                     <option value="{{ $status->value }}" {{ request('status') === $status->value ? 'selected' : '' }}>
                                         {{ $status->label() }}
                                     </option>
                                 @endforeach
                             </select>
                         </div>
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
-                                Cari
+
+                        <div class="flex gap-2">
+                            <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500">
+                                Filter
                             </button>
-                            @if(request()->anyFilled(['search', 'room_type_id', 'status']))
-                                <a href="{{ route('rooms.index') }}" class="ml-2 text-sm text-indigo-600 hover:underline">Reset</a>
+                            @if(request()->hasAny(['search', 'room_type_id', 'status']))
+                                <a href="{{ route('rooms.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
+                                    Reset
+                                </a>
                             @endif
                         </div>
                     </form>
 
-                    <!-- Table -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
+                            <thead class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-b dark:border-gray-600">
                                 <tr>
                                     <th class="px-4 py-3">Foto</th>
-                                    <th class="px-4 py-3">No. Kamar</th>
+                                    <th class="px-4 py-3">Nomor Kamar</th>
                                     <th class="px-4 py-3">Lantai</th>
                                     <th class="px-4 py-3">Tipe</th>
                                     <th class="px-4 py-3">Harga/Bulan</th>
@@ -75,18 +81,18 @@
                                     <th class="px-4 py-3">Aksi</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
                                 @forelse ($rooms as $room)
-                                    <tr class="border-b dark:border-gray-600">
+                                    <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                         <td class="px-4 py-3">
                                             @php
                                                 $primaryPhoto = $room->photos->where('is_primary', true)->first() ?? $room->photos->first();
                                             @endphp
                                             @if($primaryPhoto)
-                                                <img src="{{ Storage::url($primaryPhoto->file_path) }}" alt="Kamar {{ $room->room_number }}" class="w-16 h-16 object-cover rounded">
+                                                <img src="{{ Storage::url($primaryPhoto->file_path) }}" alt="Foto Kamar" class="w-12 h-12 object-cover rounded">
                                             @else
-                                                <div class="w-16 h-16 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center text-gray-400 text-xs">
-                                                    No Image
+                                                <div class="w-12 h-12 bg-gray-200 dark:bg-gray-600 rounded flex items-center justify-center text-gray-400 text-xs">
+                                                    No Pic
                                                 </div>
                                             @endif
                                         </td>
@@ -102,13 +108,15 @@
                                             <a href="{{ route('rooms.edit', $room) }}" class="text-indigo-600 hover:underline">Edit</a>
                                             <button type="button"
                                                     @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('rooms.destroy', $room) }}', name: 'Kamar {{ $room->room_number }}', softDelete: true })"
-                                                    class="text-red-600 hover:underline">Hapus</button>
+                                                    class="text-red-600 hover:underline">
+                                                Hapus
+                                            </button>
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
-                                            Tidak ada data kamar ditemukan.
+                                        <td colspan="7" class="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
+                                            Belum ada data kamar.
                                         </td>
                                     </tr>
                                 @endforelse
@@ -120,8 +128,7 @@
                         {{ $rooms->links() }}
                     </div>
 
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

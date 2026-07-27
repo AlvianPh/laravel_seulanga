@@ -14,7 +14,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <!-- Panel Data -->
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <x-ui.card>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Informasi Transaksi</h3>
                     
                     <dl class="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2 text-sm">
@@ -57,10 +57,10 @@
                         <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expenses.destroy', $expense) }}', name: 'data pengeluaran ini' })" class="w-full flex-1 bg-red-600 text-white font-bold py-2 rounded shadow hover:bg-red-700">Hapus Data</button>
                     </div>
 
-                </div>
+                </x-ui.card>
 
                 <!-- Panel Bukti Foto -->
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <x-ui.card>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Bukti Lampiran (Struk/Nota)</h3>
                     
                     @if($expense->receipt_path)
@@ -80,7 +80,7 @@
                             <p class="text-sm mt-1">Pengeluaran ini dicatat tanpa mengunggah foto struk/nota pembelian.</p>
                         </div>
                     @endif
-                </div>
+                </x-ui.card>
 
             </div>
 

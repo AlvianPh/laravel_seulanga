@@ -17,8 +17,7 @@
                 
                 <!-- Kolom Kiri: Galeri Foto -->
                 <div class="lg:col-span-2">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                        <div class="p-6">
+                    <x-ui.card class="mb-6">
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Galeri Foto</h3>
                             
                             @if($room->photos->isEmpty())
@@ -45,15 +44,13 @@
                                     </div>
                                 @endif
                             @endif
-                        </div>
-                    </div>
+                    </x-ui.card>
                 </div>
 
                 <!-- Kolom Kanan: Detail & Fasilitas -->
                 <div>
                     <!-- Detail Harga & Spesifikasi -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                        <div class="p-6">
+                    <x-ui.card class="mb-6">
                             <div class="flex justify-between items-center mb-4 border-b pb-2">
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Spesifikasi</h3>
                                 <x-ui.badge :status="$room->status">{{ $room->status->label() }}</x-ui.badge>
@@ -86,12 +83,10 @@
                                     </div>
                                 </dl>
                             </div>
-                        </div>
-                    </div>
+                    </x-ui.card>
 
                     <!-- Fasilitas -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6">
+                    <x-ui.card>
                             <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Fasilitas</h3>
                             
                             @if($room->facilities->isNotEmpty())
@@ -108,15 +103,13 @@
                             @else
                                 <p class="text-gray-500 italic text-sm">Tidak ada fasilitas spesifik yang tercatat.</p>
                             @endif
-                        </div>
-                    </div>
+                    </x-ui.card>
                 </div>
 
             </div>
             
             <!-- Riwayat Kontrak Singkat (opsional, disiapkan placeholder) -->
-            <div class="mt-6 bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card class="mt-6">
                     <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Kontrak Terakhir</h3>
                     @if($room->contracts->isEmpty())
                         <p class="text-gray-500 italic text-sm">Belum ada riwayat kontrak untuk kamar ini.</p>
@@ -144,8 +137,7 @@
                             </tbody>
                         </table>
                     @endif
-                </div>
-            </div>
+            </x-ui.card>
 
         </div>
     </div>

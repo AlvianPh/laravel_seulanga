@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <x-ui.card>
 
                 <form method="POST" action="{{ route('payment_methods.update', $paymentMethod) }}">
                     @csrf
@@ -50,7 +50,7 @@
                     </div>
                 </form>
 
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

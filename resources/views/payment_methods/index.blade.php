@@ -30,8 +30,7 @@
                 </nav>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card>
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Metode Pembayaran</h3>
                         <a href="{{ route('payment_methods.create') }}"
@@ -98,8 +97,7 @@
                             </table>
                         </div>
                     @endif
-                </div>
-            </div>
+            </x-ui.card>
 
         </div>
     </div>

@@ -17,7 +17,7 @@
                 
                 <!-- Kolom Kiri: Foto & Info Singkat -->
                 <div class="lg:col-span-1 space-y-6">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-center">
+                    <x-ui.card class="text-center">
                         @if($tenant->tenant_photo_path)
                             <img src="{{ Storage::url($tenant->tenant_photo_path) }}" class="w-32 h-32 object-cover rounded-full mx-auto mb-4 border-4 border-indigo-100 dark:border-indigo-900" alt="Foto Profil">
                         @else
@@ -39,10 +39,10 @@
                                 {{ $tenant->email ?: '-' }}
                             </div>
                         </div>
-                    </div>
+                    </x-ui.card>
 
                     <!-- Dokumen KTP -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <x-ui.card>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Dokumen KTP</h3>
                         @if($tenant->ktp_photo_path)
                             <a href="{{ Storage::url($tenant->ktp_photo_path) }}" target="_blank">
@@ -54,14 +54,14 @@
                                 Belum ada foto KTP.
                             </div>
                         @endif
-                    </div>
+                    </x-ui.card>
                 </div>
 
                 <!-- Kolom Kanan: Detail & Riwayat -->
                 <div class="lg:col-span-2 space-y-6">
                     
                     <!-- Detail Lengkap -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <x-ui.card>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Informasi Detail</h3>
                         
                         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 text-sm">
@@ -90,10 +90,10 @@
                                 <dd class="mt-1 text-gray-900 dark:text-gray-100">{{ $tenant->emergency_contact_phone ?: '-' }}</dd>
                             </div>
                         </dl>
-                    </div>
+                    </x-ui.card>
 
                     <!-- Riwayat Kontrak -->
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <x-ui.card>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Riwayat Sewa Kamar</h3>
                         
                         @if($tenant->contracts->isEmpty())
@@ -126,7 +126,7 @@
                                 </table>
                             </div>
                         @endif
-                    </div>
+                    </x-ui.card>
 
                 </div>
 

@@ -7,8 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card>
                     <form action="{{ route('additional_fee_types.update', $additionalFeeType) }}" method="POST">
                         @csrf
                         @method('PUT')
@@ -43,8 +42,7 @@
                             <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">Update</button>
                         </div>
                     </form>
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

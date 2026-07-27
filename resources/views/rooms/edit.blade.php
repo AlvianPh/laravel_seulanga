@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <x-ui.card>
 
                 @if (session('success'))
                     <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
@@ -181,7 +181,7 @@
                     @endif
                 </div>
 
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

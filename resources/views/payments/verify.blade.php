@@ -11,7 +11,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <!-- Panel Data -->
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <x-ui.card>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Informasi Pembayaran</h3>
                     
                     <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 text-sm">
@@ -63,10 +63,10 @@
                         </div>
                     </form>
 
-                </div>
+                </x-ui.card>
 
                 <!-- Panel Bukti -->
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <x-ui.card>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Bukti Transaksi</h3>
                     
                     @if($payment->proof_path)
@@ -83,7 +83,7 @@
                             Tidak ada file bukti (Biasanya dibayar tunai).
                         </div>
                     @endif
-                </div>
+                </x-ui.card>
 
             </div>
 
