@@ -125,24 +125,32 @@ class ReportGeneratorService
 
     public function generateProfitLossReport(string $filterType, ?string $startDate, ?string $endDate): array
     {
-        $incomes = $this->generateIncomeReport($filterType, $startDate, $endDate);
-        $expenses = $this->generateExpenseReport($filterType, $startDate, $endDate);
+        [$start, $end] = $this->parseDateRange($filterType, $startDate, $endDate);
 
-        $totalIncome = $incomes->sum('amount');
-        $totalExpense = $expenses->sum('amount');
+        $totalIncome = Payment::where('status', StatusPembayaran::Verified->value)
+            ->whereBetween('payment_date', [$start->toDateString(), $end->toDateString()])
+            ->sum('amount');
 
-        // Breakdown expense by category
-        $expenseBreakdown = $expenses->groupBy('expense_category_id')->map(function ($group) {
+        $totalExpense = Expense::whereBetween('expense_date', [$start->toDateString(), $end->toDateString()])
+            ->sum('amount');
+
+        $breakdownRows = Expense::select('expense_category_id', DB::raw('SUM(amount) as total'))
+            ->with('expenseCategory')
+            ->whereBetween('expense_date', [$start->toDateString(), $end->toDateString()])
+            ->groupBy('expense_category_id')
+            ->get();
+
+        $expenseBreakdown = $breakdownRows->map(function ($row) {
             return [
-                'label' => $group->first()->expenseCategory->name ?? '-',
-                'total' => $group->sum('amount')
+                'label' => $row->expenseCategory?->name ?? '-',
+                'total' => (float) $row->total
             ];
         });
 
         return [
-            'total_income' => $totalIncome,
-            'total_expense' => $totalExpense,
-            'net_profit' => $totalIncome - $totalExpense,
+            'total_income' => (float) $totalIncome,
+            'total_expense' => (float) $totalExpense,
+            'net_profit' => (float) ($totalIncome - $totalExpense),
             'expense_breakdown' => $expenseBreakdown
         ];
     }

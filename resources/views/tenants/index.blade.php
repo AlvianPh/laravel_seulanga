@@ -73,12 +73,9 @@
                                         <td class="px-4 py-3 space-x-2">
                                             <a href="{{ route('tenants.show', $tenant) }}" class="text-blue-600 hover:underline">Detail</a>
                                             <a href="{{ route('tenants.edit', $tenant) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            <form method="POST" action="{{ route('tenants.destroy', $tenant) }}" class="inline">
-                                                @csrf @method('DELETE')
-                                                <button type="submit"
-                                                        onclick="return confirm('Yakin ingin menghapus penghuni ini beserta berkasnya? Data riwayat sewa juga dapat terhapus secara berantai.')"
-                                                        class="text-red-600 hover:underline">Hapus</button>
-                                            </form>
+                                            <button type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.destroy', $tenant) }}', name: 'Penghuni {{ addslashes($tenant->name) }}', softDelete: true })"
+                                                    class="text-red-600 hover:underline">Hapus</button>
                                         </td>
                                     </tr>
                                 @empty

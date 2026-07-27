@@ -59,9 +59,32 @@
 </head>
 <body>
 
-    <div class="header">
-        <h1>{{ $data['title'] ?? 'Laporan' }}</h1>
-        <p>Periode: {{ $data['dateLabel'] ?? '-' }}</p>
+    <div class="header" style="border:none;">
+        @php
+            $setting = \App\Models\Setting::getInstance();
+            $logoPath = $setting->kost_logo ? public_path('storage/' . $setting->kost_logo) : null;
+            // Fallback for dompdf to read file if symlink issue
+            if ($logoPath && !file_exists($logoPath)) {
+                $logoPath = storage_path('app/public/' . $setting->kost_logo);
+            }
+        @endphp
+        <table style="width: 100%; border-bottom: 2px solid #333; margin-bottom: 20px; padding-bottom: 10px; border-collapse: collapse;">
+            <tr>
+                @if($logoPath && file_exists($logoPath))
+                <td style="width: 80px; text-align: left; vertical-align: middle; border: none;">
+                    <img src="{{ $logoPath }}" style="max-height: 60px; max-width: 60px;">
+                </td>
+                @endif
+                <td style="text-align: {{ ($logoPath && file_exists($logoPath)) ? 'left' : 'center' }}; vertical-align: middle; border: none;">
+                    <h1 style="margin: 0; font-size: 24px;">{{ $setting->kost_name }}</h1>
+                    @if($setting->kost_address)
+                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #555;">{{ $setting->kost_address }}</p>
+                    @endif
+                </td>
+            </tr>
+        </table>
+        <h2 style="margin: 0; font-size: 18px; text-align: center;">{{ $data['title'] ?? 'Laporan' }}</h2>
+        <p style="text-align: center; font-size: 14px; margin-top: 5px; color: #555;">Periode: {{ $data['dateLabel'] ?? '-' }}</p>
     </div>
 
     <!-- Include the same table partial used in web view -->

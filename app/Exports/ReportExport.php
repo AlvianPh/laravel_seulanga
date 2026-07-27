@@ -18,6 +18,6 @@ class ReportExport implements FromView
 
     public function view(): View
     {
-        return view($this->viewName, ['data' => $this->data]);
+        return view($this->viewName, $this->data);
     }
 }

@@ -46,6 +46,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::resource('facilities', \App\Http\Controllers\FacilityController::class);
     Route::resource('payment_methods', \App\Http\Controllers\PaymentMethodController::class)->except(['show']);
     Route::resource('expense_categories', \App\Http\Controllers\ExpenseCategoryController::class)->except(['show']);
+    Route::resource('bank_accounts', \App\Http\Controllers\BankAccountController::class)->except(['show']);
+    Route::resource('additional_fee_types', \App\Http\Controllers\AdditionalFeeTypeController::class)->except(['show']);
 
     // Modul Penghuni
     Route::resource('tenants', \App\Http\Controllers\TenantController::class)->withTrashed(['show']);
@@ -72,6 +74,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     // Modul Laporan (Tahap 5b)
     Route::get('/reports', [\App\Http\Controllers\ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [\App\Http\Controllers\ReportController::class, 'generate'])->name('reports.generate');
+
+    // Modul Pengaturan (Tahap 5c / D)
+    Route::get('/settings', [\App\Http\Controllers\SettingController::class, 'edit'])->name('settings.edit');
+    Route::put('/settings', [\App\Http\Controllers\SettingController::class, 'update'])->name('settings.update');
+
+    // Modul Notifikasi
+    Route::get('/notifications', [\App\Http\Controllers\NotificationController::class, 'index'])->name('notifications.index');
+    Route::patch('/notifications/{id}/read', [\App\Http\Controllers\NotificationController::class, 'markAsRead'])->name('notifications.read');
+    Route::post('/notifications/read-all', [\App\Http\Controllers\NotificationController::class, 'markAllAsRead'])->name('notifications.read-all');
 });
 
 // ── Manajemen User — HANYA Owner ─────────────────────────────────────────

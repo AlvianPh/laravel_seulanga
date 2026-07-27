@@ -148,10 +148,7 @@
                             <h4 class="font-medium mb-2 text-gray-700 dark:text-gray-300">Foto KTP</h4>
                             @if($tenant->ktp_photo_path)
                                 <img src="{{ Storage::url($tenant->ktp_photo_path) }}" class="w-full h-48 object-cover rounded mb-3" alt="Foto KTP">
-                                <form action="{{ route('tenants.ktp.destroy', $tenant) }}" method="POST" onsubmit="return confirm('Hapus foto KTP ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus KTP</button>
-                                </form>
+                                <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.ktp.destroy', $tenant) }}', name: 'foto KTP ini' })" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus KTP</button>
                             @else
                                 <p class="text-sm text-gray-500 italic">Belum ada foto KTP.</p>
                             @endif
@@ -162,10 +159,7 @@
                             <h4 class="font-medium mb-2 text-gray-700 dark:text-gray-300">Foto Profil</h4>
                             @if($tenant->tenant_photo_path)
                                 <img src="{{ Storage::url($tenant->tenant_photo_path) }}" class="w-full h-48 object-cover rounded mb-3" alt="Foto Profil">
-                                <form action="{{ route('tenants.photo.destroy', $tenant) }}" method="POST" onsubmit="return confirm('Hapus foto profil ini?')">
-                                    @csrf @method('DELETE')
-                                    <button type="submit" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus Profil</button>
-                                </form>
+                                <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.photo.destroy', $tenant) }}', name: 'foto profil ini' })" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus Profil</button>
                             @else
                                 <p class="text-sm text-gray-500 italic">Belum ada foto profil.</p>
                             @endif

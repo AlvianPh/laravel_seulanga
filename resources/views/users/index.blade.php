@@ -48,12 +48,9 @@
                                         @if (auth()->id() !== $user->id)
                                             <a href="{{ route('users.edit', $user) }}"
                                                class="text-indigo-600 hover:underline">Edit</a>
-                                            <form method="POST" action="{{ route('users.destroy', $user) }}" class="inline">
-                                                @csrf @method('DELETE')
-                                                <button type="submit"
-                                                        onclick="return confirm('Hapus user ini?')"
-                                                        class="text-red-600 hover:underline">Hapus</button>
-                                            </form>
+                                            <button type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('users.destroy', $user) }}', name: 'User {{ addslashes($user->name) }}' })"
+                                                    class="text-red-600 hover:underline">Hapus</button>
                                         @else
                                             <span class="text-gray-400 text-xs">Akun Anda</span>
                                         @endif

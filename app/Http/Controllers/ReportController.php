@@ -115,6 +115,10 @@ class ReportController extends Controller
         $exportFormat = $action === 'csv' ? \Maatwebsite\Excel\Excel::CSV : \Maatwebsite\Excel\Excel::XLSX;
         $ext = $action === 'csv' ? '.csv' : '.xlsx';
 
-        return Excel::download(new ReportExport($viewName, $data), $filename . $ext, $exportFormat);
+        return Excel::download(new ReportExport('reports.excel_template', [
+            'viewName' => $viewName, 
+            'data' => $data,
+            'setting' => \App\Models\Setting::getInstance()
+        ]), $filename . $ext, $exportFormat);
     }
 }

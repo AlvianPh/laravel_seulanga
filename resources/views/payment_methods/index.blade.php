@@ -19,6 +19,17 @@
                 </div>
             @endif
 
+            <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
+                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
+                    <a href="{{ route('payment_methods.index') }}" class="{{ request()->routeIs('payment_methods.*') ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
+                        Metode Pembayaran
+                    </a>
+                    <a href="{{ route('bank_accounts.index') }}" class="{{ request()->routeIs('bank_accounts.*') ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
+                        Bank / Rekening
+                    </a>
+                </nav>
+            </div>
+
             <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                 <div class="p-6">
                     <div class="flex items-center justify-between mb-6">
@@ -74,14 +85,11 @@
                                                        class="text-xs px-3 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300 rounded hover:bg-yellow-200 transition-colors">
                                                         Edit
                                                     </a>
-                                                    <form action="{{ route('payment_methods.destroy', $method) }}" method="POST"
-                                                          onsubmit="return confirm('Hapus Metode Pembayaran {{ $method->name }}?')">
-                                                        @csrf @method('DELETE')
-                                                        <button type="submit"
-                                                                class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">
-                                                            Hapus
-                                                        </button>
-                                                    </form>
+                                                    <button type="button"
+                                                            @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('payment_methods.destroy', $method) }}', name: 'Metode Pembayaran {{ addslashes($method->name) }}' })"
+                                                            class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">
+                                                        Hapus
+                                                    </button>
                                                 </div>
                                             </td>
                                         </tr>

@@ -11,8 +11,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property int    $id
  * @property string $name
  */
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class PaymentMethod extends Model
 {
+    use HasFactory;
+
     protected $fillable = ['name'];
 
     public function payments(): HasMany

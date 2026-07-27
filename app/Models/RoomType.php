@@ -13,8 +13,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
  * @property string|null $description
  * @property float|null  $default_price
  */
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+
 class RoomType extends Model
 {
+    use HasFactory;
+
     protected $fillable = [
         'name',
         'description',

@@ -84,24 +84,36 @@ class DashboardMetricsService
         $expenses = [];
         $profits = [];
 
+        $startDate = Carbon::now()->startOfMonth()->subMonths(5);
+        $endDate = Carbon::now()->endOfMonth();
+
+        $driver = DB::getDriverName();
+        $payFormat = $driver === 'sqlite' ? "strftime('%Y-%m', payment_date)" : "DATE_FORMAT(payment_date, '%Y-%m')";
+        $expFormat = $driver === 'sqlite' ? "strftime('%Y-%m', expense_date)" : "DATE_FORMAT(expense_date, '%Y-%m')";
+
+        $incomeData = Payment::selectRaw("{$payFormat} as ym, SUM(amount) as total")
+            ->where('status', StatusPembayaran::Verified->value)
+            ->whereBetween('payment_date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->groupBy('ym')
+            ->pluck('total', 'ym');
+
+        $expenseData = Expense::selectRaw("{$expFormat} as ym, SUM(amount) as total")
+            ->whereBetween('expense_date', [$startDate->toDateString(), $endDate->toDateString()])
+            ->groupBy('ym')
+            ->pluck('total', 'ym');
+
         // Ambil 6 bulan terakhir
         for ($i = 5; $i >= 0; $i--) {
             $date = Carbon::now()->startOfMonth()->subMonths($i);
-            $monthLabel = $date->format('M Y');
-            $months[] = $monthLabel;
+            $months[] = $date->format('M Y');
+            $ym = $date->format('Y-m');
 
-            $inc = Payment::whereMonth('payment_date', $date->month)
-                ->whereYear('payment_date', $date->year)
-                ->where('status', StatusPembayaran::Verified->value)
-                ->sum('amount');
-                
-            $exp = Expense::whereMonth('expense_date', $date->month)
-                ->whereYear('expense_date', $date->year)
-                ->sum('amount');
+            $inc = (float) ($incomeData[$ym] ?? 0);
+            $exp = (float) ($expenseData[$ym] ?? 0);
 
-            $incomes[] = (float) $inc;
-            $expenses[] = (float) $exp;
-            $profits[] = (float) ($inc - $exp);
+            $incomes[] = $inc;
+            $expenses[] = $exp;
+            $profits[] = $inc - $exp;
         }
 
         return [

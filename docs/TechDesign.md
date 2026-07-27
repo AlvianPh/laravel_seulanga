@@ -25,16 +25,37 @@ erDiagram
         timestamp   updated_at
     }
 
+    ROOM_TYPES {
+        bigint      id              PK
+        string      name            NN  "Unik, cth: Standard"
+        text        description
+        decimal     default_price
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
+    FACILITIES {
+        bigint      id              PK
+        string      name            NN  "Unik, cth: AC"
+        string      icon
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
+    ROOM_FACILITIES {
+        bigint      room_id         PK,FK
+        bigint      facility_id     PK,FK
+    }
+
     ROOMS {
         bigint      id              PK
         string      room_number     NN  "Unik, cth: 101"
         tinyint     floor           NN  "Lantai ke-berapa"
-        enum        type            NN  "standard | deluxe | suite"
+        bigint      room_type_id    FK  "Tipe kamar"
         decimal     size_m2             "Luas dalam meter persegi"
         decimal     monthly_price   NN  "Harga sewa per bulan"
         decimal     deposit_price   NN  "Besaran deposit"
         enum        status          NN  "available | occupied | maintenance"
-        json        facilities          "Daftar fasilitas: AC, wifi, dll"
         timestamp   created_at
         timestamp   updated_at
     }
@@ -99,13 +120,20 @@ erDiagram
         timestamp   updated_at
     }
 
+    PAYMENT_METHODS {
+        bigint      id              PK
+        string      name            NN  "Unik, cth: Transfer Bank"
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
     PAYMENTS {
         bigint      id              PK
         bigint      invoice_id      FK
         bigint      tenant_id       FK
         decimal     amount          NN  "Nominal yang dibayar"
         date        payment_date    NN
-        enum        method          NN  "cash | transfer | qris | other"
+        bigint      payment_method_id FK "Metode bayar"
         enum        status          NN  "verified | pending | rejected"
         string      proof_path          "Path bukti transfer di storage"
         text        notes
@@ -114,14 +142,53 @@ erDiagram
         timestamp   updated_at
     }
 
+    EXPENSE_CATEGORIES {
+        bigint      id              PK
+        string      name            NN  "Unik, cth: Listrik"
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
     EXPENSES {
         bigint      id              PK
-        enum        category        NN  "electricity|water|internet|repair|cleaning|salary|other"
+        bigint      expense_category_id FK "Kategori pengeluaran"
         string      description     NN  "Keterangan pengeluaran"
         decimal     amount          NN  "Nominal pengeluaran"
         date        expense_date    NN
         string      receipt_path        "Path struk/bukti pengeluaran"
         bigint      created_by      FK  "ID user yang input"
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
+    BANK_ACCOUNTS {
+        bigint      id              PK
+        string      nama_bank       NN
+        string      nomor_rekening  NN
+        string      nama_pemilik_rekening NN
+        boolean     is_active       NN  "Default true"
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
+    ADDITIONAL_FEE_TYPES {
+        bigint      id              PK
+        string      nama            NN
+        enum        jenis           NN  "nominal_tetap | persentase"
+        decimal     nilai_default   NN  "Default 0"
+        boolean     is_active       NN  "Default true"
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
+    SETTINGS {
+        bigint      id              PK
+        string      kost_name       NN  "Default: Kost App"
+        string      kost_logo           "Path logo"
+        text        kost_address
+        integer     default_due_date_day NN "Default 10"
+        bigint      default_late_fee_id FK
+        bigint      default_bank_account_id FK
         timestamp   created_at
         timestamp   updated_at
     }
@@ -137,11 +204,16 @@ erDiagram
         timestamp   updated_at
     }
 
+    ROOM_TYPES      ||--o{ ROOMS         : "memiliki banyak"
+    ROOMS           ||--o{ ROOM_FACILITIES : "punya fasilitas"
+    FACILITIES      ||--o{ ROOM_FACILITIES : "dimiliki kamar"
     ROOMS           ||--o{ ROOM_PHOTOS   : "punya banyak foto"
     ROOMS           ||--o{ CONTRACTS     : "punya banyak kontrak (riwayat)"
     TENANTS         ||--o{ CONTRACTS     : "punya banyak kontrak"
     CONTRACTS       ||--o{ INVOICES      : "menghasilkan banyak tagihan"
     INVOICES        ||--o{ PAYMENTS      : "bisa dibayar berkali-kali"
+    PAYMENT_METHODS ||--o{ PAYMENTS      : "metode dipakai untuk"
+    EXPENSE_CATEGORIES ||--o{ EXPENSES   : "kategori dari"
     TENANTS         ||--o{ INVOICES      : "tagihan milik penghuni"
     TENANTS         ||--o{ PAYMENTS      : "pembayaran oleh penghuni"
     USERS           ||--o{ EXPENSES      : "pengeluaran diinput user"
@@ -183,12 +255,11 @@ atau boleh kosong, dan index apa yang dipasang agar pencarian cepat.
 | `id` | BIGINT | ✓ | PK | |
 | `room_number` | VARCHAR(20) | ✓ | UNIQUE | Nomor kamar, mis: "101", "A2" |
 | `floor` | TINYINT | ✓ | INDEX | Lantai (1, 2, 3, ...) |
-| `type` | ENUM | ✓ | INDEX | `standard` / `deluxe` / `suite` |
+| `room_type_id` | BIGINT | ✓ | FK + INDEX | Relasi ke tipe kamar |
 | `size_m2` | DECIMAL(5,2) | — | — | Luas m2, mis: 12.50 |
 | `monthly_price` | DECIMAL(12,2) | ✓ | — | Harga normal per bulan |
 | `deposit_price` | DECIMAL(12,2) | ✓ | — | Besaran deposit standar |
 | `status` | ENUM | ✓ | INDEX | `available` / `occupied` / `maintenance` |
-| `facilities` | JSON | — | — | Misal: ["AC","WiFi","Kasur"] |
 | `created_at` | TIMESTAMP | — | — | |
 | `updated_at` | TIMESTAMP | — | — | |
 
@@ -293,7 +364,7 @@ atau boleh kosong, dan index apa yang dipasang agar pencarian cepat.
 | `tenant_id` | BIGINT | ✓ | FK + INDEX | Denormalized untuk query riwayat |
 | `amount` | DECIMAL(12,2) | ✓ | — | Nominal yang dibayar |
 | `payment_date` | DATE | ✓ | INDEX | Tanggal bayar |
-| `method` | ENUM | ✓ | — | `cash` / `transfer` / `qris` / `other` |
+| `payment_method_id` | BIGINT | ✓ | FK + INDEX | Metode pembayaran |
 | `status` | ENUM | ✓ | INDEX | `pending` / `verified` / `rejected` |
 | `proof_path` | VARCHAR(500) | — | — | Bukti transfer (opsional untuk cash) |
 | `notes` | TEXT | — | — | Catatan |
@@ -309,7 +380,7 @@ atau boleh kosong, dan index apa yang dipasang agar pencarian cepat.
 | Kolom | Tipe | Wajib | Index | Keterangan |
 |---|---|---|---|---|
 | `id` | BIGINT | ✓ | PK | |
-| `category` | ENUM | ✓ | INDEX | Kategori pengeluaran |
+| `expense_category_id` | BIGINT | ✓ | FK + INDEX | Kategori pengeluaran |
 | `description` | VARCHAR(500) | ✓ | — | Keterangan detail |
 | `amount` | DECIMAL(12,2) | ✓ | — | Nominal |
 | `expense_date` | DATE | ✓ | INDEX | Tanggal pengeluaran |
@@ -318,8 +389,110 @@ atau boleh kosong, dan index apa yang dipasang agar pencarian cepat.
 | `created_at` | TIMESTAMP | — | — | |
 | `updated_at` | TIMESTAMP | — | — | |
 
-> **Kategori ENUM:** `electricity` / `water` / `internet` / `repair` /
-> `cleaning` / `salary` / `other`
+---
+
+### Tabel: `room_types`
+*Master data tipe kamar kost.*
+
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `id` | BIGINT | ✓ | PK | |
+| `name` | VARCHAR(100) | ✓ | UNIQUE | Nama tipe kamar |
+| `description` | TEXT | — | — | Deskripsi |
+| `default_price` | DECIMAL(12,2) | — | — | Harga rekomendasi |
+| `created_at` | TIMESTAMP | — | — | |
+| `updated_at` | TIMESTAMP | — | — | |
+
+---
+
+### Tabel: `facilities` & `room_facilities`
+*Master data fasilitas kamar.*
+
+**facilities:**
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `id` | BIGINT | ✓ | PK | |
+| `name` | VARCHAR(100) | ✓ | UNIQUE | Nama fasilitas |
+| `icon` | VARCHAR(100) | — | — | Ikon tampilan |
+| `created_at` | TIMESTAMP | — | — | |
+| `updated_at` | TIMESTAMP | — | — | |
+
+**room_facilities:** (Tabel Pivot)
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `room_id` | BIGINT | ✓ | PK, FK | Relasi ke rooms |
+| `facility_id` | BIGINT | ✓ | PK, FK | Relasi ke facilities |
+
+---
+
+### Tabel: `payment_methods`
+*Master data metode pembayaran.*
+
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `id` | BIGINT | ✓ | PK | |
+| `name` | VARCHAR(255) | ✓ | UNIQUE | Nama metode |
+| `created_at` | TIMESTAMP | — | — | |
+| `updated_at` | TIMESTAMP | — | — | |
+
+---
+
+### Tabel: `expense_categories`
+*Master data kategori pengeluaran.*
+
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `id` | BIGINT | ✓ | PK | |
+| `name` | VARCHAR(255) | ✓ | UNIQUE | Nama kategori |
+| `created_at` | TIMESTAMP | — | — | |
+| `updated_at` | TIMESTAMP | — | — | |
+
+---
+
+### Tabel: `bank_accounts`
+*Master data rekening bank.*
+
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `id` | BIGINT | ✓ | PK | |
+| `nama_bank` | VARCHAR(255) | ✓ | — | |
+| `nomor_rekening` | VARCHAR(255) | ✓ | — | |
+| `nama_pemilik_rekening` | VARCHAR(255) | ✓ | — | |
+| `is_active` | BOOLEAN | ✓ | — | Default true |
+| `created_at` | TIMESTAMP | — | — | |
+| `updated_at` | TIMESTAMP | — | — | |
+
+---
+
+### Tabel: `additional_fee_types`
+*Master data jenis denda / biaya tambahan.*
+
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `id` | BIGINT | ✓ | PK | |
+| `nama` | VARCHAR(255) | ✓ | — | |
+| `jenis` | ENUM | ✓ | — | `nominal_tetap` / `persentase` |
+| `nilai_default` | DECIMAL(15,2) | ✓ | — | Default 0 |
+| `is_active` | BOOLEAN | ✓ | — | Default true |
+| `created_at` | TIMESTAMP | — | — | |
+| `updated_at` | TIMESTAMP | — | — | |
+
+---
+
+### Tabel: `settings`
+*Konfigurasi aplikasi (single-row).*
+
+| Kolom | Tipe | Wajib | Index | Keterangan |
+|---|---|---|---|---|
+| `id` | BIGINT | ✓ | PK | Selalu 1 |
+| `kost_name` | VARCHAR(255) | ✓ | — | |
+| `kost_logo` | VARCHAR(255) | — | — | Path logo file |
+| `kost_address` | TEXT | — | — | |
+| `default_due_date_day` | INT | ✓ | — | 1-28 |
+| `default_late_fee_id` | BIGINT | — | FK | Relasi ke additional_fee_types |
+| `default_bank_account_id` | BIGINT | — | FK | Relasi ke bank_accounts |
+| `created_at` | TIMESTAMP | — | — | |
+| `updated_at` | TIMESTAMP | — | — | |
 
 ---
 
@@ -351,12 +524,21 @@ Diagram teks berikut menggambarkan **siapa bisa melakukan apa** dalam sistem.
 +==============================================================+
 |                                                              |
 |  +---------+     +-------------------------------------+    |
+|  |         |     |  MODUL DATA MASTER & PENGATURAN     |    |
+|  |  OWNER  |---->|  - Manajemen Tipe Kamar & Fasilitas |    |
+|  |         |     |  - Manajemen Metode Pembayaran      |    |
+|  |  &      |     |  - Manajemen Kategori Pengeluaran   |    |
+|  |         |     |  - Manajemen Bank & Denda           |    |
+|  |  ADMIN  |     |  - Konfigurasi Aplikasi (Identitas) |    |
+|  |         |     +-------------------------------------+    |
+|  |         |                                                  |
+|  |         |     +-------------------------------------+    |
 |  |         |     |  MODUL KAMAR                        |    |
-|  |  OWNER  |---->|  - Lihat daftar kamar               |    |
+|  |         |---->|  - Lihat daftar kamar               |    |
 |  |         |     |  - Tambah / Edit / Hapus kamar      |    |
-|  |  &      |     |  - Upload foto kamar                 |    |
-|  |         |     |  - Filter & cari kamar               |    |
-|  |  ADMIN  |     +-------------------------------------+    |
+|  |         |     |  - Upload foto kamar                 |    |
+|  |         |     |  - Atur relasi Kamar & Tipe/Fasilitas|    |
+|  |         |     +-------------------------------------+    |
 |  |         |                                                  |
 |  +----+----+     +-------------------------------------+    |
 |       |          |  MODUL PENGHUNI                      |    |
@@ -388,7 +570,7 @@ Diagram teks berikut menggambarkan **siapa bisa melakukan apa** dalam sistem.
 |       +--------->|  - Input pembayaran baru             |    |
 |       |          |  - Upload bukti transfer             |    |
 |       |          |  - Verifikasi pembayaran             |    |
-|       |          |  - Cetak kuitansi                    |    |
+|       |          |  - Cetak kuitansi ber-Kop            |    |
 |       |          |  - Lihat riwayat pembayaran          |    |
 |       |          +-------------------------------------+    |
 |       |                                                       |
@@ -417,7 +599,7 @@ Diagram teks berikut menggambarkan **siapa bisa melakukan apa** dalam sistem.
 |  |  ONLY   |     |  - Laporan laba rugi                 |    |
 |  |         |     |  - Laporan occupancy rate            |    |
 |  +---------+     |  - Laporan piutang                   |    |
-|                  |  - Export PDF / Excel / CSV          |    |
+|                  |  - Export PDF / Excel / CSV dgn Kop  |    |
 |                  +-------------------------------------+    |
 +==============================================================+
 

@@ -54,12 +54,7 @@
                         <a href="{{ route('expenses.edit', $expense) }}" class="flex-1 text-center bg-indigo-600 text-white font-bold py-2 rounded shadow hover:bg-indigo-700">
                             Edit Data
                         </a>
-                        <form action="{{ route('expenses.destroy', $expense) }}" method="POST" class="flex-1" onsubmit="return confirm('Apakah Anda yakin ingin menghapus data pengeluaran ini secara permanen?')">
-                            @csrf @method('DELETE')
-                            <button type="submit" class="w-full bg-red-100 text-red-700 font-bold py-2 rounded border border-red-200 hover:bg-red-200">
-                                Hapus Data
-                            </button>
-                        </form>
+                        <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expenses.destroy', $expense) }}', name: 'data pengeluaran ini' })" class="w-full flex-1 bg-red-600 text-white font-bold py-2 rounded shadow hover:bg-red-700">Hapus Data</button>
                     </div>
 
                 </div>
