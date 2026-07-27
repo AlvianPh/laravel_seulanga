@@ -57,13 +57,9 @@
                         </div>
 
                         <div class="flex gap-2">
-                            <button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500">
-                                Filter
-                            </button>
+                            <x-ui.button type="submit" class="px-4 py-2 bg-gray-800 text-white text-sm rounded hover:bg-gray-700 dark:bg-gray-600 dark:hover:bg-gray-500">Filter</x-ui.button>
                             @if(request()->hasAny(['search', 'room_type_id', 'status']))
-                                <a href="{{ route('rooms.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
-                                    Reset
-                                </a>
+                                <x-ui.button href="{{ route('rooms.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">Reset</x-ui.button>
                             @endif
                         </div>
                     </form>
