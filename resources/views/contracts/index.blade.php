@@ -59,20 +59,18 @@
                     </form>
 
                     <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                <tr>
-                                    <th class="px-4 py-3">ID</th>
-                                    <th class="px-4 py-3">Penghuni</th>
-                                    <th class="px-4 py-3">Kamar</th>
-                                    <th class="px-4 py-3">Periode Sewa</th>
-                                    <th class="px-4 py-3">Harga Sewa</th>
-                                    <th class="px-4 py-3">Status</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
+                            <tr>
+                                <th class="px-4 py-3">ID</th>
+                                <th class="px-4 py-3">Penghuni</th>
+                                <th class="px-4 py-3">Kamar</th>
+                                <th class="px-4 py-3">Periode Sewa</th>
+                                <th class="px-4 py-3">Harga Sewa</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Aksi</th>
+                            </tr>
+                        </x-slot>
                                 @forelse ($contracts as $contract)
                                     <tr class="border-b dark:border-gray-600">
                                         <td class="px-4 py-3 font-mono text-xs text-gray-500">#{{ $contract->id }}</td>
@@ -100,9 +98,7 @@
                                         </td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    </x-ui.table-wrapper>
 
                     <div class="mt-4">
                         {{ $contracts->links() }}

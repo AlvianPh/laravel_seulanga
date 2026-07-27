@@ -24,16 +24,15 @@
                         </a>
                     </div>
 
-                    <table class="w-full text-sm text-left">
-                        <thead class="bg-gray-50 dark:bg-gray-700">
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
                             <tr>
                                 <th class="px-4 py-3">Nama</th>
                                 <th class="px-4 py-3">Email</th>
                                 <th class="px-4 py-3">Role</th>
                                 <th class="px-4 py-3">Aksi</th>
                             </tr>
-                        </thead>
-                        <tbody>
+                        </x-slot>
                             @foreach ($users as $user)
                                 <tr class="border-b dark:border-gray-600">
                                     <td class="px-4 py-3">{{ $user->name }}</td>
@@ -57,8 +56,7 @@
                                     </td>
                                 </tr>
                             @endforeach
-                        </tbody>
-                    </table>
+                    </x-ui.table-wrapper>
 
                 </div>
             </div>

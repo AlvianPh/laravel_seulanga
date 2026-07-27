@@ -68,20 +68,18 @@
                         </div>
                     </form>
 
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 border-b dark:border-gray-600">
-                                <tr>
-                                    <th class="px-4 py-3">Foto</th>
-                                    <th class="px-4 py-3">Nomor Kamar</th>
-                                    <th class="px-4 py-3">Lantai</th>
-                                    <th class="px-4 py-3">Tipe</th>
-                                    <th class="px-4 py-3">Harga/Bulan</th>
-                                    <th class="px-4 py-3">Status</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-gray-200 dark:divide-gray-700">
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
+                            <tr>
+                                <th class="px-4 py-3">Foto</th>
+                                <th class="px-4 py-3">Nomor Kamar</th>
+                                <th class="px-4 py-3">Lantai</th>
+                                <th class="px-4 py-3">Tipe</th>
+                                <th class="px-4 py-3">Harga/Bulan</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Aksi</th>
+                            </tr>
+                        </x-slot>
                                 @forelse ($rooms as $room)
                                     <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/50">
                                         <td class="px-4 py-3">
@@ -120,9 +118,7 @@
                                         </td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    </x-ui.table-wrapper>
 
                     <div class="mt-4">
                         {{ $rooms->links() }}

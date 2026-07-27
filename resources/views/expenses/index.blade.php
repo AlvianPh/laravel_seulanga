@@ -70,19 +70,17 @@
                     </form>
 
                     <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700 border-b dark:border-gray-600">
-                                <tr>
-                                    <th class="px-4 py-3">Tgl Keluar</th>
-                                    <th class="px-4 py-3">Kategori</th>
-                                    <th class="px-4 py-3">Keterangan</th>
-                                    <th class="px-4 py-3">Nominal (Rp)</th>
-                                    <th class="px-4 py-3">Input Oleh</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
+                            <tr>
+                                <th class="px-4 py-3">Tgl Keluar</th>
+                                <th class="px-4 py-3">Kategori</th>
+                                <th class="px-4 py-3">Keterangan</th>
+                                <th class="px-4 py-3">Nominal (Rp)</th>
+                                <th class="px-4 py-3">Input Oleh</th>
+                                <th class="px-4 py-3">Aksi</th>
+                            </tr>
+                        </x-slot>
                                 @forelse ($expenses as $expense)
                                     <tr class="border-b dark:border-gray-700">
                                         <td class="px-4 py-3 font-medium whitespace-nowrap">{{ $expense->expense_date->format('d/m/Y') }}</td>
@@ -108,9 +106,7 @@
                                         </td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    </x-ui.table-wrapper>
 
                     <div class="mt-4">
                         {{ $expenses->links() }}

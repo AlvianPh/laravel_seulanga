@@ -40,19 +40,17 @@
                     </form>
 
                     <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                <tr>
-                                    <th class="px-4 py-3">Foto</th>
-                                    <th class="px-4 py-3">Nama Lengkap</th>
-                                    <th class="px-4 py-3">NIK</th>
-                                    <th class="px-4 py-3">No. HP</th>
-                                    <th class="px-4 py-3">Gender</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
+                            <tr>
+                                <th class="px-4 py-3">Foto</th>
+                                <th class="px-4 py-3">Nama Lengkap</th>
+                                <th class="px-4 py-3">NIK</th>
+                                <th class="px-4 py-3">No. HP</th>
+                                <th class="px-4 py-3">Gender</th>
+                                <th class="px-4 py-3">Aksi</th>
+                            </tr>
+                        </x-slot>
                                 @forelse ($tenants as $tenant)
                                     <tr class="border-b dark:border-gray-600">
                                         <td class="px-4 py-3">
@@ -83,9 +81,7 @@
                                         </td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    </x-ui.table-wrapper>
 
                     <div class="mt-4">
                         {{ $tenants->links() }}

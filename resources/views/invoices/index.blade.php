@@ -85,20 +85,18 @@
                     </form>
 
                     <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700 border-b dark:border-gray-600">
-                                <tr>
-                                    <th class="px-4 py-3">ID</th>
-                                    <th class="px-4 py-3">Periode</th>
-                                    <th class="px-4 py-3">Penghuni / Kamar</th>
-                                    <th class="px-4 py-3">Total Tagihan</th>
-                                    <th class="px-4 py-3">Jatuh Tempo</th>
-                                    <th class="px-4 py-3">Status</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
+                            <tr>
+                                <th class="px-4 py-3">ID</th>
+                                <th class="px-4 py-3">Periode</th>
+                                <th class="px-4 py-3">Penghuni / Kamar</th>
+                                <th class="px-4 py-3">Total Tagihan</th>
+                                <th class="px-4 py-3">Jatuh Tempo</th>
+                                <th class="px-4 py-3">Status</th>
+                                <th class="px-4 py-3">Aksi</th>
+                            </tr>
+                        </x-slot>
                                 @forelse ($invoices as $invoice)
                                     <tr class="border-b dark:border-gray-700">
                                         <td class="px-4 py-3 font-mono text-xs text-gray-500">INV-{{ $invoice->id }}</td>
@@ -124,9 +122,7 @@
                                         </td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    </x-ui.table-wrapper>
 
                     <div class="mt-4">
                         {{ $invoices->links() }}

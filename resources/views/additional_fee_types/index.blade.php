@@ -29,18 +29,16 @@
                     @if ($feeTypes->isEmpty())
                         <p class="text-gray-500 dark:text-gray-400 text-center py-8 italic">Belum ada Jenis Denda/Biaya.</p>
                     @else
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="border-b dark:border-gray-700 text-left">
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Jenis</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nilai Default</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Status</th>
-                                        <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        <x-ui.table-wrapper>
+                            <x-slot name="header">
+                                <tr class="border-b dark:border-gray-700 text-left">
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Jenis</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nilai Default</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Status</th>
+                                    <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
+                                </tr>
+                            </x-slot>
                                     @foreach ($feeTypes as $type)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                             <td class="py-3 pr-4 font-medium text-gray-900 dark:text-gray-100">{{ $type->nama }}</td>
@@ -73,9 +71,7 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                        </x-ui.table-wrapper>
                         <div class="mt-4">
                             {{ $feeTypes->links() }}
                         </div>
