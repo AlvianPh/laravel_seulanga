@@ -95,13 +95,7 @@
                                         <td class="px-4 py-3">{{ $room->roomType?->name ?? '-' }}</td>
                                         <td class="px-4 py-3">Rp {{ number_format($room->monthly_price, 0, ',', '.') }}</td>
                                         <td class="px-4 py-3">
-                                            <span class="px-2 py-1 rounded text-xs font-semibold
-                                                @if($room->status->value === 'available') bg-green-100 text-green-700
-                                                @elseif($room->status->value === 'occupied') bg-blue-100 text-blue-700
-                                                @else bg-yellow-100 text-yellow-700 @endif
-                                            ">
-                                                {{ $room->status->label() }}
-                                            </span>
+                                            <x-ui.badge :status="$room->status">{{ $room->status->label() }}</x-ui.badge>
                                         </td>
                                         <td class="px-4 py-3 space-x-2">
                                             <a href="{{ route('rooms.show', $room) }}" class="text-blue-600 hover:underline">Detail</a>

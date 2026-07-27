@@ -112,14 +112,7 @@
                                         <td class="px-4 py-3 font-bold text-indigo-600">Rp {{ number_format($invoice->total_amount, 0, ',', '.') }}</td>
                                         <td class="px-4 py-3 text-red-600 font-medium">{{ $invoice->due_date->format('d/m/Y') }}</td>
                                         <td class="px-4 py-3">
-                                            <span class="px-2 py-1 rounded text-xs font-semibold
-                                                @if($invoice->status->value === 'paid') bg-green-100 text-green-700
-                                                @elseif($invoice->status->value === 'pending') bg-yellow-100 text-yellow-800
-                                                @elseif($invoice->status->value === 'overdue') bg-red-100 text-red-700
-                                                @else bg-gray-100 text-gray-700 @endif
-                                            ">
-                                                {{ $invoice->status->label() }}
-                                            </span>
+                                            <x-ui.badge :status="$invoice->status">{{ $invoice->status->label() }}</x-ui.badge>
                                         </td>
                                         <td class="px-4 py-3 space-x-2">
                                             <a href="{{ route('invoices.show', $invoice) }}" class="text-blue-600 hover:underline">Detail</a>

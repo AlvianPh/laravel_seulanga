@@ -85,13 +85,7 @@
                                         </td>
                                         <td class="px-4 py-3">Rp {{ number_format($contract->rent_price, 0, ',', '.') }}</td>
                                         <td class="px-4 py-3">
-                                            <span class="px-2 py-1 rounded text-xs font-semibold
-                                                @if($contract->status->value === 'active') bg-green-100 text-green-700
-                                                @elseif($contract->status->value === 'ended') bg-gray-100 text-gray-700
-                                                @else bg-red-100 text-red-700 @endif
-                                            ">
-                                                {{ $contract->status->label() }}
-                                            </span>
+                                            <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
                                         </td>
                                         <td class="px-4 py-3 space-x-2">
                                             <a href="{{ route('contracts.show', $contract) }}" class="text-blue-600 hover:underline">Detail</a>

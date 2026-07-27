@@ -56,13 +56,7 @@
                         <div class="p-6">
                             <div class="flex justify-between items-center mb-4 border-b pb-2">
                                 <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Spesifikasi</h3>
-                                <span class="px-2 py-1 rounded text-xs font-semibold
-                                    @if($room->status->value === 'available') bg-green-100 text-green-700
-                                    @elseif($room->status->value === 'occupied') bg-blue-100 text-blue-700
-                                    @else bg-yellow-100 text-yellow-700 @endif
-                                ">
-                                    {{ $room->status->label() }}
-                                </span>
+                                <x-ui.badge :status="$room->status">{{ $room->status->label() }}</x-ui.badge>
                             </div>
 
                             <dl class="space-y-3 text-sm">

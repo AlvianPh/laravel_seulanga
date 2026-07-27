@@ -31,13 +31,7 @@
                     <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
                         <div class="flex justify-between items-center border-b pb-4 mb-4">
                             <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Informasi Kontrak</h3>
-                            <span class="px-3 py-1 text-sm rounded font-bold
-                                @if($contract->status->value === 'active') bg-green-100 text-green-700
-                                @elseif($contract->status->value === 'ended') bg-gray-100 text-gray-700
-                                @else bg-red-100 text-red-700 @endif
-                            ">
-                                {{ $contract->status->label() }}
-                            </span>
+                            <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
                         </div>
 
                         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 text-sm">
