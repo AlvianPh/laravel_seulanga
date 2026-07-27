@@ -22,7 +22,6 @@ class ExpenseController extends Controller
     {
         $this->authorize('viewAny', Expense::class);
 
-        $query = Expense::with(['creator']);
         $query = Expense::with(['creator', 'expenseCategory']);
 
         if ($request->filled('category_id')) {

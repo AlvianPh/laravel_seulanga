@@ -26,6 +26,7 @@ class GenerateInvoiceService
     {
         $activeContracts = Contract::where('status', StatusKontrak::Active)->get();
         $generatedCount = 0;
+        $admins = User::whereIn('role', ['admin', 'owner'])->get();
 
         foreach ($activeContracts as $contract) {
             // Cek duplikasi
@@ -61,7 +62,6 @@ class GenerateInvoiceService
             $generatedCount++;
 
             // Send Notification to admin and owner
-            $admins = User::whereIn('role', ['admin', 'owner'])->get();
             Notification::send($admins, new InvoiceCreatedNotification($invoice));
         }
 
