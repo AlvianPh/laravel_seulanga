@@ -13,19 +13,19 @@
                         @method('PUT')
                         <div class="mb-4">
                             <label for="nama_bank" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Bank</label>
-                            <input type="text" name="nama_bank" id="nama_bank" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ old('nama_bank', $bankAccount->nama_bank) }}" required>
+                            <x-ui.input type="text" name="nama_bank" id="nama_bank" value="{{ old('nama_bank', $bankAccount->nama_bank) }}" required />
                             @error('nama_bank')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
                         <div class="mb-4">
                             <label for="nomor_rekening" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nomor Rekening</label>
-                            <input type="text" name="nomor_rekening" id="nomor_rekening" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ old('nomor_rekening', $bankAccount->nomor_rekening) }}" required>
+                            <x-ui.input type="text" name="nomor_rekening" id="nomor_rekening" value="{{ old('nomor_rekening', $bankAccount->nomor_rekening) }}" required />
                             @error('nomor_rekening')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
                         <div class="mb-4">
                             <label for="nama_pemilik_rekening" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Pemilik Rekening</label>
-                            <input type="text" name="nama_pemilik_rekening" id="nama_pemilik_rekening" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ old('nama_pemilik_rekening', $bankAccount->nama_pemilik_rekening) }}" required>
+                            <x-ui.input type="text" name="nama_pemilik_rekening" id="nama_pemilik_rekening" value="{{ old('nama_pemilik_rekening', $bankAccount->nama_pemilik_rekening) }}" required />
                             @error('nama_pemilik_rekening')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 

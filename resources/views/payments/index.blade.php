@@ -26,29 +26,28 @@
                     <!-- Filter & Search -->
                     <form method="GET" action="{{ route('payments.index') }}" class="mb-6 flex flex-col md:flex-row gap-4" x-data x-ref="form">
                         <div class="flex-1">
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="Cari nama penghuni atau no tagihan..."
-                                   class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.input type="text" name="search" value="{{ request('search') }}"
+                                   placeholder="Cari nama penghuni atau no tagihan..." />
                         </div>
                         <div class="w-full md:w-48">
-                            <select name="payment_method_id" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.select name="payment_method_id" @change="$refs.form.submit()">
                                 <option value="">Semua Metode</option>
                                 @foreach ($paymentMethods as $method)
                                     <option value="{{ $method->id }}" {{ request('payment_method_id') == $method->id ? 'selected' : '' }}>
                                         {{ $method->name }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </x-ui.select>
                         </div>
                         <div class="w-full md:w-48">
-                            <select name="status" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.select name="status" @change="$refs.form.submit()">
                                 <option value="">Semua Status</option>
                                 @foreach ($statuses as $status)
                                     <option value="{{ $status->value }}" {{ request('status') === $status->value ? 'selected' : '' }}>
                                         {{ $status->label() }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </x-ui.select>
                         </div>
                         <div>
                             <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">

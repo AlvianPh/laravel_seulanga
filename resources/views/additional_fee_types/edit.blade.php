@@ -13,22 +13,22 @@
                         @method('PUT')
                         <div class="mb-4">
                             <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama</label>
-                            <input type="text" name="nama" id="nama" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ old('nama', $additionalFeeType->nama) }}" required>
+                            <x-ui.input type="text" name="nama" id="nama" value="{{ old('nama', $additionalFeeType->nama) }}" required />
                             @error('nama')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
                         <div class="mb-4">
                             <label for="jenis" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jenis</label>
-                            <select name="jenis" id="jenis" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                            <x-ui.select name="jenis" id="jenis" required>
                                 <option value="nominal_tetap" {{ old('jenis', $additionalFeeType->jenis) == 'nominal_tetap' ? 'selected' : '' }}>Nominal Tetap (Rp)</option>
                                 <option value="persentase" {{ old('jenis', $additionalFeeType->jenis) == 'persentase' ? 'selected' : '' }}>Persentase (%)</option>
-                            </select>
+                            </x-ui.select>
                             @error('jenis')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 
                         <div class="mb-4">
                             <label for="nilai_default" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nilai Default</label>
-                            <input type="number" step="0.01" min="0" name="nilai_default" id="nilai_default" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ old('nilai_default', rtrim(rtrim($additionalFeeType->nilai_default, '0'), '.')) }}" required>
+                            <x-ui.input type="number" step="0.01" min="0" name="nilai_default" id="nilai_default" value="{{ old('nilai_default', rtrim(rtrim($additionalFeeType->nilai_default, '0'), '.')) }}" required />
                             @error('nilai_default')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                         </div>
 

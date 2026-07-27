@@ -27,33 +27,33 @@
                     <form method="GET" action="{{ route('rooms.index') }}" class="mb-6 bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex flex-wrap gap-4 items-end">
                         <div class="flex-1 min-w-[200px]">
                             <label class="block text-xs text-gray-500 dark:text-gray-300 mb-1">Cari Kamar / Lantai</label>
-                            <input type="text" name="search" value="{{ request('search') }}"
+                            <x-ui.input type="text" name="search" value="{{ request('search') }}"
                                    placeholder="Contoh: 101, Lantai 1..."
-                                   class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded shadow-sm focus:ring-indigo-500">
+                                   class="text-sm" />
                         </div>
 
                         <div class="w-48">
                             <label class="block text-xs text-gray-500 dark:text-gray-300 mb-1">Tipe Kamar</label>
-                            <select name="room_type_id" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded shadow-sm focus:ring-indigo-500">
+                            <x-ui.select name="room_type_id" class="text-sm">
                                 <option value="">Semua Tipe</option>
                                 @foreach($roomTypes as $type)
                                     <option value="{{ $type->id }}" {{ request('room_type_id') == $type->id ? 'selected' : '' }}>
                                         {{ $type->name }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </x-ui.select>
                         </div>
 
                         <div class="w-40">
                             <label class="block text-xs text-gray-500 dark:text-gray-300 mb-1">Status</label>
-                            <select name="status" class="w-full text-sm border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-white rounded shadow-sm focus:ring-indigo-500">
+                            <x-ui.select name="status" class="text-sm">
                                 <option value="">Semua Status</option>
                                 @foreach($statuses as $status)
                                     <option value="{{ $status->value }}" {{ request('status') === $status->value ? 'selected' : '' }}>
                                         {{ $status->label() }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </x-ui.select>
                         </div>
 
                         <div class="flex gap-2">

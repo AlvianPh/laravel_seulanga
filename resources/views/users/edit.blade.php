@@ -15,28 +15,26 @@
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama</label>
-                        <input type="text" name="name" value="{{ old('name', $user->name) }}"
-                               class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <x-ui.input type="text" name="name" value="{{ old('name', $user->name) }}" required />
                         @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                        <input type="email" name="email" value="{{ old('email', $user->email) }}"
-                               class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <x-ui.input type="email" name="email" value="{{ old('email', $user->email) }}" required />
                         @error('email') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="mb-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Role</label>
-                        <select name="role" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <x-ui.select name="role" required>
                             @foreach ($roles as $role)
                                 <option value="{{ $role->value }}"
                                     {{ old('role', $user->role->value) === $role->value ? 'selected' : '' }}>
                                     {{ $role->label() }}
                                 </option>
                             @endforeach
-                        </select>
+                        </x-ui.select>
                         @error('role') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -44,15 +42,13 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Password Baru <span class="text-gray-400 text-xs">(kosongkan jika tidak diubah)</span>
                         </label>
-                        <input type="password" name="password"
-                               class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                        <x-ui.input type="password" name="password" />
                         @error('password') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <div class="mb-6">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Konfirmasi Password Baru</label>
-                        <input type="password" name="password_confirmation"
-                               class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600">
+                        <x-ui.input type="password" name="password_confirmation" />
                     </div>
 
                     <div class="flex gap-3">

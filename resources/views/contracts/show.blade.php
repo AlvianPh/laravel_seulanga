@@ -112,19 +112,19 @@
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tgl Mulai Lanjutan</label>
                                                 <!-- Default start date adalah besoknya dari end_date kontrak lama -->
-                                                <input type="date" name="start_date" value="{{ $contract->end_date->copy()->addDay()->format('Y-m-d') }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="date" name="start_date" value="{{ $contract->end_date->copy()->addDay()->format('Y-m-d') }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tgl Selesai Baru</label>
-                                                <input type="date" name="end_date" value="{{ $contract->end_date->copy()->addMonth()->format('Y-m-d') }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="date" name="end_date" value="{{ $contract->end_date->copy()->addMonth()->format('Y-m-d') }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Harga Sewa Baru</label>
-                                                <input type="number" name="rent_price" value="{{ (int)$contract->rent_price }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="number" name="rent_price" value="{{ (int)$contract->rent_price }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deposit</label>
-                                                <input type="number" name="deposit_amount" value="{{ (int)$contract->deposit_amount }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="number" name="deposit_amount" value="{{ (int)$contract->deposit_amount }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <button type="submit" class="w-full bg-indigo-600 text-white text-sm py-2 rounded hover:bg-indigo-700">Submit Perpanjangan</button>
                                         </form>

@@ -61,31 +61,31 @@
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Listrik</label>
-                                <input type="number" name="electricity_fee" x-model.number="electricity" min="0" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="electricity_fee" x-model.number="electricity" min="0" />
                                 @error('electricity_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Air</label>
-                                <input type="number" name="water_fee" x-model.number="water" min="0" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="water_fee" x-model.number="water" min="0" />
                                 @error('water_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Internet / WiFi</label>
-                                <input type="number" name="internet_fee" x-model.number="internet" min="0" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="internet_fee" x-model.number="internet" min="0" />
                                 @error('internet_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Denda Keterlambatan / Kerusakan</label>
-                                <input type="number" name="penalty_fee" x-model.number="penalty" min="0" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="penalty_fee" x-model.number="penalty" min="0" />
                                 @error('penalty_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lain-lain</label>
-                                <input type="number" name="other_fee" x-model.number="other" min="0" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="other_fee" x-model.number="other" min="0" />
                                 @error('other_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
@@ -97,13 +97,13 @@
                             <div class="bg-gray-50 dark:bg-gray-700 border dark:border-gray-600 rounded p-4">
                                 <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-3 border-b pb-1">Status Tagihan</h4>
                                 
-                                <select name="status" class="w-full border rounded px-3 py-2 dark:bg-gray-800 dark:border-gray-500 dark:text-white">
+                                <x-ui.select name="status">
                                     @foreach($statuses as $status)
                                         <option value="{{ $status->value }}" {{ $invoice->status->value === $status->value ? 'selected' : '' }}>
                                             {{ $status->label() }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                                 <p class="text-xs text-gray-500 mt-2">Ubah manual jika ada penyesuaian khusus. Idealnya diubah jadi 'Paid' saat pembayaran diterima.</p>
                                 @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                             </div>

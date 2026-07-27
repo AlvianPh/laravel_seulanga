@@ -29,34 +29,34 @@
                             
                             <div class="md:col-span-1">
                                 <label class="block text-xs text-gray-500 mb-1">Cari Keterangan</label>
-                                <input type="text" name="search" value="{{ request('search') }}"
+                                <x-ui.input type="text" name="search" value="{{ request('search') }}"
                                        placeholder="Cari deskripsi..."
-                                       class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                       class="text-sm" />
                             </div>
 
                             <div class="md:col-span-1">
                                 <label class="block text-xs text-gray-500 mb-1">Kategori</label>
-                                <select name="category_id" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <x-ui.select name="category_id" @change="$refs.form.submit()" class="text-sm">
                                     <option value="">Semua Kategori</option>
                                     @foreach ($categories as $cat)
                                         <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
                                             {{ $cat->name }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                             </div>
 
                             <div class="md:col-span-1">
                                 <label class="block text-xs text-gray-500 mb-1">Dari Tanggal</label>
-                                <input type="date" name="start_date" value="{{ request('start_date') }}" @change="$refs.form.submit()"
-                                       class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="date" name="start_date" value="{{ request('start_date') }}" @change="$refs.form.submit()"
+                                       class="text-sm" />
                             </div>
 
                             <div class="md:col-span-1 flex items-end gap-2">
                                 <div class="flex-1">
                                     <label class="block text-xs text-gray-500 mb-1">Sampai Tanggal</label>
-                                    <input type="date" name="end_date" value="{{ request('end_date') }}" @change="$refs.form.submit()"
-                                           class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                    <x-ui.input type="date" name="end_date" value="{{ request('end_date') }}" @change="$refs.form.submit()"
+                                           class="text-sm" />
                                 </div>
                                 <button type="submit" class="px-3 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200">
                                     Cari

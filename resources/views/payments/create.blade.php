@@ -23,14 +23,14 @@
                     <!-- Pilih Tagihan (Hanya yg pending/overdue) -->
                     <div class="mb-4">
                         <label for="invoice_id" class="block font-medium text-gray-700 dark:text-gray-300">Pilih Tagihan</label>
-                        <select name="invoice_id" id="invoice_id" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <x-ui.select name="invoice_id" id="invoice_id" required>
                             <option value="">-- Pilih Tagihan --</option>
                             @foreach($invoices as $inv)
                                 <option value="{{ $inv->id }}" {{ old('invoice_id', $selectedInvoiceId ?? null) == $inv->id ? 'selected' : '' }}>
                                     #{{ $inv->id }} - {{ $inv->tenant->name ?? '?' }} ({{ $inv->room->room_number ?? '?' }}) - Rp{{ number_format($inv->total_amount, 0, ',', '.') }}
                                 </option>
                             @endforeach
-                        </select>
+                        </x-ui.select>
                         @error('invoice_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         @if($invoices->isEmpty())
                             <p class="text-yellow-600 text-xs mt-2 italic">Semua tagihan sudah lunas atau belum ada tagihan dibuat.</p>
@@ -40,8 +40,7 @@
                     <!-- Jumlah Bayar -->
                     <div class="mb-4">
                         <label for="amount" class="block font-medium text-gray-700 dark:text-gray-300">Jumlah Bayar (Rp)</label>
-                        <input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="1"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <x-ui.input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="1" />
                         <p class="text-xs text-gray-500 mt-1">Isi sesuai nominal yang ditransfer/dibayar. Jika ada denda, sertakan juga.</p>
                         @error('amount') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
@@ -49,20 +48,19 @@
                     <!-- Tanggal Pembayaran -->
                     <div class="mb-4">
                         <label for="payment_date" class="block font-medium text-gray-700 dark:text-gray-300">Tanggal Pembayaran</label>
-                        <input type="date" name="payment_date" id="payment_date" value="{{ old('payment_date', date('Y-m-d')) }}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <x-ui.input type="date" name="payment_date" id="payment_date" value="{{ old('payment_date', date('Y-m-d')) }}" required />
                         @error('payment_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Metode Pembayaran -->
                     <div class="mb-4">
                         <label for="payment_method_id" class="block font-medium text-gray-700 dark:text-gray-300">Metode Pembayaran</label>
-                        <select name="payment_method_id" id="payment_method_id" x-model="methodId" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <x-ui.select name="payment_method_id" id="payment_method_id" x-model="methodId" required>
                             <option value="">-- Pilih Metode --</option>
                             @foreach($paymentMethods as $method)
                                 <option value="{{ $method->id }}">{{ $method->name }}</option>
                             @endforeach
-                        </select>
+                        </x-ui.select>
                         @error('payment_method_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -81,7 +79,7 @@
                     <!-- Catatan -->
                     <div class="mb-6">
                         <label for="notes" class="block font-medium text-gray-700 dark:text-gray-300">Catatan (Opsional)</label>
-                        <textarea name="notes" id="notes" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{{ old('notes') }}</textarea>
+                        <x-ui.textarea name="notes" id="notes" rows="3">{{ old('notes') }}</x-ui.textarea>
                         @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 

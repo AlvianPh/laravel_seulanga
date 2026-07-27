@@ -16,35 +16,32 @@
                     <!-- Tanggal Pengeluaran -->
                     <div class="mb-4">
                         <label for="expense_date" class="block font-medium text-gray-700 dark:text-gray-300">Tanggal Pengeluaran</label>
-                        <input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', $expense->expense_date->format('Y-m-d')) }}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <x-ui.input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', $expense->expense_date->format('Y-m-d')) }}" required />
                         @error('expense_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Kategori -->
                     <div class="mb-4">
                         <label for="category" class="block font-medium text-gray-700 dark:text-gray-300">Kategori</label>
-                        <select name="expense_category_id" id="expense_category_id" class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                        <x-ui.select name="expense_category_id" id="expense_category_id" required>
                             @foreach($expenseCategories as $cat)
                                 <option value="{{ $cat->id }}" {{ old('expense_category_id', $expense->expense_category_id) == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                             @endforeach
-                        </select>
+                        </x-ui.select>
                         @error('expense_category_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Keterangan -->
                     <div class="mb-4">
                         <label for="description" class="block font-medium text-gray-700 dark:text-gray-300">Deskripsi Singkat</label>
-                        <input type="text" name="description" id="description" value="{{ old('description', $expense->description) }}" required
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <x-ui.input type="text" name="description" id="description" value="{{ old('description', $expense->description) }}" required />
                         @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
                     <!-- Nominal -->
                     <div class="mb-4">
                         <label for="amount" class="block font-medium text-gray-700 dark:text-gray-300">Nominal (Rp)</label>
-                        <input type="number" name="amount" id="amount" value="{{ old('amount', (int)$expense->amount) }}" required min="1"
-                               class="mt-1 block w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                        <x-ui.input type="number" name="amount" id="amount" value="{{ old('amount', (int)$expense->amount) }}" required min="1" />
                         @error('amount') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 

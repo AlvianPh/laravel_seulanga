@@ -27,15 +27,15 @@
                         <form method="POST" action="{{ route('invoices.generate-manual') }}">
                             @csrf
                             <div class="flex items-center space-x-2">
-                                <select name="month" class="border rounded px-2 py-1 text-sm dark:bg-gray-700 dark:border-gray-600">
+                                <x-ui.select name="month" class="px-2 py-1 text-sm">
                                     @for($m=1; $m<=12; $m++)
                                         <option value="{{ $m }}" {{ date('n') == $m ? 'selected' : '' }}>Bulan {{ $m }}</option>
                                     @endfor
-                                </select>
-                                <select name="year" class="border rounded px-2 py-1 text-sm dark:bg-gray-700 dark:border-gray-600">
+                                </x-ui.select>
+                                <x-ui.select name="year" class="px-2 py-1 text-sm">
                                     <option value="{{ date('Y') }}" selected>{{ date('Y') }}</option>
                                     <option value="{{ date('Y')+1 }}">{{ date('Y')+1 }}</option>
-                                </select>
+                                </x-ui.select>
                                 <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded hover:bg-indigo-700">
                                     + Generate Manual
                                 </button>
@@ -46,34 +46,33 @@
                     <!-- Filter & Search -->
                     <form method="GET" action="{{ route('invoices.index') }}" class="mb-6 flex flex-col md:flex-row gap-4" x-data x-ref="form">
                         <div class="flex-1">
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="Cari nama penghuni..."
-                                   class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.input type="text" name="search" value="{{ request('search') }}"
+                                   placeholder="Cari nama penghuni..." />
                         </div>
                         <div class="w-full md:w-32">
-                            <select name="month" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.select name="month" @change="$refs.form.submit()">
                                 <option value="">Semua Bln</option>
                                 @for($m=1; $m<=12; $m++)
                                     <option value="{{ $m }}" {{ request('month') == $m ? 'selected' : '' }}>Bulan {{ $m }}</option>
                                 @endfor
-                            </select>
+                            </x-ui.select>
                         </div>
                         <div class="w-full md:w-32">
-                            <select name="year" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.select name="year" @change="$refs.form.submit()">
                                 <option value="">Semua Thn</option>
                                 <option value="2026" {{ request('year') == '2026' ? 'selected' : '' }}>2026</option>
                                 <option value="2027" {{ request('year') == '2027' ? 'selected' : '' }}>2027</option>
-                            </select>
+                            </x-ui.select>
                         </div>
                         <div class="w-full md:w-40">
-                            <select name="status" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.select name="status" @change="$refs.form.submit()">
                                 <option value="">Semua Status</option>
                                 @foreach ($statuses as $status)
                                     <option value="{{ $status->value }}" {{ request('status') === $status->value ? 'selected' : '' }}>
                                         {{ $status->label() }}
                                     </option>
                                 @endforeach
-                            </select>
+                            </x-ui.select>
                         </div>
                         <div>
                             <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">

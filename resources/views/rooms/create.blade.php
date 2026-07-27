@@ -19,21 +19,19 @@
                             
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nomor Kamar <span class="text-red-500">*</span></label>
-                                <input type="text" name="room_number" value="{{ old('room_number') }}" required
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="text" name="room_number" value="{{ old('room_number') }}" required />
                                 @error('room_number') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lantai <span class="text-red-500">*</span></label>
-                                <input type="number" name="floor" value="{{ old('floor') }}" min="1" required
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="floor" value="{{ old('floor') }}" min="1" required />
                                 @error('floor') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tipe Kamar <span class="text-red-500">*</span></label>
-                                <select name="room_type_id" required class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.select name="room_type_id" required>
                                     <option value="" disabled selected>-- Pilih Tipe --</option>
                                     @foreach ($roomTypes as $roomType)
                                         <option value="{{ $roomType->id }}" {{ old('room_type_id') == $roomType->id ? 'selected' : '' }}>
@@ -43,14 +41,13 @@
                                             @endif
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                                 @error('room_type_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Luas Kamar (m²) <span class="text-red-500">*</span></label>
-                                <input type="number" step="0.01" name="size_m2" value="{{ old('size_m2') }}" min="0" required
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" step="0.01" name="size_m2" value="{{ old('size_m2') }}" min="0" required />
                                 @error('size_m2') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
@@ -61,27 +58,25 @@
                             
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Harga Sewa / Bulan (Rp) <span class="text-red-500">*</span></label>
-                                <input type="number" name="monthly_price" value="{{ old('monthly_price') }}" min="0" required
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="monthly_price" value="{{ old('monthly_price') }}" min="0" required />
                                 @error('monthly_price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Harga Deposit (Rp) <span class="text-red-500">*</span></label>
-                                <input type="number" name="deposit_price" value="{{ old('deposit_price') }}" min="0" required
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="deposit_price" value="{{ old('deposit_price') }}" min="0" required />
                                 @error('deposit_price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Status Kamar <span class="text-red-500">*</span></label>
-                                <select name="status" required class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.select name="status" required>
                                     @foreach ($statuses as $status)
                                         <option value="{{ $status->value }}" {{ old('status') === $status->value ? 'selected' : '' }}>
                                             {{ $status->label() }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                                 @error('status') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>

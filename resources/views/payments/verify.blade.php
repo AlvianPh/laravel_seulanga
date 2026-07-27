@@ -47,7 +47,7 @@
                             <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Catatan Owner (Wajib diisi jika DITOLAK)
                             </label>
-                            <textarea name="notes" id="notes" rows="2" class="w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Misal: Bukti transfer buram, uang belum masuk..."></textarea>
+                            <x-ui.textarea name="notes" id="notes" rows="2" placeholder="Misal: Bukti transfer buram, uang belum masuk..."></x-ui.textarea>
                             @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
