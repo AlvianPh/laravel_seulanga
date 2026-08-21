@@ -10,9 +10,9 @@
             <x-ui.card>
 
                 @if (session('success'))
-                    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
+                    <x-ui.alert type="success">
                         {{ session('success') }}
-                    </div>
+                    </x-ui.alert>
                 @endif
 
                 <form method="POST" action="{{ route('tenants.update', $tenant) }}" enctype="multipart/form-data">

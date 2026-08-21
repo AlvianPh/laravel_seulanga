@@ -10,18 +10,18 @@
             <x-ui.card>
 
                     @if (session('success'))
-                        <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
+                        <x-ui.alert type="success">
                             {{ session('success') }}
-                        </div>
+                        </x-ui.alert>
                     @endif
                     @if ($errors->any())
-                        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
+                        <x-ui.alert type="error">
                             <ul class="list-disc pl-5">
                                 @foreach ($errors->all() as $error)
                                     <li>{{ $error }}</li>
                                 @endforeach
                             </ul>
-                        </div>
+                        </x-ui.alert>
                     @endif
 
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">

@@ -9,14 +9,14 @@
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
 
             @if (session('success'))
-                <div class="mb-4 p-4 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg">
+                <x-ui.alert type="success">
                     {{ session('success') }}
-                </div>
+                </x-ui.alert>
             @endif
             @if (session('error'))
-                <div class="mb-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
+                <x-ui.alert type="error">
                     {{ session('error') }}
-                </div>
+                </x-ui.alert>
             @endif
 
             <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
