@@ -19,8 +19,7 @@
                 </div>
             @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card>
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Kategori Pengeluaran</h3>
                         <a href="{{ route('expense_categories.create') }}"
@@ -35,17 +34,15 @@
                     @if ($expense_categories->isEmpty())
                         <p class="text-gray-500 dark:text-gray-400 text-center py-8 italic">Belum ada Kategori Pengeluaran.</p>
                     @else
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="border-b dark:border-gray-700 text-left">
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Kategori Pengeluaran</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Ikon</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Digunakan</th>
-                                        <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        <x-ui.table-wrapper>
+                            <x-slot name="header">
+                                <tr class="border-b dark:border-gray-700 text-left">
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Kategori Pengeluaran</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Ikon</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Digunakan</th>
+                                    <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
+                                </tr>
+                            </x-slot>
                                     @foreach ($expense_categories as $expense_category)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                             <td class="py-3 pr-4 font-medium text-gray-900 dark:text-gray-100">
@@ -75,12 +72,9 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                        </x-ui.table-wrapper>
                     @endif
-                </div>
-            </div>
+            </x-ui.card>
 
         </div>
     </div>

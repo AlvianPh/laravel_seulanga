@@ -13,8 +13,7 @@
                 </div>
             @endif
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card>
                     <form action="{{ route('settings.update') }}" method="POST" enctype="multipart/form-data">
                         @csrf
                         @method('PUT')
@@ -26,7 +25,7 @@
                             <div class="grid grid-cols-1 gap-4">
                                 <div>
                                     <label for="kost_name" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama Kost</label>
-                                    <input type="text" name="kost_name" id="kost_name" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" value="{{ old('kost_name', $setting->kost_name) }}" required>
+                                    <x-ui.input type="text" name="kost_name" id="kost_name" value="{{ old('kost_name', $setting->kost_name) }}" required />
                                     @error('kost_name')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
 
@@ -44,7 +43,7 @@
 
                                 <div>
                                     <label for="kost_address" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Alamat Lengkap</label>
-                                    <textarea name="kost_address" id="kost_address" rows="3" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">{{ old('kost_address', $setting->kost_address) }}</textarea>
+                                    <x-ui.textarea name="kost_address" id="kost_address" rows="3">{{ old('kost_address', $setting->kost_address) }}</x-ui.textarea>
                                     <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Digunakan sebagai kop di kuitansi dan laporan.</p>
                                     @error('kost_address')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
@@ -58,17 +57,17 @@
                             <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                 <div>
                                     <label for="default_due_date_day" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Tanggal Jatuh Tempo Default</label>
-                                    <select name="default_due_date_day" id="default_due_date_day" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" required>
+                                    <x-ui.select name="default_due_date_day" id="default_due_date_day" required>
                                         @for ($i = 1; $i <= 28; $i++)
                                             <option value="{{ $i }}" {{ old('default_due_date_day', $setting->default_due_date_day) == $i ? 'selected' : '' }}>Tanggal {{ $i }}</option>
                                         @endfor
-                                    </select>
+                                    </x-ui.select>
                                     @error('default_due_date_day')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
 
                                 <div>
                                     <label for="default_late_fee_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Denda Keterlambatan Default</label>
-                                    <select name="default_late_fee_id" id="default_late_fee_id" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                    <x-ui.select name="default_late_fee_id" id="default_late_fee_id">
                                         <option value="">-- Tidak Ada Denda --</option>
                                         @foreach ($feeTypes as $fee)
                                             <option value="{{ $fee->id }}" {{ old('default_late_fee_id', $setting->default_late_fee_id) == $fee->id ? 'selected' : '' }}>
@@ -76,7 +75,7 @@
                                                 ({{ $fee->jenis === 'nominal_tetap' ? 'Rp '.number_format($fee->nilai_default, 0, ',', '.') : floatval($fee->nilai_default).'%' }})
                                             </option>
                                         @endforeach
-                                    </select>
+                                    </x-ui.select>
                                     @error('default_late_fee_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                                 </div>
                             </div>
@@ -88,14 +87,14 @@
                             
                             <div>
                                 <label for="default_bank_account_id" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Rekening Tujuan Default (Untuk Kuitansi)</label>
-                                <select name="default_bank_account_id" id="default_bank_account_id" class="mt-1 block w-full rounded-md border-gray-300 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+                                <x-ui.select name="default_bank_account_id" id="default_bank_account_id">
                                     <option value="">-- Pilih Rekening --</option>
                                     @foreach ($bankAccounts as $account)
                                         <option value="{{ $account->id }}" {{ old('default_bank_account_id', $setting->default_bank_account_id) == $account->id ? 'selected' : '' }}>
                                             {{ $account->nama_bank }} - {{ $account->nomor_rekening }} a.n. {{ $account->nama_pemilik_rekening }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                                 <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">Rekening ini akan dicetak di kuitansi pembayaran untuk instruksi transfer.</p>
                                 @error('default_bank_account_id')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
                             </div>
@@ -105,8 +104,7 @@
                             <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">Simpan Pengaturan</button>
                         </div>
                     </form>
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

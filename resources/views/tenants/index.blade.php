@@ -7,8 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+            <x-ui.card>
 
                     @if (session('success'))
                         <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
@@ -27,9 +26,8 @@
                     <!-- Filter & Search -->
                     <form method="GET" action="{{ route('tenants.index') }}" class="mb-6 flex flex-col md:flex-row gap-4">
                         <div class="flex-1">
-                            <input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="Cari nama atau NIK..."
-                                   class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                            <x-ui.input type="text" name="search" value="{{ request('search') }}"
+                                   placeholder="Cari nama atau NIK..." />
                         </div>
                         <div>
                             <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
@@ -42,19 +40,17 @@
                     </form>
 
                     <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                <tr>
-                                    <th class="px-4 py-3">Foto</th>
-                                    <th class="px-4 py-3">Nama Lengkap</th>
-                                    <th class="px-4 py-3">NIK</th>
-                                    <th class="px-4 py-3">No. HP</th>
-                                    <th class="px-4 py-3">Gender</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
+                            <tr>
+                                <th class="px-4 py-3">Foto</th>
+                                <th class="px-4 py-3">Nama Lengkap</th>
+                                <th class="px-4 py-3">NIK</th>
+                                <th class="px-4 py-3">No. HP</th>
+                                <th class="px-4 py-3">Gender</th>
+                                <th class="px-4 py-3">Aksi</th>
+                            </tr>
+                        </x-slot>
                                 @forelse ($tenants as $tenant)
                                     <tr class="border-b dark:border-gray-600">
                                         <td class="px-4 py-3">
@@ -85,16 +81,13 @@
                                         </td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    </x-ui.table-wrapper>
 
                     <div class="mt-4">
                         {{ $tenants->links() }}
                     </div>
 
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

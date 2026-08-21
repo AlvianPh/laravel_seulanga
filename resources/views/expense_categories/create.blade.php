@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <x-ui.card>
 
                 <form method="POST" action="{{ route('expense_categories.store') }}">
                     @csrf
@@ -16,9 +16,8 @@
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                             Nama Kategori Pengeluaran <span class="text-red-500">*</span>
                         </label>
-                        <input type="text" name="name" value="{{ old('name') }}" required maxlength="100"
-                               class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white"
-                               placeholder="Contoh: AC, WiFi, Kasur, Kamar Mandi Dalam">
+                        <x-ui.input type="text" name="name" value="{{ old('name') }}" required maxlength="100"
+                               placeholder="Contoh: AC, WiFi, Kasur, Kamar Mandi Dalam" />
                         @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -43,7 +42,7 @@
                     </div>
                 </form>
 
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

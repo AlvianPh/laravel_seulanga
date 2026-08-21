@@ -11,7 +11,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 
                 <!-- Panel Data -->
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <x-ui.card>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Informasi Pembayaran</h3>
                     
                     <dl class="grid grid-cols-1 gap-x-4 gap-y-4 sm:grid-cols-2 text-sm">
@@ -47,7 +47,7 @@
                             <label for="notes" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                                 Catatan Owner (Wajib diisi jika DITOLAK)
                             </label>
-                            <textarea name="notes" id="notes" rows="2" class="w-full rounded-md border-gray-300 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="Misal: Bukti transfer buram, uang belum masuk..."></textarea>
+                            <x-ui.textarea name="notes" id="notes" rows="2" placeholder="Misal: Bukti transfer buram, uang belum masuk..."></x-ui.textarea>
                             @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
@@ -63,10 +63,10 @@
                         </div>
                     </form>
 
-                </div>
+                </x-ui.card>
 
                 <!-- Panel Bukti -->
-                <div class="bg-white dark:bg-gray-800 shadow-sm sm:rounded-lg p-6">
+                <x-ui.card>
                     <h3 class="text-lg font-bold text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Bukti Transaksi</h3>
                     
                     @if($payment->proof_path)
@@ -83,7 +83,7 @@
                             Tidak ada file bukti (Biasanya dibayar tunai).
                         </div>
                     @endif
-                </div>
+                </x-ui.card>
 
             </div>
 

@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <x-ui.card>
 
                 @if ($errors->has('error'))
                     <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
@@ -33,25 +33,25 @@
                             
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Pilih Penghuni <span class="text-red-500">*</span></label>
-                                <select name="tenant_id" required class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.select name="tenant_id" required>
                                     @foreach ($tenants as $tenant)
                                         <option value="{{ $tenant->id }}" {{ old('tenant_id', $contract->tenant_id) == $tenant->id ? 'selected' : '' }}>
                                             {{ $tenant->name }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                                 @error('tenant_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Kamar <span class="text-red-500">*</span></label>
-                                <select name="room_id" required class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.select name="room_id" required>
                                     @foreach ($rooms as $room)
                                         <option value="{{ $room->id }}" {{ old('room_id', $contract->room_id) == $room->id ? 'selected' : '' }}>
                                             Kamar {{ $room->room_number }} (Status saat ini: {{ $room->status->label() }})
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                                 @error('room_id') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
@@ -63,29 +63,25 @@
                             <div class="grid grid-cols-2 gap-4 mb-4">
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Mulai <span class="text-red-500">*</span></label>
-                                    <input type="date" name="start_date" value="{{ old('start_date', $contract->start_date->format('Y-m-d')) }}" required
-                                           class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <x-ui.input type="date" name="start_date" value="{{ old('start_date', $contract->start_date->format('Y-m-d')) }}" required />
                                     @error('start_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
                                 <div>
                                     <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Selesai <span class="text-red-500">*</span></label>
-                                    <input type="date" name="end_date" value="{{ old('end_date', $contract->end_date->format('Y-m-d')) }}" required
-                                           class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                    <x-ui.input type="date" name="end_date" value="{{ old('end_date', $contract->end_date->format('Y-m-d')) }}" required />
                                     @error('end_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                                 </div>
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Harga Sewa Deal (Rp) <span class="text-red-500">*</span></label>
-                                <input type="number" name="rent_price" value="{{ old('rent_price', (int)$contract->rent_price) }}" required min="0"
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="rent_price" value="{{ old('rent_price', (int)$contract->rent_price) }}" required min="0" />
                                 @error('rent_price') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
 
                             <div class="mb-4">
                                 <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Deposit (Rp) <span class="text-red-500">*</span></label>
-                                <input type="number" name="deposit_amount" value="{{ old('deposit_amount', (int)$contract->deposit_amount) }}" required min="0"
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="number" name="deposit_amount" value="{{ old('deposit_amount', (int)$contract->deposit_amount) }}" required min="0" />
                                 @error('deposit_amount') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                             </div>
                         </div>
@@ -94,8 +90,7 @@
 
                     <div class="mt-4">
                         <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Catatan Tambahan</label>
-                        <textarea name="notes" rows="3"
-                                  class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">{{ old('notes', $contract->notes) }}</textarea>
+                        <x-ui.textarea name="notes" rows="3">{{ old('notes', $contract->notes) }}</x-ui.textarea>
                         @error('notes') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
                     </div>
 
@@ -109,7 +104,7 @@
                     </div>
                 </form>
 
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

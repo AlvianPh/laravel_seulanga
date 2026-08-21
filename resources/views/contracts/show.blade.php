@@ -28,16 +28,10 @@
                 
                 <!-- Detail Utama -->
                 <div class="lg:col-span-2 space-y-6">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <x-ui.card>
                         <div class="flex justify-between items-center border-b pb-4 mb-4">
                             <h3 class="text-xl font-bold text-gray-900 dark:text-gray-100">Informasi Kontrak</h3>
-                            <span class="px-3 py-1 text-sm rounded font-bold
-                                @if($contract->status->value === 'active') bg-green-100 text-green-700
-                                @elseif($contract->status->value === 'ended') bg-gray-100 text-gray-700
-                                @else bg-red-100 text-red-700 @endif
-                            ">
-                                {{ $contract->status->label() }}
-                            </span>
+                            <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
                         </div>
 
                         <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-6 text-sm">
@@ -95,12 +89,12 @@
                         <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
                             <a href="{{ route('contracts.edit', $contract) }}" class="text-indigo-600 hover:underline text-sm">Edit Data Dasar Kontrak</a>
                         </div>
-                    </div>
+                    </x-ui.card>
                 </div>
 
                 <!-- Aksi Khusus -->
                 <div class="space-y-6">
-                    <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+                    <x-ui.card>
                         <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Tindakan Kontrak</h3>
                         
                         @if($contract->isActive())
@@ -118,19 +112,19 @@
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tgl Mulai Lanjutan</label>
                                                 <!-- Default start date adalah besoknya dari end_date kontrak lama -->
-                                                <input type="date" name="start_date" value="{{ $contract->end_date->copy()->addDay()->format('Y-m-d') }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="date" name="start_date" value="{{ $contract->end_date->copy()->addDay()->format('Y-m-d') }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Tgl Selesai Baru</label>
-                                                <input type="date" name="end_date" value="{{ $contract->end_date->copy()->addMonth()->format('Y-m-d') }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="date" name="end_date" value="{{ $contract->end_date->copy()->addMonth()->format('Y-m-d') }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Harga Sewa Baru</label>
-                                                <input type="number" name="rent_price" value="{{ (int)$contract->rent_price }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="number" name="rent_price" value="{{ (int)$contract->rent_price }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <div class="mb-3">
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deposit</label>
-                                                <input type="number" name="deposit_amount" value="{{ (int)$contract->deposit_amount }}" required class="w-full text-sm border rounded px-2 py-1">
+                                                <x-ui.input type="number" name="deposit_amount" value="{{ (int)$contract->deposit_amount }}" required class="text-sm px-2 py-1" />
                                             </div>
                                             <button type="submit" class="w-full bg-indigo-600 text-white text-sm py-2 rounded hover:bg-indigo-700">Submit Perpanjangan</button>
                                         </form>
@@ -149,7 +143,7 @@
                         @else
                             <p class="text-gray-500 italic text-sm">Kontrak ini sudah selesai/diakhiri. Tidak ada tindakan yang dapat dilakukan.</p>
                         @endif
-                    </div>
+                    </x-ui.card>
                 </div>
 
             </div>

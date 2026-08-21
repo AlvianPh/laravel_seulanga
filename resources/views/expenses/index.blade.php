@@ -7,8 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
+            <x-ui.card>
 
                     @if (session('success'))
                         <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
@@ -30,34 +29,34 @@
                             
                             <div class="md:col-span-1">
                                 <label class="block text-xs text-gray-500 mb-1">Cari Keterangan</label>
-                                <input type="text" name="search" value="{{ request('search') }}"
+                                <x-ui.input type="text" name="search" value="{{ request('search') }}"
                                        placeholder="Cari deskripsi..."
-                                       class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                       class="text-sm" />
                             </div>
 
                             <div class="md:col-span-1">
                                 <label class="block text-xs text-gray-500 mb-1">Kategori</label>
-                                <select name="category_id" @change="$refs.form.submit()" class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <x-ui.select name="category_id" @change="$refs.form.submit()" class="text-sm">
                                     <option value="">Semua Kategori</option>
                                     @foreach ($categories as $cat)
                                         <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
                                             {{ $cat->name }}
                                         </option>
                                     @endforeach
-                                </select>
+                                </x-ui.select>
                             </div>
 
                             <div class="md:col-span-1">
                                 <label class="block text-xs text-gray-500 mb-1">Dari Tanggal</label>
-                                <input type="date" name="start_date" value="{{ request('start_date') }}" @change="$refs.form.submit()"
-                                       class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                <x-ui.input type="date" name="start_date" value="{{ request('start_date') }}" @change="$refs.form.submit()"
+                                       class="text-sm" />
                             </div>
 
                             <div class="md:col-span-1 flex items-end gap-2">
                                 <div class="flex-1">
                                     <label class="block text-xs text-gray-500 mb-1">Sampai Tanggal</label>
-                                    <input type="date" name="end_date" value="{{ request('end_date') }}" @change="$refs.form.submit()"
-                                           class="w-full border rounded px-3 py-2 text-sm dark:bg-gray-800 dark:border-gray-600 dark:text-white">
+                                    <x-ui.input type="date" name="end_date" value="{{ request('end_date') }}" @change="$refs.form.submit()"
+                                           class="text-sm" />
                                 </div>
                                 <button type="submit" class="px-3 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200">
                                     Cari
@@ -71,19 +70,17 @@
                     </form>
 
                     <!-- Table -->
-                    <div class="overflow-x-auto">
-                        <table class="w-full text-sm text-left">
-                            <thead class="bg-gray-50 dark:bg-gray-700 border-b dark:border-gray-600">
-                                <tr>
-                                    <th class="px-4 py-3">Tgl Keluar</th>
-                                    <th class="px-4 py-3">Kategori</th>
-                                    <th class="px-4 py-3">Keterangan</th>
-                                    <th class="px-4 py-3">Nominal (Rp)</th>
-                                    <th class="px-4 py-3">Input Oleh</th>
-                                    <th class="px-4 py-3">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                    <x-ui.table-wrapper>
+                        <x-slot name="header">
+                            <tr>
+                                <th class="px-4 py-3">Tgl Keluar</th>
+                                <th class="px-4 py-3">Kategori</th>
+                                <th class="px-4 py-3">Keterangan</th>
+                                <th class="px-4 py-3">Nominal (Rp)</th>
+                                <th class="px-4 py-3">Input Oleh</th>
+                                <th class="px-4 py-3">Aksi</th>
+                            </tr>
+                        </x-slot>
                                 @forelse ($expenses as $expense)
                                     <tr class="border-b dark:border-gray-700">
                                         <td class="px-4 py-3 font-medium whitespace-nowrap">{{ $expense->expense_date->format('d/m/Y') }}</td>
@@ -109,16 +106,13 @@
                                         </td>
                                     </tr>
                                 @endforelse
-                            </tbody>
-                        </table>
-                    </div>
+                    </x-ui.table-wrapper>
 
                     <div class="mt-4">
                         {{ $expenses->links() }}
                     </div>
 
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

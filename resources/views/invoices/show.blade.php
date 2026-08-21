@@ -39,15 +39,7 @@
                         <p class="text-gray-500 text-sm font-mono mt-1">#INV-{{ $invoice->id }}</p>
                     </div>
                     <div class="text-right">
-                        <div class="px-4 py-1 inline-block rounded text-sm font-bold uppercase tracking-wider
-                            @if($invoice->status->value === 'paid') bg-green-100 text-green-700
-                            @elseif($invoice->status->value === 'pending') bg-yellow-100 text-yellow-800
-                            @elseif($invoice->status->value === 'overdue') bg-red-100 text-red-700
-                            @else bg-gray-100 text-gray-700 @endif
-                            print:border print:border-gray-400 print:bg-white print:text-black
-                        ">
-                            {{ $invoice->status->label() }}
-                        </div>
+                        <x-ui.badge :status="$invoice->status" class="print:border print:border-gray-400 print:bg-white print:text-black">{{ $invoice->status->label() }}</x-ui.badge>
                         <p class="text-gray-500 text-sm mt-2">
                             Jatuh Tempo: <br>
                             <strong class="{{ $invoice->status->value === 'overdue' ? 'text-red-600' : 'text-gray-800 dark:text-gray-200' }}">

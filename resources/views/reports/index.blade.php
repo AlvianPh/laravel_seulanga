@@ -31,27 +31,27 @@
                         <!-- Jenis Laporan -->
                         <div>
                             <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Jenis Laporan</label>
-                            <select name="type" class="w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                            <x-ui.select name="type" required>
                                 <option value="income">1. Laporan Pendapatan (Pembayaran)</option>
                                 <option value="expense">2. Laporan Pengeluaran</option>
                                 <option value="cashflow">3. Laporan Cash Flow (Arus Kas)</option>
                                 <option value="occupancy">4. Laporan Keterisian Kamar (Occupancy)</option>
                                 <option value="receivables">5. Laporan Piutang Tagihan</option>
                                 <option value="profit_loss">6. Laporan Laba Rugi</option>
-                            </select>
+                            </x-ui.select>
                             <p class="text-xs text-gray-500 mt-1">Laporan Piutang & Occupancy mungkin tidak selalu terpaku pada rentang waktu di bawah.</p>
                         </div>
 
                         <!-- Rentang Waktu (Filter) -->
                         <div>
                             <label class="block font-medium text-gray-700 dark:text-gray-300 mb-1">Periode Waktu</label>
-                            <select name="filter" x-model="filterType" class="w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
+                            <x-ui.select name="filter" x-model="filterType" required>
                                 <option value="daily">Hari Ini</option>
                                 <option value="weekly">Minggu Ini</option>
                                 <option value="monthly">Bulan Ini</option>
                                 <option value="yearly">Tahun Ini</option>
                                 <option value="custom">-- Rentang Waktu Kustom --</option>
-                            </select>
+                            </x-ui.select>
                         </div>
 
                     </div>
@@ -60,11 +60,11 @@
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg" x-show="filterType === 'custom'" style="display: none;">
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Mulai</label>
-                            <input type="date" name="start_date" :required="filterType === 'custom'" class="w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                            <x-ui.input type="date" name="start_date" x-bind:required="filterType === 'custom'" />
                         </div>
                         <div>
                             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Akhir</label>
-                            <input type="date" name="end_date" :required="filterType === 'custom'" class="w-full border-gray-300 rounded-md shadow-sm dark:bg-gray-600 dark:border-gray-500 dark:text-white">
+                            <x-ui.input type="date" name="end_date" x-bind:required="filterType === 'custom'" />
                         </div>
                     </div>
 

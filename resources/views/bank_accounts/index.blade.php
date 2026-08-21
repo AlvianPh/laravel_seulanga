@@ -29,8 +29,7 @@
                 </nav>
             </div>
 
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6">
+            <x-ui.card>
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Rekening Bank</h3>
                         <a href="{{ route('bank_accounts.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
@@ -41,18 +40,16 @@
                     @if ($bankAccounts->isEmpty())
                         <p class="text-gray-500 dark:text-gray-400 text-center py-8 italic">Belum ada Rekening.</p>
                     @else
-                        <div class="overflow-x-auto">
-                            <table class="w-full text-sm">
-                                <thead>
-                                    <tr class="border-b dark:border-gray-700 text-left">
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Bank</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nomor Rekening</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Pemilik</th>
-                                        <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Status</th>
-                                        <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-100 dark:divide-gray-700">
+                        <x-ui.table-wrapper>
+                            <x-slot name="header">
+                                <tr class="border-b dark:border-gray-700 text-left">
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Bank</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nomor Rekening</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Pemilik</th>
+                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Status</th>
+                                    <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
+                                </tr>
+                            </x-slot>
                                     @foreach ($bankAccounts as $account)
                                         <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
                                             <td class="py-3 pr-4 font-medium text-gray-900 dark:text-gray-100">{{ $account->nama_bank }}</td>
@@ -73,15 +70,12 @@
                                             </td>
                                         </tr>
                                     @endforeach
-                                </tbody>
-                            </table>
-                        </div>
+                        </x-ui.table-wrapper>
                         <div class="mt-4">
                             {{ $bankAccounts->links() }}
                         </div>
                     @endif
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>
