@@ -101,7 +101,7 @@
                         </div>
 
                         <div class="flex items-center justify-end mt-6">
-                            <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors font-medium">Simpan Pengaturan</button>
+                            <x-ui.button type="submit">Simpan Pengaturan</x-ui.button>
                         </div>
                     </form>
             </x-ui.card>

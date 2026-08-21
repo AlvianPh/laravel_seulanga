@@ -17,10 +17,9 @@
 
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <h3 class="text-lg font-semibold">Daftar Kamar</h3>
-                        <a href="{{ route('rooms.create') }}"
-                           class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        <x-ui.button href="{{ route('rooms.create') }}">
                             + Tambah Kamar
-                        </a>
+                        </x-ui.button>
                     </div>
 
                     <!-- Toolbar Filter -->
@@ -98,13 +97,12 @@
                                             <x-ui.badge :status="$room->status">{{ $room->status->label() }}</x-ui.badge>
                                         </td>
                                         <td class="px-4 py-3 space-x-2">
-                                            <a href="{{ route('rooms.show', $room) }}" class="text-blue-600 hover:underline">Detail</a>
-                                            <a href="{{ route('rooms.edit', $room) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            <button type="button"
-                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('rooms.destroy', $room) }}', name: 'Kamar {{ $room->room_number }}', softDelete: true })"
-                                                    class="text-red-600 hover:underline">
+                                            <x-ui.button size="sm" variant="secondary" href="{{ route('rooms.show', $room) }}">Detail</x-ui.button>
+                                            <x-ui.button size="sm" variant="warning" href="{{ route('rooms.edit', $room) }}">Edit</x-ui.button>
+                                            <x-ui.button size="sm" variant="danger" type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('rooms.destroy', $room) }}', name: 'Kamar {{ $room->room_number }}', softDelete: true })">
                                                 Hapus
-                                            </button>
+                                            </x-ui.button>
                                         </td>
                                     </tr>
                                 @empty

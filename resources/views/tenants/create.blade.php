@@ -114,12 +114,12 @@
                     </div>
 
                     <div class="mt-8 flex gap-3">
-                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">
+                        <x-ui.button type="submit">
                             Simpan Data
-                        </button>
-                        <a href="{{ route('tenants.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded hover:bg-gray-300">
+                        </x-ui.button>
+                        <x-ui.button variant="secondary" href="{{ route('tenants.index') }}">
                             Batal
-                        </a>
+                        </x-ui.button>
                     </div>
                 </form>
 

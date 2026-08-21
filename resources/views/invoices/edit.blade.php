@@ -116,9 +116,12 @@
                             </div>
 
                             <div class="flex gap-3">
-                                <button type="submit" class="w-full bg-green-600 text-white font-semibold py-3 rounded hover:bg-green-700 shadow text-lg">
+                                <x-ui.button type="submit" class="w-full">
                                     Simpan Perubahan
-                                </button>
+                                </x-ui.button>
+                                <x-ui.button variant="secondary" href="{{ route('invoices.show', $invoice) }}" class="w-full">
+                                    Batal
+                                </x-ui.button>
                             </div>
                         </div>
                         

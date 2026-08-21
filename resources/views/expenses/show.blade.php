@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">
                 {{ __('Rincian Pengeluaran') }}
             </h2>
-            <a href="{{ route('expenses.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">Kembali</a>
+            <x-ui.button variant="secondary" href="{{ route('expenses.index') }}">Kembali</x-ui.button>
         </div>
     </x-slot>
 
@@ -51,10 +51,12 @@
                     </dl>
 
                     <div class="mt-8 flex gap-3 border-t pt-6">
-                        <a href="{{ route('expenses.edit', $expense) }}" class="flex-1 text-center bg-indigo-600 text-white font-bold py-2 rounded shadow hover:bg-indigo-700">
+                        <x-ui.button variant="warning" href="{{ route('expenses.edit', $expense) }}" class="flex-1">
                             Edit Data
-                        </a>
-                        <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expenses.destroy', $expense) }}', name: 'data pengeluaran ini' })" class="w-full flex-1 bg-red-600 text-white font-bold py-2 rounded shadow hover:bg-red-700">Hapus Data</button>
+                        </x-ui.button>
+                        <x-ui.button variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expenses.destroy', $expense) }}', name: 'data pengeluaran ini' })" class="flex-1">
+                            Hapus Data
+                        </x-ui.button>
                     </div>
 
                 </x-ui.card>

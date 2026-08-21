@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6 text-gray-900 dark:text-gray-100">
+            <x-ui.card>
 
                 <dl class="space-y-4">
                     <div>
@@ -34,15 +34,15 @@
                 </dl>
 
                 <div class="mt-6 flex gap-3">
-                    <a href="{{ route('users.edit', $user) }}" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                    <x-ui.button variant="warning" href="{{ route('users.edit', $user) }}">
                         Edit
-                    </a>
-                    <a href="{{ route('users.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                    </x-ui.button>
+                    <x-ui.button variant="secondary" href="{{ route('users.index') }}">
                         Kembali
-                    </a>
+                    </x-ui.button>
                 </div>
 
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

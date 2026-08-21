@@ -14,9 +14,9 @@
                         @if(Auth::user()->unreadNotifications->count() > 0)
                             <form action="{{ route('notifications.read-all') }}" method="POST">
                                 @csrf
-                                <button type="submit" class="text-sm text-indigo-600 dark:text-indigo-400 hover:text-indigo-900 dark:hover:text-indigo-300 font-medium bg-indigo-50 dark:bg-indigo-900/50 px-3 py-1.5 rounded-lg transition-colors">
+                                <x-ui.button size="sm" variant="secondary" type="submit">
                                     Tandai Semua Dibaca
-                                </button>
+                                </x-ui.button>
                             </form>
                         @endif
                     </div>
@@ -37,18 +37,18 @@
                                     </p>
                                     <div class="mt-3 flex items-center gap-3">
                                         @if(isset($notification->data['url']))
-                                            <a href="{{ $notification->data['url'] }}" class="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline">
+                                            <x-ui.button size="sm" variant="secondary" href="{{ $notification->data['url'] }}">
                                                 Lihat Detail
-                                            </a>
+                                            </x-ui.button>
                                         @endif
                                         
                                         @if(is_null($notification->read_at))
                                             <form action="{{ route('notifications.read', $notification->id) }}" method="POST" class="inline">
                                                 @csrf
                                                 @method('PATCH')
-                                                <button type="submit" class="text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300">
+                                                <x-ui.button size="sm" variant="secondary" type="submit">
                                                     Tandai Dibaca
-                                                </button>
+                                                </x-ui.button>
                                             </form>
                                         @endif
                                     </div>

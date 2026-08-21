@@ -34,9 +34,9 @@
                             <label for="is_active" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Aktif</label>
                         </div>
 
-                        <div class="flex items-center justify-end">
-                            <a href="{{ route('bank_accounts.index') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mr-4">Batal</a>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">Update</button>
+                        <div class="flex items-center justify-end gap-3">
+                            <x-ui.button variant="secondary" href="{{ route('bank_accounts.index') }}">Batal</x-ui.button>
+                            <x-ui.button type="submit">Update</x-ui.button>
                         </div>
                     </form>
             </x-ui.card>

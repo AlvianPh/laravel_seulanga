@@ -36,16 +36,16 @@
                                     <option value="{{ date('Y') }}" selected>{{ date('Y') }}</option>
                                     <option value="{{ date('Y')+1 }}">{{ date('Y')+1 }}</option>
                                 </x-ui.select>
-                                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white text-sm font-semibold rounded hover:bg-indigo-700">
+                                <x-ui.button type="submit">
                                     + Generate Manual
-                                </button>
+                                </x-ui.button>
                             </div>
                         </form>
                     </div>
 
                     <!-- Filter & Search -->
-                    <form method="GET" action="{{ route('invoices.index') }}" class="mb-6 flex flex-col md:flex-row gap-4" x-data x-ref="form">
-                        <div class="flex-1">
+                    <form method="GET" action="{{ route('invoices.index') }}" class="mb-6 flex flex-col md:flex-row gap-4 items-center" x-data x-ref="form">
+                        <div class="flex-1 w-full">
                             <x-ui.input type="text" name="search" value="{{ request('search') }}"
                                    placeholder="Cari nama penghuni..." />
                         </div>
@@ -74,12 +74,12 @@
                                 @endforeach
                             </x-ui.select>
                         </div>
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
+                        <div class="flex gap-2">
+                            <x-ui.button type="submit" variant="secondary">
                                 Cari
-                            </button>
+                            </x-ui.button>
                             @if(request()->anyFilled(['search', 'status', 'month', 'year']))
-                                <a href="{{ route('invoices.index') }}" class="ml-2 text-sm text-indigo-600 hover:underline">Reset</a>
+                                <x-ui.button href="{{ route('invoices.index') }}" variant="secondary">Reset</x-ui.button>
                             @endif
                         </div>
                     </form>
@@ -111,8 +111,8 @@
                                             <x-ui.badge :status="$invoice->status">{{ $invoice->status->label() }}</x-ui.badge>
                                         </td>
                                         <td class="px-4 py-3 space-x-2">
-                                            <a href="{{ route('invoices.show', $invoice) }}" class="text-blue-600 hover:underline">Detail</a>
-                                            <a href="{{ route('invoices.edit', $invoice) }}" class="text-indigo-600 hover:underline">Edit Biaya</a>
+                                            <x-ui.button size="sm" variant="secondary" href="{{ route('invoices.show', $invoice) }}">Detail</x-ui.button>
+                                            <x-ui.button size="sm" variant="warning" href="{{ route('invoices.edit', $invoice) }}">Edit Biaya</x-ui.button>
                                         </td>
                                     </tr>
                                 @empty

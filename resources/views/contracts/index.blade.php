@@ -26,15 +26,14 @@
 
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <h3 class="text-lg font-semibold">Daftar Kontrak</h3>
-                        <a href="{{ route('contracts.create') }}"
-                           class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        <x-ui.button href="{{ route('contracts.create') }}">
                             + Buat Kontrak Baru
-                        </a>
+                        </x-ui.button>
                     </div>
 
                     <!-- Filter & Search -->
-                    <form method="GET" action="{{ route('contracts.index') }}" class="mb-6 flex flex-col md:flex-row gap-4" x-data x-ref="form">
-                        <div class="flex-1">
+                    <form method="GET" action="{{ route('contracts.index') }}" class="mb-6 flex flex-col md:flex-row gap-4 items-center" x-data x-ref="form">
+                        <div class="flex-1 w-full">
                             <x-ui.input type="text" name="search" value="{{ request('search') }}"
                                    placeholder="Cari nama penghuni atau nomor kamar..." />
                         </div>
@@ -48,12 +47,12 @@
                                 @endforeach
                             </x-ui.select>
                         </div>
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
+                        <div class="flex gap-2">
+                            <x-ui.button type="submit" variant="secondary">
                                 Cari
-                            </button>
+                            </x-ui.button>
                             @if(request()->anyFilled(['search', 'status']))
-                                <a href="{{ route('contracts.index') }}" class="ml-2 text-sm text-indigo-600 hover:underline">Reset</a>
+                                <x-ui.button href="{{ route('contracts.index') }}" variant="secondary">Reset</x-ui.button>
                             @endif
                         </div>
                     </form>
@@ -84,11 +83,10 @@
                                             <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
                                         </td>
                                         <td class="px-4 py-3 space-x-2">
-                                            <a href="{{ route('contracts.show', $contract) }}" class="text-blue-600 hover:underline">Detail</a>
-                                            <a href="{{ route('contracts.edit', $contract) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            <button type="button"
-                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('contracts.destroy', $contract) }}', name: 'kontrak ini' })"
-                                                    class="text-red-600 hover:underline">Hapus</button>
+                                            <x-ui.button size="sm" variant="secondary" href="{{ route('contracts.show', $contract) }}">Detail</x-ui.button>
+                                            <x-ui.button size="sm" variant="warning" href="{{ route('contracts.edit', $contract) }}">Edit</x-ui.button>
+                                            <x-ui.button size="sm" variant="danger" type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('contracts.destroy', $contract) }}', name: 'kontrak ini' })">Hapus</x-ui.button>
                                         </td>
                                     </tr>
                                 @empty

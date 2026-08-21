@@ -58,11 +58,13 @@
                         @error('receipt_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
 
-                    <div class="flex items-center justify-end">
-                        <a href="{{ route('expenses.index') }}" class="text-gray-600 hover:text-gray-900 mr-4 text-sm">Batal</a>
-                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">
+                    <div class="flex items-center justify-end gap-3">
+                        <x-ui.button variant="secondary" href="{{ route('expenses.index') }}">
+                            Batal
+                        </x-ui.button>
+                        <x-ui.button type="submit">
                             Simpan Pengeluaran
-                        </button>
+                        </x-ui.button>
                     </div>
                 </form>
 

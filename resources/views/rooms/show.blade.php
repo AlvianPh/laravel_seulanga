@@ -5,8 +5,8 @@
                 {{ __('Detail Kamar: ') . $room->room_number }}
             </h2>
             <div class="space-x-2">
-                <a href="{{ route('rooms.edit', $room) }}" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">Edit Kamar</a>
-                <a href="{{ route('rooms.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">Kembali</a>
+                <x-ui.button variant="warning" href="{{ route('rooms.edit', $room) }}">Edit Kamar</x-ui.button>
+                <x-ui.button variant="secondary" href="{{ route('rooms.index') }}">Kembali</x-ui.button>
             </div>
         </div>
     </x-slot>

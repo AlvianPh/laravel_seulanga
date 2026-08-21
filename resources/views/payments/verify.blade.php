@@ -52,14 +52,14 @@
                         </div>
 
                         <div class="flex gap-4">
-                            <button type="submit" name="action" value="verify" class="flex-1 bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 shadow flex justify-center items-center">
+                            <x-ui.button type="submit" name="action" value="verify" variant="success" class="flex-1">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
                                 Terima Pembayaran
-                            </button>
-                            <button type="submit" name="action" value="reject" class="flex-1 bg-red-600 text-white font-bold py-3 rounded-lg hover:bg-red-700 shadow flex justify-center items-center" onclick="return confirm('Yakin ingin menolak pembayaran ini? Tagihan akan tetap dianggap belum dibayar.')">
+                            </x-ui.button>
+                            <x-ui.button type="submit" name="action" value="reject" variant="danger" class="flex-1" onclick="return confirm('Yakin ingin menolak pembayaran ini? Tagihan akan tetap dianggap belum dibayar.')">
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
                                 Tolak Pembayaran
-                            </button>
+                            </x-ui.button>
                         </div>
                     </form>
 

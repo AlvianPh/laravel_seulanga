@@ -18,9 +18,9 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <h3 class="text-lg font-semibold">Daftar Pengeluaran</h3>
                         
-                        <a href="{{ route('expenses.create') }}" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">
+                        <x-ui.button href="{{ route('expenses.create') }}">
                             + Catat Pengeluaran
-                        </a>
+                        </x-ui.button>
                     </div>
 
                     <!-- Filter & Search -->
@@ -58,11 +58,11 @@
                                     <x-ui.input type="date" name="end_date" value="{{ request('end_date') }}" @change="$refs.form.submit()"
                                            class="text-sm" />
                                 </div>
-                                <button type="submit" class="px-3 py-2 bg-gray-300 text-gray-700 rounded hover:bg-gray-400 dark:bg-gray-600 dark:text-gray-200">
+                                <x-ui.button type="submit" variant="secondary">
                                     Cari
-                                </button>
+                                </x-ui.button>
                                 @if(request()->anyFilled(['search', 'category', 'start_date', 'end_date']))
-                                    <a href="{{ route('expenses.index') }}" class="px-3 py-2 text-sm text-red-600 hover:underline">Reset</a>
+                                    <x-ui.button href="{{ route('expenses.index') }}" variant="secondary">Reset</x-ui.button>
                                 @endif
                             </div>
 
@@ -93,10 +93,9 @@
                                         <td class="px-4 py-3 font-bold text-red-600">{{ number_format($expense->amount, 0, ',', '.') }}</td>
                                         <td class="px-4 py-3 text-xs text-gray-500">{{ $expense->creator->name ?? 'Dihapus' }}</td>
                                         <td class="px-4 py-3 space-x-2 whitespace-nowrap">
-                                            <a href="{{ route('expenses.show', $expense) }}" class="text-blue-600 hover:underline">Detail</a>
-                                            <a href="{{ route('expenses.edit', $expense) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            
-                                            <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expenses.destroy', $expense) }}', name: 'data pengeluaran ini' })" class="text-red-600 hover:underline">Hapus</button>
+                                            <x-ui.button size="sm" variant="secondary" href="{{ route('expenses.show', $expense) }}">Detail</x-ui.button>
+                                            <x-ui.button size="sm" variant="warning" href="{{ route('expenses.edit', $expense) }}">Edit</x-ui.button>
+                                            <x-ui.button size="sm" variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('expenses.destroy', $expense) }}', name: 'data pengeluaran ini' })">Hapus</x-ui.button>
                                         </td>
                                     </tr>
                                 @empty

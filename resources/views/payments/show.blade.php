@@ -5,8 +5,8 @@
                 {{ __('Kuitansi Pembayaran #PAY-') . $payment->id }}
             </h2>
             <div class="space-x-2">
-                <a href="{{ route('payments.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">Kembali</a>
-                <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">Print Kuitansi</button>
+                <x-ui.button variant="secondary" href="{{ route('payments.index') }}">Kembali</x-ui.button>
+                <x-ui.button onclick="window.print()">Print Kuitansi</x-ui.button>
             </div>
         </div>
     </x-slot>
@@ -93,7 +93,7 @@
                 @if($payment->status->value === 'pending')
                 <div class="mt-6 bg-yellow-50 border border-yellow-200 rounded p-4 flex justify-between items-center print:hidden">
                     <p class="text-yellow-800 text-sm">Pembayaran ini masih pending. Silakan cek bukti dan verifikasi.</p>
-                    <a href="{{ route('payments.verify', $payment) }}" class="px-4 py-2 bg-yellow-600 text-white rounded font-bold hover:bg-yellow-700">Lanjut ke Verifikasi</a>
+                    <x-ui.button variant="warning" href="{{ route('payments.verify', $payment) }}">Lanjut ke Verifikasi</x-ui.button>
                 </div>
                 @endif
             @endcan

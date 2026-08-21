@@ -117,12 +117,12 @@
                     </div>
 
                     <div class="mt-6 flex gap-3">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        <x-ui.button type="submit">
                             Simpan Kamar
-                        </button>
-                        <a href="{{ route('rooms.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                        </x-ui.button>
+                        <x-ui.button variant="secondary" href="{{ route('rooms.index') }}">
                             Batal
-                        </a>
+                        </x-ui.button>
                     </div>
                 </form>
 

@@ -5,7 +5,7 @@
                 {{ __('Detail Kontrak: #') . $contract->id }}
             </h2>
             <div class="space-x-2">
-                <a href="{{ route('contracts.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">Kembali</a>
+                <x-ui.button variant="secondary" href="{{ route('contracts.index') }}">Kembali</x-ui.button>
             </div>
         </div>
     </x-slot>
@@ -87,7 +87,7 @@
                         </dl>
                         
                         <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                            <a href="{{ route('contracts.edit', $contract) }}" class="text-indigo-600 hover:underline text-sm">Edit Data Dasar Kontrak</a>
+                            <x-ui.button size="sm" variant="warning" href="{{ route('contracts.edit', $contract) }}">Edit Data Dasar Kontrak</x-ui.button>
                         </div>
                     </x-ui.card>
                 </div>
@@ -126,7 +126,7 @@
                                                 <label class="block text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Deposit</label>
                                                 <x-ui.input type="number" name="deposit_amount" value="{{ (int)$contract->deposit_amount }}" required class="text-sm px-2 py-1" />
                                             </div>
-                                            <button type="submit" class="w-full bg-indigo-600 text-white text-sm py-2 rounded hover:bg-indigo-700">Submit Perpanjangan</button>
+                                            <x-ui.button variant="success" type="submit" class="w-full">Submit Perpanjangan</x-ui.button>
                                         </form>
                                     </div>
                                 </div>
@@ -136,7 +136,7 @@
                                     <p class="text-xs text-red-800 dark:text-red-200 mb-2">Mengakhiri kontrak akan membuat status kamar menjadi <strong>Available</strong>.</p>
                                     <form method="POST" action="{{ route('contracts.terminate', $contract) }}" onsubmit="return confirm('Yakin ingin mengakhiri kontrak ini sekarang? Status kamar akan dikembalikan jadi available.')">
                                         @csrf
-                                        <button type="submit" class="w-full bg-red-600 text-white text-sm py-2 rounded hover:bg-red-700">Akhiri Kontrak</button>
+                                        <x-ui.button variant="danger" type="submit" class="w-full">Akhiri Kontrak</x-ui.button>
                                     </form>
                                 </div>
                             </div>

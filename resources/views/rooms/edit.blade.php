@@ -127,12 +127,12 @@
                     </div>
 
                     <div class="mt-6 flex gap-3">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        <x-ui.button type="submit">
                             Simpan Perubahan
-                        </button>
-                        <a href="{{ route('rooms.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                        </x-ui.button>
+                        <x-ui.button variant="secondary" href="{{ route('rooms.index') }}">
                             Batal
-                        </a>
+                        </x-ui.button>
                     </div>
                 </form>
 
@@ -158,17 +158,17 @@
                                         @if(!$photo->is_primary)
                                             <form action="{{ route('rooms.photos.primary', [$room, $photo]) }}" method="POST">
                                                 @csrf @method('PATCH')
-                                                <button type="submit" class="w-full text-xs bg-blue-100 text-blue-700 py-1 rounded hover:bg-blue-200">
+                                                <x-ui.button size="sm" variant="secondary" type="submit" class="w-full">
                                                     Jadikan Primary
-                                                </button>
+                                                </x-ui.button>
                                             </form>
                                         @endif
                                         
-                                        <button type="button" 
+                                        <x-ui.button size="sm" variant="danger" type="button" 
                                                 @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('rooms.photos.destroy', [$room, $photo]) }}', name: 'foto ini' })"
-                                                class="w-full text-xs bg-red-100 text-red-700 py-1 rounded hover:bg-red-200">
+                                                class="w-full">
                                             Hapus
-                                        </button>
+                                        </x-ui.button>
                                     </div>
                                 </div>
                             @endforeach

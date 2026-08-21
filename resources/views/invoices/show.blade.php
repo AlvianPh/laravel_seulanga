@@ -5,8 +5,8 @@
                 {{ __('Invoice #INV-') . $invoice->id }}
             </h2>
             <div class="space-x-2">
-                <a href="{{ route('invoices.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">Kembali</a>
-                <button onclick="window.print()" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">Print</button>
+                <x-ui.button variant="secondary" href="{{ route('invoices.index') }}">Kembali</x-ui.button>
+                <x-ui.button onclick="window.print()">Print</x-ui.button>
             </div>
         </div>
     </x-slot>
@@ -133,9 +133,9 @@
                     <p class="text-sm text-gray-500">
                         Pastikan untuk selalu mengecek komponen tambahan sebelum menagih.
                     </p>
-                    <a href="{{ route('invoices.edit', $invoice) }}" class="px-6 py-2 bg-yellow-500 text-white font-semibold rounded hover:bg-yellow-600">
+                    <x-ui.button variant="warning" href="{{ route('invoices.edit', $invoice) }}">
                         Edit Komponen Biaya
-                    </a>
+                    </x-ui.button>
                 </div>
 
             </div>

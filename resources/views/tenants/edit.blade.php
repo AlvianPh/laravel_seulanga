@@ -122,12 +122,12 @@
                     </div>
 
                     <div class="mt-8 flex gap-3">
-                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">
+                        <x-ui.button type="submit">
                             Simpan Perubahan
-                        </button>
-                        <a href="{{ route('tenants.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded hover:bg-gray-300">
+                        </x-ui.button>
+                        <x-ui.button variant="secondary" href="{{ route('tenants.index') }}">
                             Batal
-                        </a>
+                        </x-ui.button>
                     </div>
                 </form>
 
@@ -141,7 +141,7 @@
                             <h4 class="font-medium mb-2 text-gray-700 dark:text-gray-300">Foto KTP</h4>
                             @if($tenant->ktp_photo_path)
                                 <img src="{{ Storage::url($tenant->ktp_photo_path) }}" class="w-full h-48 object-cover rounded mb-3" alt="Foto KTP">
-                                <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.ktp.destroy', $tenant) }}', name: 'foto KTP ini' })" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus KTP</button>
+                                <x-ui.button size="sm" variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.ktp.destroy', $tenant) }}', name: 'foto KTP ini' })">Hapus KTP</x-ui.button>
                             @else
                                 <p class="text-sm text-gray-500 italic">Belum ada foto KTP.</p>
                             @endif
@@ -152,7 +152,7 @@
                             <h4 class="font-medium mb-2 text-gray-700 dark:text-gray-300">Foto Profil</h4>
                             @if($tenant->tenant_photo_path)
                                 <img src="{{ Storage::url($tenant->tenant_photo_path) }}" class="w-full h-48 object-cover rounded mb-3" alt="Foto Profil">
-                                <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.photo.destroy', $tenant) }}', name: 'foto profil ini' })" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus Profil</button>
+                                <x-ui.button size="sm" variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.photo.destroy', $tenant) }}', name: 'foto profil ini' })">Hapus Profil</x-ui.button>
                             @else
                                 <p class="text-sm text-gray-500 italic">Belum ada foto profil.</p>
                             @endif

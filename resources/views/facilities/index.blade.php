@@ -22,13 +22,12 @@
             <x-ui.card>
                     <div class="flex items-center justify-between mb-6">
                         <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Fasilitas</h3>
-                        <a href="{{ route('facilities.create') }}"
-                           class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
+                        <x-ui.button href="{{ route('facilities.create') }}">
                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
                             </svg>
                             Tambah Fasilitas
-                        </a>
+                        </x-ui.button>
                     </div>
 
                     @if ($facilities->isEmpty())
@@ -59,15 +58,13 @@
                                             </td>
                                             <td class="py-3">
                                                 <div class="flex items-center gap-2">
-                                                    <a href="{{ route('facilities.edit', $facility) }}"
-                                                       class="text-xs px-3 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300 rounded hover:bg-yellow-200 transition-colors">
+                                                    <x-ui.button size="sm" variant="warning" href="{{ route('facilities.edit', $facility) }}">
                                                         Edit
-                                                    </a>
-                                                    <button type="button"
-                                                            @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('facilities.destroy', $facility) }}', name: 'fasilitas {{ addslashes($facility->name) }}' })"
-                                                            class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">
+                                                    </x-ui.button>
+                                                    <x-ui.button size="sm" variant="danger" type="button"
+                                                            @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('facilities.destroy', $facility) }}', name: 'fasilitas {{ addslashes($facility->name) }}' })">
                                                         Hapus
-                                                    </button>
+                                                    </x-ui.button>
                                                 </div>
                                             </td>
                                         </tr>

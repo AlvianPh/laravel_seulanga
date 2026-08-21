@@ -7,7 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg p-6">
+            <x-ui.card>
 
                 <form method="POST" action="{{ route('users.update', $user) }}">
                     @csrf
@@ -52,16 +52,16 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        <x-ui.button type="submit">
                             Simpan Perubahan
-                        </button>
-                        <a href="{{ route('users.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300">
+                        </x-ui.button>
+                        <x-ui.button variant="secondary" href="{{ route('users.index') }}">
                             Batal
-                        </a>
+                        </x-ui.button>
                     </div>
                 </form>
 
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

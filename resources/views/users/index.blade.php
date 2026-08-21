@@ -7,9 +7,7 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-gray-900 dark:text-gray-100">
-
+            <x-ui.card>
                     @if (session('success'))
                         <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
                             {{ session('success') }}
@@ -18,10 +16,9 @@
 
                     <div class="flex justify-between items-center mb-6">
                         <h3 class="text-lg font-semibold">Daftar User</h3>
-                        <a href="{{ route('users.create') }}"
-                           class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        <x-ui.button href="{{ route('users.create') }}">
                             + Tambah User
-                        </a>
+                        </x-ui.button>
                     </div>
 
                     <x-ui.table-wrapper>
@@ -45,11 +42,9 @@
                                     </td>
                                     <td class="px-4 py-3 space-x-2">
                                         @if (auth()->id() !== $user->id)
-                                            <a href="{{ route('users.edit', $user) }}"
-                                               class="text-indigo-600 hover:underline">Edit</a>
-                                            <button type="button"
-                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('users.destroy', $user) }}', name: 'User {{ addslashes($user->name) }}' })"
-                                                    class="text-red-600 hover:underline">Hapus</button>
+                                            <x-ui.button size="sm" variant="warning" href="{{ route('users.edit', $user) }}">Edit</x-ui.button>
+                                            <x-ui.button size="sm" variant="danger" type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('users.destroy', $user) }}', name: 'User {{ addslashes($user->name) }}' })">Hapus</x-ui.button>
                                         @else
                                             <span class="text-gray-400 text-xs">Akun Anda</span>
                                         @endif
@@ -57,9 +52,7 @@
                                 </tr>
                             @endforeach
                     </x-ui.table-wrapper>
-
-                </div>
-            </div>
+            </x-ui.card>
         </div>
     </div>
 </x-app-layout>

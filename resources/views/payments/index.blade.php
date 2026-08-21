@@ -18,14 +18,14 @@
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <h3 class="text-lg font-semibold">Daftar Transaksi Pembayaran</h3>
                         
-                        <a href="{{ route('payments.create') }}" class="px-4 py-2 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">
+                        <x-ui.button href="{{ route('payments.create') }}">
                             + Input Pembayaran
-                        </a>
+                        </x-ui.button>
                     </div>
 
                     <!-- Filter & Search -->
-                    <form method="GET" action="{{ route('payments.index') }}" class="mb-6 flex flex-col md:flex-row gap-4" x-data x-ref="form">
-                        <div class="flex-1">
+                    <form method="GET" action="{{ route('payments.index') }}" class="mb-6 flex flex-col md:flex-row gap-4 items-center" x-data x-ref="form">
+                        <div class="flex-1 w-full">
                             <x-ui.input type="text" name="search" value="{{ request('search') }}"
                                    placeholder="Cari nama penghuni atau no tagihan..." />
                         </div>
@@ -49,12 +49,12 @@
                                 @endforeach
                             </x-ui.select>
                         </div>
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
+                        <div class="flex gap-2">
+                            <x-ui.button type="submit" variant="secondary">
                                 Cari
-                            </button>
+                            </x-ui.button>
                             @if(request()->anyFilled(['search', 'status', 'method']))
-                                <a href="{{ route('payments.index') }}" class="ml-2 text-sm text-indigo-600 hover:underline">Reset</a>
+                                <x-ui.button href="{{ route('payments.index') }}" variant="secondary">Reset</x-ui.button>
                             @endif
                         </div>
                     </form>
@@ -86,12 +86,12 @@
                                             <x-ui.badge :status="$payment->status">{{ $payment->status->label() }}</x-ui.badge>
                                         </td>
                                         <td class="px-4 py-3 space-x-2">
-                                            <a href="{{ route('payments.show', $payment) }}" class="text-blue-600 hover:underline">Detail</a>
+                                            <x-ui.button size="sm" variant="secondary" href="{{ route('payments.show', $payment) }}">Detail</x-ui.button>
                                             
                                             <!-- Tombol Verifikasi KHUSUS Owner -->
                                             @can('verify', $payment)
                                                 @if($payment->status->value === 'pending')
-                                                    <a href="{{ route('payments.verify', $payment) }}" class="text-green-600 hover:underline font-semibold ml-2">Verifikasi</a>
+                                                    <x-ui.button size="sm" variant="success" href="{{ route('payments.verify', $payment) }}">Verifikasi</x-ui.button>
                                                 @endif
                                             @endcan
                                         </td>

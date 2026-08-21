@@ -40,12 +40,12 @@
                     </div>
 
                     <div class="flex gap-3">
-                        <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700 transition-colors">
+                        <x-ui.button type="submit">
                             Simpan
-                        </button>
-                        <a href="{{ route('payment_methods.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 transition-colors">
+                        </x-ui.button>
+                        <x-ui.button variant="secondary" href="{{ route('payment_methods.index') }}">
                             Batal
-                        </a>
+                        </x-ui.button>
                     </div>
                 </form>
 

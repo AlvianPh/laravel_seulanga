@@ -17,24 +17,23 @@
 
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
                         <h3 class="text-lg font-semibold">Daftar Penghuni</h3>
-                        <a href="{{ route('tenants.create') }}"
-                           class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
+                        <x-ui.button href="{{ route('tenants.create') }}">
                             + Tambah Penghuni
-                        </a>
+                        </x-ui.button>
                     </div>
 
                     <!-- Filter & Search -->
-                    <form method="GET" action="{{ route('tenants.index') }}" class="mb-6 flex flex-col md:flex-row gap-4">
-                        <div class="flex-1">
+                    <form method="GET" action="{{ route('tenants.index') }}" class="mb-6 flex flex-col md:flex-row gap-4 items-center">
+                        <div class="flex-1 w-full">
                             <x-ui.input type="text" name="search" value="{{ request('search') }}"
                                    placeholder="Cari nama atau NIK..." />
                         </div>
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
+                        <div class="flex gap-2">
+                            <x-ui.button type="submit" variant="secondary">
                                 Cari
-                            </button>
+                            </x-ui.button>
                             @if(request('search'))
-                                <a href="{{ route('tenants.index') }}" class="ml-2 text-sm text-indigo-600 hover:underline">Reset</a>
+                                <x-ui.button href="{{ route('tenants.index') }}" variant="secondary">Reset</x-ui.button>
                             @endif
                         </div>
                     </form>
@@ -67,11 +66,10 @@
                                         <td class="px-4 py-3">{{ $tenant->phone }}</td>
                                         <td class="px-4 py-3">{{ $tenant->gender->label() }}</td>
                                         <td class="px-4 py-3 space-x-2">
-                                            <a href="{{ route('tenants.show', $tenant) }}" class="text-blue-600 hover:underline">Detail</a>
-                                            <a href="{{ route('tenants.edit', $tenant) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            <button type="button"
-                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.destroy', $tenant) }}', name: 'Penghuni {{ addslashes($tenant->name) }}', softDelete: true })"
-                                                    class="text-red-600 hover:underline">Hapus</button>
+                                            <x-ui.button size="sm" variant="secondary" href="{{ route('tenants.show', $tenant) }}">Detail</x-ui.button>
+                                            <x-ui.button size="sm" variant="warning" href="{{ route('tenants.edit', $tenant) }}">Edit</x-ui.button>
+                                            <x-ui.button size="sm" variant="danger" type="button"
+                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.destroy', $tenant) }}', name: 'Penghuni {{ addslashes($tenant->name) }}', softDelete: true })">Hapus</x-ui.button>
                                         </td>
                                     </tr>
                                 @empty
