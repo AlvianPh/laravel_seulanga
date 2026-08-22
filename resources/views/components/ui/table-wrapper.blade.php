@@ -5,7 +5,7 @@
                 {{ $header }}
             </thead>
         @endisset
-        <tbody class="divide-y divide-gray-150 dark:divide-gray-700/70 bg-white dark:bg-gray-800/80">
+        <tbody class="divide-y divide-gray-200/60 dark:divide-gray-700/70 bg-white dark:bg-gray-800/80">
             {{ $slot }}
         </tbody>
     </table>
