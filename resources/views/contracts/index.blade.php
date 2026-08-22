@@ -5,106 +5,104 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <x-ui.card>
+    <div class="max-w-7xl mx-auto space-y-6">
+        <x-ui.card>
 
-                    @if (session('success'))
-                        <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
-                            {{ session('success') }}
-                        </div>
-                    @endif
-                    @if ($errors->any())
-                        <div class="mb-4 p-4 bg-red-100 text-red-700 rounded">
-                            <ul class="list-disc pl-5">
-                                @foreach ($errors->all() as $error)
-                                    <li>{{ $error }}</li>
-                                @endforeach
-                            </ul>
-                        </div>
-                    @endif
+                @if (session('success'))
+                    <x-ui.alert type="success">
+                        {{ session('success') }}
+                    </x-ui.alert>
+                @endif
+                @if ($errors->any())
+                    <x-ui.alert type="error">
+                        <ul class="list-disc pl-5">
+                            @foreach ($errors->all() as $error)
+                                <li>{{ $error }}</li>
+                            @endforeach
+                        </ul>
+                    </x-ui.alert>
+                @endif
 
-                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                        <h3 class="text-lg font-semibold">Daftar Kontrak</h3>
-                        <a href="{{ route('contracts.create') }}"
-                           class="px-4 py-2 bg-indigo-600 text-white rounded hover:bg-indigo-700">
-                            + Buat Kontrak Baru
-                        </a>
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                    <div>
+                        <h3 class="text-xl font-bold text-gray-900 dark:text-white">Manajemen Kontrak Sewa</h3>
+                        <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Kelola perjanjian sewa kamar, tanggal jatuh tempo, dan deposit</p>
                     </div>
+                    <x-ui.button href="{{ route('contracts.create') }}" variant="primary" size="sm">
+                        <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                        Buat Kontrak Baru
+                    </x-ui.button>
+                </div>
 
-                    <!-- Filter & Search -->
-                    <form method="GET" action="{{ route('contracts.index') }}" class="mb-6 flex flex-col md:flex-row gap-4" x-data x-ref="form">
-                        <div class="flex-1">
-                            <x-ui.input type="text" name="search" value="{{ request('search') }}"
-                                   placeholder="Cari nama penghuni atau nomor kamar..." />
-                        </div>
-                        <div class="w-full md:w-48">
-                            <x-ui.select name="status" @change="$refs.form.submit()">
-                                <option value="">Semua Status</option>
-                                @foreach ($statuses as $status)
-                                    <option value="{{ $status->value }}" {{ request('status') === $status->value ? 'selected' : '' }}>
-                                        {{ $status->label() }}
-                                    </option>
-                                @endforeach
-                            </x-ui.select>
-                        </div>
-                        <div>
-                            <button type="submit" class="px-4 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300 dark:bg-gray-600 dark:text-gray-200 dark:hover:bg-gray-500">
-                                Cari
-                            </button>
-                            @if(request()->anyFilled(['search', 'status']))
-                                <a href="{{ route('contracts.index') }}" class="ml-2 text-sm text-indigo-600 hover:underline">Reset</a>
-                            @endif
-                        </div>
-                    </form>
-
-                    <!-- Table -->
-                    <x-ui.table-wrapper>
-                        <x-slot name="header">
-                            <tr>
-                                <th class="px-4 py-3">ID</th>
-                                <th class="px-4 py-3">Penghuni</th>
-                                <th class="px-4 py-3">Kamar</th>
-                                <th class="px-4 py-3">Periode Sewa</th>
-                                <th class="px-4 py-3">Harga Sewa</th>
-                                <th class="px-4 py-3">Status</th>
-                                <th class="px-4 py-3">Aksi</th>
-                            </tr>
-                        </x-slot>
-                                @forelse ($contracts as $contract)
-                                    <tr class="border-b dark:border-gray-600">
-                                        <td class="px-4 py-3 font-mono text-xs text-gray-500">#{{ $contract->id }}</td>
-                                        <td class="px-4 py-3 font-semibold">{{ $contract->tenant->name ?? 'Dihapus' }}</td>
-                                        <td class="px-4 py-3 font-bold text-indigo-600">{{ $contract->room->room_number ?? 'Dihapus' }}</td>
-                                        <td class="px-4 py-3">
-                                            {{ $contract->start_date->format('d/m/Y') }} - {{ $contract->end_date->format('d/m/Y') }}
-                                        </td>
-                                        <td class="px-4 py-3">Rp {{ number_format($contract->rent_price, 0, ',', '.') }}</td>
-                                        <td class="px-4 py-3">
-                                            <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
-                                        </td>
-                                        <td class="px-4 py-3 space-x-2">
-                                            <a href="{{ route('contracts.show', $contract) }}" class="text-blue-600 hover:underline">Detail</a>
-                                            <a href="{{ route('contracts.edit', $contract) }}" class="text-indigo-600 hover:underline">Edit</a>
-                                            <button type="button"
-                                                    @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('contracts.destroy', $contract) }}', name: 'kontrak ini' })"
-                                                    class="text-red-600 hover:underline">Hapus</button>
-                                        </td>
-                                    </tr>
-                                @empty
-                                    <tr>
-                                        <td colspan="7" class="px-4 py-8 text-center text-gray-500">
-                                            Tidak ada data kontrak ditemukan.
-                                        </td>
-                                    </tr>
-                                @endforelse
-                    </x-ui.table-wrapper>
-
-                    <div class="mt-4">
-                        {{ $contracts->links() }}
+                <!-- Filter & Search -->
+                <form method="GET" action="{{ route('contracts.index') }}" class="mb-6 flex flex-col sm:flex-row gap-3 items-center">
+                    <div class="flex-1 w-full">
+                        <x-ui.input type="text" name="search" value="{{ request('search') }}"
+                               placeholder="Cari nama penghuni atau kamar..." class="text-sm" />
                     </div>
+                    <div class="w-full sm:w-44">
+                        <x-ui.select name="status" class="text-sm">
+                            <option value="">Semua Status</option>
+                            @foreach ($statuses as $status)
+                                <option value="{{ $status->value }}" {{ request('status') === $status->value ? 'selected' : '' }}>
+                                    {{ $status->label() }}
+                                </option>
+                            @endforeach
+                        </x-ui.select>
+                    </div>
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <x-ui.button type="submit" variant="primary" size="sm" class="flex-1 sm:flex-none">
+                            Filter
+                        </x-ui.button>
+                        @if(request('search') || request('status'))
+                            <x-ui.button href="{{ route('contracts.index') }}" variant="secondary" size="sm">Reset</x-ui.button>
+                        @endif
+                    </div>
+                </form>
 
-            </x-ui.card>
-        </div>
+                <!-- Table -->
+                <x-ui.table-wrapper>
+                    <x-slot name="header">
+                        <tr>
+                            <th class="px-4 py-3.5">ID</th>
+                            <th class="px-4 py-3.5">Penghuni</th>
+                            <th class="px-4 py-3.5">Kamar</th>
+                            <th class="px-4 py-3.5">Periode Sewa</th>
+                            <th class="px-4 py-3.5">Harga Sewa</th>
+                            <th class="px-4 py-3.5">Status</th>
+                            <th class="px-4 py-3.5 text-right">Aksi</th>
+                        </tr>
+                    </x-slot>
+                            @forelse ($contracts as $contract)
+                                <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors">
+                                    <td class="px-4 py-3.5 font-mono text-xs text-gray-500 dark:text-gray-400">#{{ $contract->id }}</td>
+                                    <td class="px-4 py-3.5 font-bold text-gray-900 dark:text-white">{{ $contract->tenant->name ?? 'Dihapus' }}</td>
+                                    <td class="px-4 py-3.5 text-gray-700 dark:text-gray-300 font-medium">Kamar {{ $contract->room->room_number ?? 'Dihapus' }}</td>
+                                    <td class="px-4 py-3.5 text-xs text-gray-600 dark:text-gray-300">
+                                        {{ $contract->start_date->format('d M Y') }} - {{ $contract->end_date->format('d M Y') }}
+                                    </td>
+                                    <td class="px-4 py-3.5 font-semibold text-gray-900 dark:text-white">Rp {{ number_format($contract->rent_price, 0, ',', '.') }}</td>
+                                    <td class="px-4 py-3.5">
+                                        <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
+                                    </td>
+                                    <td class="px-4 py-3.5 text-right space-x-1.5">
+                                        <x-ui.button size="sm" variant="secondary" href="{{ route('contracts.show', $contract) }}">Detail</x-ui.button>
+                                        <x-ui.button size="sm" variant="secondary" href="{{ route('contracts.edit', $contract) }}">Edit</x-ui.button>
+                                    </td>
+                                </tr>
+                            @empty
+                                <tr>
+                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                                        Tidak ada data kontrak ditemukan.
+                                    </td>
+                                </tr>
+                            @endforelse
+                </x-ui.table-wrapper>
+
+                <div class="mt-6">
+                    {{ $contracts->links() }}
+                </div>
+
+        </x-ui.card>
     </div>
 </x-app-layout>

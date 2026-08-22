@@ -5,79 +5,86 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 p-4 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="mb-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
+    <div class="max-w-7xl mx-auto space-y-6">
 
-            <x-ui.card>
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Jenis Denda & Biaya</h3>
-                        <x-ui.button href="{{ route('additional_fee_types.create') }}" class="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
-                            Tambah Jenis
-                        </x-ui.button>
+        @if (session('success'))
+            <x-ui.alert type="success">
+                {{ session('success') }}
+            </x-ui.alert>
+        @endif
+        @if (session('error'))
+            <x-ui.alert type="error">
+                {{ session('error') }}
+            </x-ui.alert>
+        @endif
+
+        <x-ui.card>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Jenis Denda & Biaya Tambahan</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Kelola komponen biaya insidental seperti Denda Telat Bayar, Tambahan Tamu, Listrik Elektronik Tambahan, dll</p>
+                </div>
+                <x-ui.button href="{{ route('additional_fee_types.create') }}" variant="primary" size="sm">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    Tambah Jenis
+                </x-ui.button>
+            </div>
+
+            @if ($feeTypes->isEmpty())
+                <div class="py-12 text-center">
+                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/60 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
                     </div>
+                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Belum Ada Jenis Biaya Tambahan</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tambahkan jenis denda atau biaya tambahan untuk perhitungan invoice.</p>
+                </div>
+            @else
+                <x-ui.table-wrapper>
+                    <x-slot name="header">
+                        <tr>
+                            <th class="px-4 py-3.5">Nama</th>
+                            <th class="px-4 py-3.5">Jenis Perhitungan</th>
+                            <th class="px-4 py-3.5">Nilai Default</th>
+                            <th class="px-4 py-3.5 text-center">Status</th>
+                            <th class="px-4 py-3.5 text-right">Aksi</th>
+                        </tr>
+                    </x-slot>
+                    @foreach ($feeTypes as $type)
+                        <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors">
+                            <td class="px-4 py-3.5 font-bold text-gray-900 dark:text-white">{{ $type->nama }}</td>
+                            <td class="px-4 py-3.5 text-gray-700 dark:text-gray-300">
+                                @if ($type->jenis === 'nominal_tetap')
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-blue-50 text-blue-700 dark:bg-blue-950/60 dark:text-blue-300">Nominal Tetap</span>
+                                @else
+                                    <span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-medium bg-purple-50 text-purple-700 dark:bg-purple-950/60 dark:text-purple-300">Persentase</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3.5 font-semibold text-gray-900 dark:text-white">
+                                @if ($type->jenis === 'nominal_tetap')
+                                    Rp {{ number_format($type->nilai_default, 0, ',', '.') }}
+                                @else
+                                    {{ rtrim(rtrim(number_format($type->nilai_default, 2, ',', '.'), '0'), ',') }}%
+                                @endif
+                            </td>
+                            <td class="px-4 py-3.5 text-center">
+                                @if ($type->is_active)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">Aktif</span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400">Nonaktif</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3.5 text-right space-x-1.5">
+                                <x-ui.button size="sm" variant="secondary" href="{{ route('additional_fee_types.edit', $type) }}">Edit</x-ui.button>
+                                <x-ui.button size="sm" variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('additional_fee_types.destroy', $type) }}', name: 'jenis {{ addslashes($type->nama) }}' })">Hapus</x-ui.button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </x-ui.table-wrapper>
+                <div class="mt-6">
+                    {{ $feeTypes->links() }}
+                </div>
+            @endif
+        </x-ui.card>
 
-                    @if ($feeTypes->isEmpty())
-                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 italic">Belum ada Jenis Denda/Biaya.</p>
-                    @else
-                        <x-ui.table-wrapper>
-                            <x-slot name="header">
-                                <tr class="border-b dark:border-gray-700 text-left">
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama</th>
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Jenis</th>
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nilai Default</th>
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Status</th>
-                                    <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
-                                </tr>
-                            </x-slot>
-                                    @foreach ($feeTypes as $type)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                            <td class="py-3 pr-4 font-medium text-gray-900 dark:text-gray-100">{{ $type->nama }}</td>
-                                            <td class="py-3 pr-4 text-gray-700 dark:text-gray-300">
-                                                @if ($type->jenis === 'nominal_tetap')
-                                                    Nominal Tetap
-                                                @else
-                                                    Persentase
-                                                @endif
-                                            </td>
-                                            <td class="py-3 pr-4 text-gray-700 dark:text-gray-300">
-                                                @if ($type->jenis === 'nominal_tetap')
-                                                    Rp {{ number_format($type->nilai_default, 0, ',', '.') }}
-                                                @else
-                                                    {{ rtrim(rtrim(number_format($type->nilai_default, 2, ',', '.'), '0'), ',') }}%
-                                                @endif
-                                            </td>
-                                            <td class="py-3 pr-4 text-center">
-                                                @if ($type->is_active)
-                                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300">Aktif</span>
-                                                @else
-                                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400">Nonaktif</span>
-                                                @endif
-                                            </td>
-                                            <td class="py-3">
-                                                <div class="flex items-center gap-2">
-                                                    <x-ui.button href="{{ route('additional_fee_types.edit', $type) }}" class="text-xs px-3 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300 rounded hover:bg-yellow-200 transition-colors">Edit</x-ui.button>
-    <x-ui.button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('additional_fee_types.destroy', $type) }}', name: 'jenis {{ addslashes($type->nama) }}' })" class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">Hapus</x-ui.button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                        </x-ui.table-wrapper>
-                        <div class="mt-4">
-                            {{ $feeTypes->links() }}
-                        </div>
-                    @endif
-            </x-ui.card>
-        </div>
     </div>
 </x-app-layout>

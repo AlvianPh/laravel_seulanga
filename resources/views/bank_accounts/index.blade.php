@@ -5,77 +5,88 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            @if (session('success'))
-                <div class="mb-4 p-4 bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 rounded-lg">
-                    {{ session('success') }}
-                </div>
-            @endif
-            @if (session('error'))
-                <div class="mb-4 p-4 bg-red-100 dark:bg-red-900/30 text-red-700 dark:text-red-300 rounded-lg">
-                    {{ session('error') }}
-                </div>
-            @endif
+    <div class="max-w-7xl mx-auto space-y-6">
 
-            <div class="mb-6 border-b border-gray-200 dark:border-gray-700">
-                <nav class="-mb-px flex space-x-8" aria-label="Tabs">
-                    <a href="{{ route('payment_methods.index') }}" class="{{ request()->routeIs('payment_methods.*') ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-                        Metode Pembayaran
-                    </a>
-                    <a href="{{ route('bank_accounts.index') }}" class="{{ request()->routeIs('bank_accounts.*') ? 'border-indigo-500 text-indigo-600 dark:text-indigo-400' : 'border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300' }} whitespace-nowrap border-b-2 py-4 px-1 text-sm font-medium">
-                        Bank / Rekening
-                    </a>
-                </nav>
+        @if (session('success'))
+            <x-ui.alert type="success">
+                {{ session('success') }}
+            </x-ui.alert>
+        @endif
+        @if (session('error'))
+            <x-ui.alert type="error">
+                {{ session('error') }}
+            </x-ui.alert>
+        @endif
+
+        <!-- Sub-navigation Tabs (Modern Pill/Underline Tab) -->
+        <div class="flex items-center gap-2 p-1.5 bg-gray-100 dark:bg-gray-800/80 rounded-2xl w-fit border border-gray-200/80 dark:border-gray-700/70">
+            <a href="{{ route('payment_methods.index') }}" 
+               class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('payment_methods.*') ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900' }}">
+                Metode Pembayaran
+            </a>
+            <a href="{{ route('bank_accounts.index') }}" 
+               class="px-4 py-2 rounded-xl text-xs font-bold transition-all {{ request()->routeIs('bank_accounts.*') ? 'bg-white dark:bg-gray-900 text-indigo-600 dark:text-indigo-400 shadow-xs' : 'text-gray-600 dark:text-gray-400 hover:text-gray-900' }}">
+                Rekening Bank Kost
+            </a>
+        </div>
+
+        <x-ui.card>
+            <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+                <div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">Rekening Bank Kost</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Daftar nomor rekening bank penerima pembayaran untuk dicantumkan pada invoice</p>
+                </div>
+                <x-ui.button href="{{ route('bank_accounts.create') }}" variant="primary" size="sm">
+                    <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                    </svg>
+                    Tambah Rekening
+                </x-ui.button>
             </div>
 
-            <x-ui.card>
-                    <div class="flex items-center justify-between mb-6">
-                        <h3 class="text-lg font-semibold text-gray-900 dark:text-gray-100">Daftar Rekening Bank</h3>
-                        <a href="{{ route('bank_accounts.create') }}" class="inline-flex items-center gap-2 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">
-                            Tambah Rekening
-                        </a>
+            @if ($bankAccounts->isEmpty())
+                <div class="py-12 text-center">
+                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/60 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
                     </div>
+                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Belum Ada Rekening Bank</h4>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tambahkan rekening bank untuk mempermudah transfer sewa penghuni.</p>
+                </div>
+            @else
+                <x-ui.table-wrapper>
+                    <x-slot name="header">
+                        <tr>
+                            <th class="px-4 py-3.5">Nama Bank</th>
+                            <th class="px-4 py-3.5">Nomor Rekening</th>
+                            <th class="px-4 py-3.5">Nama Pemilik</th>
+                            <th class="px-4 py-3.5 text-center">Status</th>
+                            <th class="px-4 py-3.5 text-right">Aksi</th>
+                        </tr>
+                    </x-slot>
+                    @foreach ($bankAccounts as $account)
+                        <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors">
+                            <td class="px-4 py-3.5 font-bold text-gray-900 dark:text-white">{{ $account->nama_bank }}</td>
+                            <td class="px-4 py-3.5 font-mono text-sm text-gray-800 dark:text-gray-200 font-semibold">{{ $account->nomor_rekening }}</td>
+                            <td class="px-4 py-3.5 text-gray-700 dark:text-gray-300 font-medium">{{ $account->nama_pemilik_rekening }}</td>
+                            <td class="px-4 py-3.5 text-center">
+                                @if ($account->is_active)
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-300 border border-emerald-200/80 dark:border-emerald-800/60">Aktif</span>
+                                @else
+                                    <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400">Nonaktif</span>
+                                @endif
+                            </td>
+                            <td class="px-4 py-3.5 text-right space-x-1.5">
+                                <x-ui.button size="sm" variant="secondary" href="{{ route('bank_accounts.edit', $account) }}">Edit</x-ui.button>
+                                <x-ui.button size="sm" variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('bank_accounts.destroy', $account) }}', name: 'rekening {{ addslashes($account->nama_bank) }}' })">Hapus</x-ui.button>
+                            </td>
+                        </tr>
+                    @endforeach
+                </x-ui.table-wrapper>
+                <div class="mt-6">
+                    {{ $bankAccounts->links() }}
+                </div>
+            @endif
+        </x-ui.card>
 
-                    @if ($bankAccounts->isEmpty())
-                        <p class="text-gray-500 dark:text-gray-400 text-center py-8 italic">Belum ada Rekening.</p>
-                    @else
-                        <x-ui.table-wrapper>
-                            <x-slot name="header">
-                                <tr class="border-b dark:border-gray-700 text-left">
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Bank</th>
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nomor Rekening</th>
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400">Nama Pemilik</th>
-                                    <th class="pb-3 pr-4 font-semibold text-gray-600 dark:text-gray-400 text-center">Status</th>
-                                    <th class="pb-3 font-semibold text-gray-600 dark:text-gray-400">Aksi</th>
-                                </tr>
-                            </x-slot>
-                                    @foreach ($bankAccounts as $account)
-                                        <tr class="hover:bg-gray-50 dark:hover:bg-gray-700/30 transition-colors">
-                                            <td class="py-3 pr-4 font-medium text-gray-900 dark:text-gray-100">{{ $account->nama_bank }}</td>
-                                            <td class="py-3 pr-4 text-gray-700 dark:text-gray-300">{{ $account->nomor_rekening }}</td>
-                                            <td class="py-3 pr-4 text-gray-700 dark:text-gray-300">{{ $account->nama_pemilik_rekening }}</td>
-                                            <td class="py-3 pr-4 text-center">
-                                                @if ($account->is_active)
-                                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 dark:bg-green-900/40 dark:text-green-300">Aktif</span>
-                                                @else
-                                                    <span class="inline-block px-2 py-0.5 rounded-full text-xs font-semibold bg-gray-100 text-gray-500 dark:bg-gray-700 dark:text-gray-400">Nonaktif</span>
-                                                @endif
-                                            </td>
-                                            <td class="py-3">
-                                                <div class="flex items-center gap-2">
-                                                    <a href="{{ route('bank_accounts.edit', $account) }}" class="text-xs px-3 py-1 bg-yellow-100 text-yellow-700 dark:bg-yellow-900/40 dark:text-yellow-300 rounded hover:bg-yellow-200 transition-colors">Edit</a>
-                                                    <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('bank_accounts.destroy', $account) }}', name: 'rekening {{ addslashes($account->nama_bank) }}' })" class="text-xs px-3 py-1 bg-red-100 text-red-700 dark:bg-red-900/40 dark:text-red-300 rounded hover:bg-red-200 transition-colors">Hapus</button>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    @endforeach
-                        </x-ui.table-wrapper>
-                        <div class="mt-4">
-                            {{ $bankAccounts->links() }}
-                        </div>
-                    @endif
-            </x-ui.card>
-        </div>
     </div>
 </x-app-layout>

@@ -5,43 +5,46 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-2xl mx-auto sm:px-6 lg:px-8">
-            <x-ui.card>
-                    <form action="{{ route('additional_fee_types.store') }}" method="POST">
-                        @csrf
-                        <div class="mb-4">
-                            <label for="nama" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nama</label>
-                            <x-ui.input type="text" name="nama" id="nama" value="{{ old('nama') }}" required />
-                            @error('nama')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                        </div>
+    <div class="max-w-xl mx-auto space-y-6">
+        <x-ui.card>
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Tambah Jenis Biaya / Denda</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Daftarkan konfigurasi denda telat bayar atau biaya tambahan (kebersihan, listrik ekstra, dll)</p>
+            </div>
 
-                        <div class="mb-4">
-                            <label for="jenis" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Jenis</label>
-                            <x-ui.select name="jenis" id="jenis" required>
-                                <option value="nominal_tetap" {{ old('jenis') == 'nominal_tetap' ? 'selected' : '' }}>Nominal Tetap (Rp)</option>
-                                <option value="persentase" {{ old('jenis') == 'persentase' ? 'selected' : '' }}>Persentase (%)</option>
-                            </x-ui.select>
-                            @error('jenis')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                        </div>
+            <form action="{{ route('additional_fee_types.store') }}" method="POST">
+                @csrf
+                <div class="mb-4">
+                    <label for="nama" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Nama Biaya / Denda <span class="text-red-500">*</span></label>
+                    <x-ui.input type="text" name="nama" id="nama" value="{{ old('nama') }}" required class="text-sm" placeholder="Contoh: Denda Keterlambatan, Biaya Listrik AC Ekstra" />
+                    @error('nama')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                </div>
 
-                        <div class="mb-4">
-                            <label for="nilai_default" class="block text-sm font-medium text-gray-700 dark:text-gray-300">Nilai Default</label>
-                            <x-ui.input type="number" step="0.01" min="0" name="nilai_default" id="nilai_default" value="{{ old('nilai_default', '0') }}" required />
-                            @error('nilai_default')<p class="mt-1 text-sm text-red-600">{{ $message }}</p>@enderror
-                        </div>
+                <div class="mb-4">
+                    <label for="jenis" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Jenis Perhitungan <span class="text-red-500">*</span></label>
+                    <x-ui.select name="jenis" id="jenis" required class="text-sm">
+                        <option value="nominal_tetap" {{ old('jenis') == 'nominal_tetap' ? 'selected' : '' }}>Nominal Tetap (Rp)</option>
+                        <option value="persentase" {{ old('jenis') == 'persentase' ? 'selected' : '' }}>Persentase (% dari total sewa)</option>
+                    </x-ui.select>
+                    @error('jenis')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                </div>
 
-                        <div class="mb-6 flex items-center">
-                            <input type="checkbox" name="is_active" id="is_active" value="1" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" {{ old('is_active', true) ? 'checked' : '' }}>
-                            <label for="is_active" class="ml-2 block text-sm text-gray-900 dark:text-gray-300">Aktif</label>
-                        </div>
+                <div class="mb-4">
+                    <label for="nilai_default" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Nilai Default <span class="text-red-500">*</span></label>
+                    <x-ui.input type="number" step="0.01" min="0" name="nilai_default" id="nilai_default" value="{{ old('nilai_default', '0') }}" required class="text-sm" placeholder="Contoh: 50000 atau 5" />
+                    @error('nilai_default')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+                </div>
 
-                        <div class="flex items-center justify-end">
-                            <a href="{{ route('additional_fee_types.index') }}" class="text-sm text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 mr-4">Batal</a>
-                            <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm font-medium">Simpan</button>
-                        </div>
-                    </form>
-            </x-ui.card>
-        </div>
+                <div class="mb-6 flex items-center">
+                    <input type="checkbox" name="is_active" id="is_active" value="1" class="rounded border-gray-300 dark:border-gray-600 text-indigo-600 shadow-xs focus:ring-indigo-500" {{ old('is_active', true) ? 'checked' : '' }}>
+                    <label for="is_active" class="ml-2 block text-xs font-medium text-gray-700 dark:text-gray-300">Status Aktif (Tersedia untuk digunakan)</label>
+                </div>
+
+                <div class="flex items-center gap-3 pt-4 border-t border-gray-100 dark:border-gray-700/60">
+                    <x-ui.button type="submit" variant="primary">Simpan Jenis Biaya</x-ui.button>
+                    <x-ui.button variant="secondary" href="{{ route('additional_fee_types.index') }}">Batal</x-ui.button>
+                </div>
+            </form>
+        </x-ui.card>
     </div>
 </x-app-layout>

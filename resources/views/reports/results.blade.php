@@ -10,42 +10,47 @@
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg mb-6">
-                
-                <!-- Action Bar -->
-                <div class="p-4 bg-gray-50 dark:bg-gray-700 border-b flex justify-between items-center flex-wrap gap-4">
-                    <a href="{{ route('reports.index') }}" class="text-sm font-medium text-gray-600 hover:text-gray-900 dark:text-gray-300">
-                        &larr; Kembali ke Filter
-                    </a>
+    <div class="max-w-7xl mx-auto space-y-6">
+        <div class="bg-white dark:bg-gray-800 shadow-sm rounded-2xl border border-gray-100 dark:border-gray-700/70 overflow-hidden">
+            
+            <!-- Action Bar -->
+            <div class="p-4 sm:p-5 bg-gray-50/70 dark:bg-gray-800/50 border-b border-gray-100 dark:border-gray-700/70 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                <div>
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white">{{ $title }}</h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Periode Laporan: <strong class="text-gray-700 dark:text-gray-200">{{ $dateLabel }}</strong></p>
+                </div>
+
+                <div class="flex items-center gap-3 w-full sm:w-auto justify-between sm:justify-end">
+                    <x-ui.button variant="secondary" size="sm" href="{{ route('reports.index') }}">
+                        &larr; Filter Ulang
+                    </x-ui.button>
 
                     <!-- Tombol Export -->
-                    <form method="POST" action="{{ route('reports.generate') }}" class="flex space-x-2">
+                    <form method="POST" action="{{ route('reports.generate') }}" class="flex items-center gap-2">
                         @csrf
                         <input type="hidden" name="type" value="{{ $type }}">
                         <input type="hidden" name="filter" value="{{ $filter }}">
                         <input type="hidden" name="start_date" value="{{ $start_date }}">
                         <input type="hidden" name="end_date" value="{{ $end_date }}">
 
-                        <button type="submit" name="action" value="pdf" class="px-4 py-2 bg-red-600 text-white text-sm font-semibold rounded hover:bg-red-700 flex items-center">
-                            PDF
-                        </button>
-                        <button type="submit" name="action" value="excel" class="px-4 py-2 bg-green-600 text-white text-sm font-semibold rounded hover:bg-green-700 flex items-center">
+                        <x-ui.button type="submit" name="action" value="pdf" variant="danger" size="sm">
+                            Export PDF
+                        </x-ui.button>
+                        <x-ui.button type="submit" name="action" value="excel" variant="primary" size="sm">
                             Excel (XLSX)
-                        </button>
-                        <button type="submit" name="action" value="csv" class="px-4 py-2 bg-gray-600 text-white text-sm font-semibold rounded hover:bg-gray-700 flex items-center">
+                        </x-ui.button>
+                        <x-ui.button type="submit" name="action" value="csv" variant="secondary" size="sm">
                             CSV
-                        </button>
+                        </x-ui.button>
                     </form>
                 </div>
-
-                <!-- Table Content -->
-                <div class="p-6 overflow-x-auto">
-                    @include($viewName, ['data' => $data])
-                </div>
-
             </div>
+
+            <!-- Table Content -->
+            <div class="p-4 sm:p-6 overflow-x-auto">
+                @include($viewName, ['data' => $data])
+            </div>
+
         </div>
     </div>
 </x-app-layout>

@@ -29,7 +29,13 @@ class RoomController extends Controller
     {
         $this->authorize('viewAny', Room::class);
 
-        $query = Room::query()->with(['roomType', 'photos']); // Eager load tipe & foto
+        $query = Room::query()->with([
+            'roomType', 
+            'photos', 
+            'contracts' => function ($q) {
+                $q->where('status', 'active')->with('tenant');
+            }
+        ]); // Eager load tipe, foto & penghuni aktif
 
         // Filter status
         if ($request->filled('status')) {

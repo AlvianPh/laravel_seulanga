@@ -5,162 +5,163 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-ui.card>
+    <div class="max-w-4xl mx-auto space-y-6">
+        <x-ui.card>
 
-                @if (session('success'))
-                    <div class="mb-4 p-4 bg-green-100 text-green-700 rounded">
-                        {{ session('success') }}
-                    </div>
-                @endif
+            @if (session('success'))
+                <x-ui.alert type="success">
+                    {{ session('success') }}
+                </x-ui.alert>
+            @endif
 
-                <form method="POST" action="{{ route('tenants.update', $tenant) }}" enctype="multipart/form-data">
-                    @csrf
-                    @method('PATCH')
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Edit Data Penghuni: {{ $tenant->name }}</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Perbarui data kontak, NIK, alamat asal, atau ganti dokumen identitas</p>
+            </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Info Dasar -->
+            <form method="POST" action="{{ route('tenants.update', $tenant) }}" enctype="multipart/form-data">
+                @csrf
+                @method('PATCH')
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- Info Dasar -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 border-b border-gray-100 dark:border-gray-700/70 pb-2">Informasi Pribadi</h4>
+                        
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 border-b pb-2 mb-4">Informasi Pribadi</h3>
-                            
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Lengkap <span class="text-red-500">*</span></label>
-                                <x-ui.input type="text" name="name" value="{{ old('name', $tenant->name) }}" required />
-                                @error('name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">NIK (16 Digit) <span class="text-red-500">*</span></label>
-                                <x-ui.input type="text" name="nik" value="{{ old('nik', $tenant->nik) }}" required minlength="16" maxlength="16" pattern="\d{16}"
-                                       class="font-mono" />
-                                <p class="text-xs text-gray-500 mt-1">Hanya angka, tepat 16 digit.</p>
-                                @error('nik') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Jenis Kelamin <span class="text-red-500">*</span></label>
-                                <x-ui.select name="gender" required>
-                                    @foreach ($genders as $gender)
-                                        <option value="{{ $gender->value }}" {{ old('gender', $tenant->gender->value) === $gender->value ? 'selected' : '' }}>
-                                            {{ $gender->label() }}
-                                        </option>
-                                    @endforeach
-                                </x-ui.select>
-                                @error('gender') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Tanggal Lahir</label>
-                                <x-ui.input type="date" name="birth_date" value="{{ old('birth_date', $tenant->birth_date ? $tenant->birth_date->format('Y-m-d') : '') }}" />
-                                @error('birth_date') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Nama Lengkap <span class="text-red-500">*</span></label>
+                            <x-ui.input type="text" name="name" value="{{ old('name', $tenant->name) }}" required class="text-sm" />
+                            @error('name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <!-- Kontak & Alamat -->
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 border-b pb-2 mb-4">Kontak & Alamat</h3>
-                            
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">No. HP <span class="text-red-500">*</span></label>
-                                <x-ui.input type="text" name="phone" value="{{ old('phone', $tenant->phone) }}" required placeholder="08..." />
-                                @error('phone') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">NIK (16 Digit) <span class="text-red-500">*</span></label>
+                            <x-ui.input type="text" name="nik" value="{{ old('nik', $tenant->nik) }}" required minlength="16" maxlength="16" pattern="\d{16}"
+                                   class="font-mono text-sm" />
+                            <p class="text-[11px] text-gray-400 mt-1">Hanya angka, tepat 16 digit.</p>
+                            @error('nik') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
 
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Email</label>
-                                <x-ui.input type="email" name="email" value="{{ old('email', $tenant->email) }}" />
-                                @error('email') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Jenis Kelamin <span class="text-red-500">*</span></label>
+                            <x-ui.select name="gender" required class="text-sm">
+                                @foreach ($genders as $gender)
+                                    <option value="{{ $gender->value }}" {{ old('gender', $tenant->gender->value) === $gender->value ? 'selected' : '' }}>
+                                        {{ $gender->label() }}
+                                    </option>
+                                @endforeach
+                            </x-ui.select>
+                            @error('gender') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
 
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Alamat Asal</label>
-                                <x-ui.textarea name="address" rows="3">{{ old('address', $tenant->address) }}</x-ui.textarea>
-                                @error('address') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Tanggal Lahir</label>
+                            <x-ui.input type="date" name="birth_date" value="{{ old('birth_date', $tenant->birth_date ? $tenant->birth_date->format('Y-m-d') : '') }}" class="text-sm" />
+                            @error('birth_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6 border-t pt-6">
-                        <!-- Dokumen -->
+                    <!-- Kontak & Alamat -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 border-b border-gray-100 dark:border-gray-700/70 pb-2">Kontak & Alamat</h4>
+                        
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 border-b pb-2 mb-4">Ganti Dokumen Lampiran</h3>
-                            
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ganti Foto KTP (Max 2MB)</label>
-                                <input type="file" name="ktp_photo" accept="image/jpeg,image/png,image/webp"
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengganti.</p>
-                                @error('ktp_photo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Ganti Foto Profil (Max 2MB)</label>
-                                <input type="file" name="tenant_photo" accept="image/jpeg,image/png,image/webp"
-                                       class="w-full border rounded px-3 py-2 dark:bg-gray-700 dark:border-gray-600 dark:text-white">
-                                <p class="text-xs text-gray-500 mt-1">Kosongkan jika tidak ingin mengganti.</p>
-                                @error('tenant_photo') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">No. HP <span class="text-red-500">*</span></label>
+                            <x-ui.input type="text" name="phone" value="{{ old('phone', $tenant->phone) }}" required class="text-sm" />
+                            @error('phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <!-- Kontak Darurat -->
                         <div>
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 border-b pb-2 mb-4">Kontak Darurat</h3>
-                            
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Nama Kontak Darurat</label>
-                                <x-ui.input type="text" name="emergency_contact_name" value="{{ old('emergency_contact_name', $tenant->emergency_contact_name) }}" />
-                                @error('emergency_contact_name') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">No. HP Darurat</label>
-                                <x-ui.input type="text" name="emergency_contact_phone" value="{{ old('emergency_contact_phone', $tenant->emergency_contact_phone) }}" placeholder="08..." />
-                                @error('emergency_contact_phone') <p class="text-red-500 text-sm mt-1">{{ $message }}</p> @enderror
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="mt-8 flex gap-3">
-                        <button type="submit" class="px-6 py-2 bg-indigo-600 text-white font-semibold rounded hover:bg-indigo-700">
-                            Simpan Perubahan
-                        </button>
-                        <a href="{{ route('tenants.index') }}" class="px-6 py-2 bg-gray-200 text-gray-700 font-semibold rounded hover:bg-gray-300">
-                            Batal
-                        </a>
-                    </div>
-                </form>
-
-                <!-- Kelola File Eksisting -->
-                <div class="mt-12 border-t pt-8">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4">Dokumen Eksisting</h3>
-                    
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <!-- Foto KTP -->
-                        <div class="border rounded p-4 dark:border-gray-700">
-                            <h4 class="font-medium mb-2 text-gray-700 dark:text-gray-300">Foto KTP</h4>
-                            @if($tenant->ktp_photo_path)
-                                <img src="{{ Storage::url($tenant->ktp_photo_path) }}" class="w-full h-48 object-cover rounded mb-3" alt="Foto KTP">
-                                <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.ktp.destroy', $tenant) }}', name: 'foto KTP ini' })" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus KTP</button>
-                            @else
-                                <p class="text-sm text-gray-500 italic">Belum ada foto KTP.</p>
-                            @endif
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Email</label>
+                            <x-ui.input type="email" name="email" value="{{ old('email', $tenant->email) }}" class="text-sm" />
+                            @error('email') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <!-- Foto Profil -->
-                        <div class="border rounded p-4 dark:border-gray-700">
-                            <h4 class="font-medium mb-2 text-gray-700 dark:text-gray-300">Foto Profil</h4>
-                            @if($tenant->tenant_photo_path)
-                                <img src="{{ Storage::url($tenant->tenant_photo_path) }}" class="w-full h-48 object-cover rounded mb-3" alt="Foto Profil">
-                                <button type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.photo.destroy', $tenant) }}', name: 'foto profil ini' })" class="text-sm px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">Hapus Profil</button>
-                            @else
-                                <p class="text-sm text-gray-500 italic">Belum ada foto profil.</p>
-                            @endif
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Alamat Asal</label>
+                            <x-ui.textarea name="address" rows="3" class="text-sm">{{ old('address', $tenant->address) }}</x-ui.textarea>
+                            @error('address') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
                 </div>
 
-            </x-ui.card>
-        </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mt-8 pt-6 border-t border-gray-100 dark:border-gray-700/70">
+                    <!-- Dokumen Baru -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 border-b border-gray-100 dark:border-gray-700/70 pb-2">Ganti Dokumen Lampiran</h4>
+                        
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Upload Foto KTP Baru (Max 2MB)</label>
+                            <input type="file" name="ktp_photo" accept="image/jpeg,image/png,image/webp"
+                                   class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
+                            @error('ktp_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Upload Foto Profil Baru (Max 2MB)</label>
+                            <input type="file" name="tenant_photo" accept="image/jpeg,image/png,image/webp"
+                                   class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
+                            @error('tenant_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+
+                    <!-- Kontak Darurat -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 border-b border-gray-100 dark:border-gray-700/70 pb-2">Kontak Darurat</h4>
+                        
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Nama Kontak Darurat</label>
+                            <x-ui.input type="text" name="emergency_contact_name" value="{{ old('emergency_contact_name', $tenant->emergency_contact_name) }}" class="text-sm" />
+                            @error('emergency_contact_name') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">No. HP Darurat</label>
+                            <x-ui.input type="text" name="emergency_contact_phone" value="{{ old('emergency_contact_phone', $tenant->emergency_contact_phone) }}" class="text-sm" />
+                            @error('emergency_contact_phone') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 pt-6 border-t border-gray-100 dark:border-gray-700/60">
+                    <x-ui.button type="submit" variant="primary">
+                        Simpan Perubahan
+                    </x-ui.button>
+                    <x-ui.button variant="secondary" href="{{ route('tenants.index') }}">
+                        Batal
+                    </x-ui.button>
+                </div>
+            </form>
+
+            <!-- Kelola File Eksisting -->
+            <div class="mt-8 border-t border-gray-100 dark:border-gray-700/70 pt-6">
+                <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4">Dokumen Eksisting</h4>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <!-- Foto KTP -->
+                    <div class="border border-gray-200/80 dark:border-gray-700/70 rounded-2xl p-4 bg-gray-50/50 dark:bg-gray-800/40">
+                        <h5 class="text-xs font-bold uppercase tracking-wider mb-2 text-gray-700 dark:text-gray-300">Foto KTP</h5>
+                        @if($tenant->ktp_photo_path)
+                            <img src="{{ Storage::url($tenant->ktp_photo_path) }}" class="w-full h-44 object-cover rounded-xl mb-3 shadow-xs" alt="Foto KTP">
+                            <x-ui.button size="sm" variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.ktp.destroy', $tenant) }}', name: 'foto KTP ini' })">Hapus KTP</x-ui.button>
+                        @else
+                            <p class="text-xs text-gray-400 italic py-6 text-center">Belum ada foto KTP.</p>
+                        @endif
+                    </div>
+
+                    <!-- Foto Profil -->
+                    <div class="border border-gray-200/80 dark:border-gray-700/70 rounded-2xl p-4 bg-gray-50/50 dark:bg-gray-800/40">
+                        <h5 class="text-xs font-bold uppercase tracking-wider mb-2 text-gray-700 dark:text-gray-300">Foto Profil</h5>
+                        @if($tenant->tenant_photo_path)
+                            <img src="{{ Storage::url($tenant->tenant_photo_path) }}" class="w-full h-44 object-cover rounded-xl mb-3 shadow-xs" alt="Foto Profil">
+                            <x-ui.button size="sm" variant="danger" type="button" @click.prevent="$dispatch('open-delete-modal', { url: '{{ route('tenants.photo.destroy', $tenant) }}', name: 'foto profil ini' })">Hapus Profil</x-ui.button>
+                        @else
+                            <p class="text-xs text-gray-400 italic py-6 text-center">Belum ada foto profil.</p>
+                        @endif
+                    </div>
+                </div>
+            </div>
+
+        </x-ui.card>
     </div>
 </x-app-layout>

@@ -5,140 +5,143 @@
                 {{ __('Detail Kamar: ') . $room->room_number }}
             </h2>
             <div class="space-x-2">
-                <a href="{{ route('rooms.edit', $room) }}" class="px-4 py-2 bg-indigo-600 text-white text-sm rounded hover:bg-indigo-700">Edit Kamar</a>
-                <a href="{{ route('rooms.index') }}" class="px-4 py-2 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300">Kembali</a>
+                <x-ui.button variant="warning" href="{{ route('rooms.edit', $room) }}">Edit Kamar</x-ui.button>
+                <x-ui.button variant="secondary" href="{{ route('rooms.index') }}">Kembali</x-ui.button>
             </div>
         </div>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                
-                <!-- Kolom Kiri: Galeri Foto -->
-                <div class="lg:col-span-2">
-                    <x-ui.card class="mb-6">
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Galeri Foto</h3>
-                            
-                            @if($room->photos->isEmpty())
-                                <div class="bg-gray-100 dark:bg-gray-700 rounded h-64 flex items-center justify-center text-gray-500">
-                                    Belum ada foto untuk kamar ini.
-                                </div>
-                            @else
-                                <!-- Foto Utama -->
-                                @php
-                                    $primaryPhoto = $room->photos->where('is_primary', true)->first() ?? $room->photos->first();
-                                    $otherPhotos = $room->photos->where('id', '!=', $primaryPhoto->id);
-                                @endphp
-                                
-                                <div class="mb-4">
-                                    <img src="{{ Storage::url($primaryPhoto->file_path) }}" class="w-full h-96 object-cover rounded shadow" alt="Foto utama kamar">
-                                </div>
-                                
-                                <!-- Thumbnail lainnya -->
-                                @if($otherPhotos->isNotEmpty())
-                                    <div class="grid grid-cols-4 gap-2">
-                                        @foreach($otherPhotos as $photo)
-                                            <img src="{{ Storage::url($photo->file_path) }}" class="w-full h-24 object-cover rounded opacity-80 hover:opacity-100 cursor-pointer" alt="Foto kamar">
-                                        @endforeach
-                                    </div>
-                                @endif
-                            @endif
-                    </x-ui.card>
-                </div>
-
-                <!-- Kolom Kanan: Detail & Fasilitas -->
-                <div>
-                    <!-- Detail Harga & Spesifikasi -->
-                    <x-ui.card class="mb-6">
-                            <div class="flex justify-between items-center mb-4 border-b pb-2">
-                                <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100">Spesifikasi</h3>
-                                <x-ui.badge :status="$room->status">{{ $room->status->label() }}</x-ui.badge>
-                            </div>
-
-                            <dl class="space-y-3 text-sm">
-                                <div class="flex justify-between">
-                                    <dt class="text-gray-500 dark:text-gray-400">Lantai</dt>
-                                    <dd class="font-medium text-gray-900 dark:text-gray-100">{{ $room->floor }}</dd>
-                                </div>
-                                <div class="flex justify-between">
-                                    <dt class="text-gray-500 dark:text-gray-400">Tipe</dt>
-                                    <dd class="font-medium text-gray-900 dark:text-gray-100">{{ $room->roomType?->name ?? '-' }}</dd>
-                                </div>
-                                <div class="flex justify-between">
-                                    <dt class="text-gray-500 dark:text-gray-400">Luas (m²)</dt>
-                                    <dd class="font-medium text-gray-900 dark:text-gray-100">{{ $room->size_m2 }}</dd>
-                                </div>
-                            </dl>
-
-                            <div class="mt-6 pt-4 border-t border-gray-200 dark:border-gray-700">
-                                <dl class="space-y-3 text-sm">
-                                    <div class="flex justify-between text-lg font-bold">
-                                        <dt class="text-gray-900 dark:text-gray-100">Harga/Bulan</dt>
-                                        <dd class="text-indigo-600 dark:text-indigo-400">Rp {{ number_format($room->monthly_price, 0, ',', '.') }}</dd>
-                                    </div>
-                                    <div class="flex justify-between">
-                                        <dt class="text-gray-500 dark:text-gray-400">Deposit</dt>
-                                        <dd class="font-medium text-gray-900 dark:text-gray-100">Rp {{ number_format($room->deposit_price, 0, ',', '.') }}</dd>
-                                    </div>
-                                </dl>
-                            </div>
-                    </x-ui.card>
-
-                    <!-- Fasilitas -->
-                    <x-ui.card>
-                            <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Fasilitas</h3>
-                            
-                            @if($room->facilities->isNotEmpty())
-                                <ul class="grid grid-cols-2 gap-2 text-sm text-gray-600 dark:text-gray-400">
-                                    @foreach($room->facilities as $facility)
-                                        <li class="flex items-center">
-                                            <svg class="h-4 w-4 text-green-500 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
-                                            </svg>
-                                            {{ $facility->name }}
-                                        </li>
-                                    @endforeach
-                                </ul>
-                            @else
-                                <p class="text-gray-500 italic text-sm">Tidak ada fasilitas spesifik yang tercatat.</p>
-                            @endif
-                    </x-ui.card>
-                </div>
-
+    <div class="max-w-7xl mx-auto space-y-6">
+        <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+            <div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Detail Kamar: {{ $room->room_number }}</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Spesifikasi kamar, galeri foto, fasilitas dan riwayat sewa</p>
             </div>
-            
-            <!-- Riwayat Kontrak Singkat (opsional, disiapkan placeholder) -->
-            <x-ui.card class="mt-6">
-                    <h3 class="text-lg font-medium text-gray-900 dark:text-gray-100 mb-4 border-b pb-2">Kontrak Terakhir</h3>
-                    @if($room->contracts->isEmpty())
-                        <p class="text-gray-500 italic text-sm">Belum ada riwayat kontrak untuk kamar ini.</p>
-                    @else
-                        <table class="w-full text-sm text-left mt-2">
-                            <thead class="bg-gray-50 dark:bg-gray-700">
-                                <tr>
-                                    <th class="px-4 py-2">ID Penghuni</th>
-                                    <th class="px-4 py-2">Mulai</th>
-                                    <th class="px-4 py-2">Selesai</th>
-                                    <th class="px-4 py-2">Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach($room->contracts as $contract)
-                                    <tr class="border-b dark:border-gray-600">
-                                        <td class="px-4 py-2">#{{ $contract->tenant_id }}</td>
-                                        <td class="px-4 py-2">{{ $contract->start_date->format('d M Y') }}</td>
-                                        <td class="px-4 py-2">{{ $contract->end_date->format('d M Y') }}</td>
-                                        <td class="px-4 py-2">
-                                            {{ $contract->status->label() }}
-                                        </td>
-                                    </tr>
-                                @endforeach
-                            </tbody>
-                        </table>
-                    @endif
-            </x-ui.card>
+            <div class="flex items-center gap-2">
+                <x-ui.button variant="primary" size="sm" href="{{ route('rooms.edit', $room) }}">Edit Kamar</x-ui.button>
+                <x-ui.button variant="secondary" size="sm" href="{{ route('rooms.index') }}">Kembali</x-ui.button>
+            </div>
+        </div>
 
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <!-- Kolom Kiri: Galeri Foto -->
+            <div class="lg:col-span-2 space-y-6">
+                <x-ui.card>
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4 border-b border-gray-100 dark:border-gray-700/70 pb-2">Galeri Foto Kamar</h4>
+                    
+                    @if($room->photos->isEmpty())
+                        <div class="bg-gray-50 dark:bg-gray-900/50 rounded-2xl h-72 flex flex-col items-center justify-center text-gray-400 border border-dashed border-gray-200 dark:border-gray-700">
+                            <svg class="w-12 h-12 mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                            <span class="text-xs">Belum ada foto yang diunggah untuk kamar ini.</span>
+                        </div>
+                    @else
+                        @php
+                            $primaryPhoto = $room->photos->where('is_primary', true)->first() ?? $room->photos->first();
+                            $otherPhotos = $room->photos->where('id', '!=', $primaryPhoto->id);
+                        @endphp
+                        
+                        <div class="mb-4 overflow-hidden rounded-2xl border border-gray-200/80 dark:border-gray-700">
+                            <img src="{{ Storage::url($primaryPhoto->file_path) }}" class="w-full h-80 sm:h-96 object-cover" alt="Foto utama kamar">
+                        </div>
+                        
+                        @if($otherPhotos->isNotEmpty())
+                            <div class="grid grid-cols-4 gap-3">
+                                @foreach($otherPhotos as $photo)
+                                    <div class="overflow-hidden rounded-xl border border-gray-200/80 dark:border-gray-700">
+                                        <img src="{{ Storage::url($photo->file_path) }}" class="w-full h-20 sm:h-24 object-cover hover:scale-105 transition-transform cursor-pointer" alt="Foto kamar">
+                                    </div>
+                                @endforeach
+                            </div>
+                        @endif
+                    @endif
+                </x-ui.card>
+
+                <!-- Riwayat Kontrak Singkat -->
+                <x-ui.card>
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4 border-b border-gray-100 dark:border-gray-700/70 pb-2">Riwayat Kontrak Terakhir</h4>
+                    @if($room->contracts->isEmpty())
+                        <p class="text-gray-400 italic text-xs">Belum ada riwayat kontrak untuk kamar ini.</p>
+                    @else
+                        <x-ui.table-wrapper>
+                            <x-slot name="header">
+                                <tr>
+                                    <th class="px-4 py-3">Penghuni</th>
+                                    <th class="px-4 py-3">Mulai</th>
+                                    <th class="px-4 py-3">Selesai</th>
+                                    <th class="px-4 py-3">Status</th>
+                                </tr>
+                            </x-slot>
+                            @foreach($room->contracts as $contract)
+                                <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors">
+                                    <td class="px-4 py-3 font-semibold text-gray-900 dark:text-white">{{ $contract->tenant->name ?? 'Penghuni #'.$contract->tenant_id }}</td>
+                                    <td class="px-4 py-3 text-xs text-gray-600 dark:text-gray-300">{{ $contract->start_date->format('d M Y') }}</td>
+                                    <td class="px-4 py-3 text-xs text-gray-600 dark:text-gray-300">{{ $contract->end_date->format('d M Y') }}</td>
+                                    <td class="px-4 py-3">
+                                        <x-ui.badge :status="$contract->status">{{ $contract->status->label() }}</x-ui.badge>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </x-ui.table-wrapper>
+                    @endif
+                </x-ui.card>
+            </div>
+
+            <!-- Kolom Kanan: Detail & Fasilitas -->
+            <div class="space-y-6">
+                <!-- Detail Harga & Spesifikasi -->
+                <x-ui.card>
+                    <div class="flex justify-between items-center mb-4 border-b border-gray-100 dark:border-gray-700/70 pb-2">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100">Spesifikasi Kamar</h4>
+                        <x-ui.badge :status="$room->status">{{ $room->status->label() }}</x-ui.badge>
+                    </div>
+
+                    <dl class="space-y-3 text-xs">
+                        <div class="flex justify-between py-1 border-b border-gray-50 dark:border-gray-800">
+                            <dt class="text-gray-500 dark:text-gray-400">Posisi Lantai</dt>
+                            <dd class="font-bold text-gray-900 dark:text-gray-100">Lantai {{ $room->floor }}</dd>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-gray-50 dark:border-gray-800">
+                            <dt class="text-gray-500 dark:text-gray-400">Tipe Kamar</dt>
+                            <dd class="font-bold text-gray-900 dark:text-gray-100">{{ $room->roomType?->name ?? '-' }}</dd>
+                        </div>
+                        <div class="flex justify-between py-1 border-b border-gray-50 dark:border-gray-800">
+                            <dt class="text-gray-500 dark:text-gray-400">Luas Kamar</dt>
+                            <dd class="font-bold text-gray-900 dark:text-gray-100">{{ $room->size_m2 }} m²</dd>
+                        </div>
+                    </dl>
+
+                    <div class="mt-6 pt-4 border-t border-gray-100 dark:border-gray-700/70 space-y-2">
+                        <div class="flex justify-between items-baseline">
+                            <span class="text-xs text-gray-500 dark:text-gray-400">Harga Sewa / Bln</span>
+                            <span class="text-xl font-bold text-indigo-600 dark:text-indigo-400">Rp {{ number_format($room->monthly_price, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-baseline text-xs">
+                            <span class="text-gray-500 dark:text-gray-400">Deposit Jaminan</span>
+                            <span class="font-semibold text-gray-900 dark:text-gray-100">Rp {{ number_format($room->deposit_price, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                </x-ui.card>
+
+                <!-- Fasilitas -->
+                <x-ui.card>
+                    <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4 border-b border-gray-100 dark:border-gray-700/70 pb-2">Fasilitas Tersedia</h4>
+                    
+                    @if($room->facilities->isNotEmpty())
+                        <ul class="grid grid-cols-1 gap-2 text-xs text-gray-700 dark:text-gray-300">
+                            @foreach($room->facilities as $facility)
+                                <li class="flex items-center gap-2 p-2 rounded-xl bg-gray-50/80 dark:bg-gray-900/40">
+                                    <svg class="h-4 w-4 text-emerald-500 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                                    </svg>
+                                    <span class="font-medium">{{ $facility->name }}</span>
+                                </li>
+                            @endforeach
+                        </ul>
+                    @else
+                        <p class="text-gray-400 italic text-xs">Tidak ada fasilitas khusus yang terdaftar.</p>
+                    @endif
+                </x-ui.card>
+            </div>
         </div>
     </div>
 </x-app-layout>
