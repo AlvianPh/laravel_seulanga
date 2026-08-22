@@ -1,58 +1,106 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Kost Management - Seulanga 🏢
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Aplikasi web modern untuk manajemen kost dan properti sewa pribadi berbasis Laravel. Dirancang untuk memudahkan pemilik kost (*Owner*) dan pengelola (*Admin*) dalam mengelola operasional harian, pemantauan hunian, penagihan sewa, hingga pelaporan keuangan secara terintegrasi.
 
-## About Laravel
+---
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## 🌟 Fitur Utama
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Dashboard & Analitik**: Ringkasan KPI keuangan, tingkat keterisian kamar (*occupancy rate*), arus kas bulanan, dan widget tindakan mendesak (*urgent actions*).
+- **Manajemen Kamar & Tipe Kamar**: Monitoring status kamar (*available*, *occupied*, *maintenance*), fasilitas, dan pengelompokan harga/tipe kamar.
+- **Data Penghuni**: Pencatatan identitas penghuni (NIK, kontak darurat, foto KTP) dan riwayat sewa.
+- **Kontrak Sewa**: Pembuatan kontrak, penyesuaian tarif sewa, pencatatan deposit jaminan, perpanjangan sewa, dan penghentian kontrak.
+- **Tagihan & Notifikasi**: Pembuatan tagihan bulanan otomatis & manual, perhitungan denda keterlambatan, dan fitur kirim pengingat tagihan via WhatsApp.
+- **Pembayaran**: Pencatatan transaksi pembayaran (Tunai, Transfer Bank, QRIS), unggah bukti bayar, dan verifikasi pembayaran.
+- **Pengeluaran Operasional**: Pencatatan biaya pemeliharaan, utilitas (listrik/air/internet), dan kategori pengeluaran kost.
+- **Laporan Keuangan & Operasional**: Ekspor & rekapitulasi Laporan Pendapatan, Pengeluaran, Arus Kas (*Cash Flow*), Laba Rugi, Piutang/Tunggakan, dan Okupansi.
+- **Manajemen Pengguna & Pengaturan**: Role & Permission (Owner vs Admin), konfigurasi profil kost (nama, alamat, logo, rekening bank, jenis biaya tambahan).
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+---
 
-## Learning Laravel
+## 🛠️ Stack Teknologi
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+- **Backend**: [Laravel](https://laravel.com) (PHP 8.3+)
+- **Database**: MySQL / MariaDB
+- **Autentikasi**: Laravel Breeze
+- **Frontend / Styling**: Blade Templates, [Tailwind CSS](https://tailwindcss.com), [Alpine.js](https://alpinejs.dev)
+- **Visualisasi & Charts**: [Chart.js](https://www.chartjs.org)
+- **Asset Bundler**: [Vite](https://vitejs.dev)
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+---
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+## 🚀 Panduan Instalasi
 
-## Agentic Development
+### 1. Prasyarat Sistem
+- PHP >= 8.2 (direkomendasikan PHP 8.3+)
+- Composer
+- Node.js & NPM
+- MySQL / MariaDB
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### 2. Langkah Instalasi
 
-```bash
-composer require laravel/boost --dev
+1. **Clone repository & masuk ke direktori proyek**:
+   ```bash
+   git clone <repository-url>
+   cd kost-management
+   ```
 
-php artisan boost:install
-```
+2. **Install dependensi PHP**:
+   ```bash
+   composer install
+   ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+3. **Install dependensi Frontend**:
+   ```bash
+   npm install
+   ```
 
-## Contributing
+4. **Konfigurasi Environment**:
+   Salin file konfigurasi environment dan sesuaikan pengaturan database:
+   ```bash
+   cp .env.example .env
+   ```
+   Buka file `.env` dan atur koneksi database:
+   ```env
+   DB_CONNECTION=mysql
+   DB_HOST=127.0.0.1
+   DB_PORT=3306
+   DB_DATABASE=kost_management
+   DB_USERNAME=root
+   DB_PASSWORD=
+   ```
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+5. **Generate Application Key**:
+   ```bash
+   php artisan key:generate
+   ```
 
-## Code of Conduct
+6. **Jalankan Migrasi & Database Seeder**:
+   ```bash
+   php artisan migrate --seed
+   ```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+7. **Buat Storage Symlink** (untuk upload bukti bayar & foto KTP):
+   ```bash
+   php artisan storage:link
+   ```
 
-## Security Vulnerabilities
+8. **Build Asset / Jalankan Server Pengembangan**:
+   - Untuk development:
+     ```bash
+     npm run dev
+     ```
+     dan di terminal lain:
+     ```bash
+     php artisan serve
+     ```
+   - Untuk production build:
+     ```bash
+     npm run build
+     ```
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+---
 
-## License
+## 📄 Lisensi
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
