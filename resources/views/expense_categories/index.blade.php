@@ -33,13 +33,7 @@
             </div>
 
             @if ($expense_categories->isEmpty())
-                <div class="py-12 text-center">
-                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/60 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    </div>
-                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Belum Ada Kategori Pengeluaran</h4>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tambahkan kategori untuk memudahkan pencatatan biaya operasional.</p>
-                </div>
+                <x-ui.empty-state icon="expense" title="Belum Ada Kategori Pengeluaran" description="Tambahkan pos pengeluaran operasional (Listrik, Air, Kebersihan, Perbaikan, dll) untuk memudahkan pembukuan." action-text="Tambah Kategori" action-url="{{ route('expense_categories.create') }}" />
             @else
                 <x-ui.table-wrapper>
                     <x-slot name="header">

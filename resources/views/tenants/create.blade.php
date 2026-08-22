@@ -83,18 +83,54 @@
                     <div class="space-y-4">
                         <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 border-b border-gray-100 dark:border-gray-700/70 pb-2">Dokumen Lampiran</h4>
                         
-                        <div>
+                        <div x-data="{
+                            previewUrl: null,
+                            handleFileChange(event) {
+                                const file = event.target.files[0];
+                                if (file && file.type.startsWith('image/')) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => { this.previewUrl = e.target.result; };
+                                    reader.readAsDataURL(file);
+                                } else {
+                                    this.previewUrl = null;
+                                }
+                            }
+                        }" class="p-3.5 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/40 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Foto KTP (Maks 2MB)</label>
-                            <input type="file" name="ktp_photo" accept="image/jpeg,image/png,image/webp"
-                                   class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
-                            @error('ktp_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            
+                            <div x-show="previewUrl" x-cloak class="mb-2.5">
+                                <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 block mb-1">Preview KTP:</span>
+                                <img :src="previewUrl" alt="Preview KTP" class="h-24 w-auto max-w-[160px] object-cover rounded-xl border-2 border-indigo-500/80 shadow-xs">
+                            </div>
+
+                            <input type="file" name="ktp_photo" @change="handleFileChange($event)" accept="image/jpeg,image/png,image/webp"
+                                   class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300 cursor-pointer">
+                            @error('ktp_photo') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
 
-                        <div>
+                        <div x-data="{
+                            previewUrl: null,
+                            handleFileChange(event) {
+                                const file = event.target.files[0];
+                                if (file && file.type.startsWith('image/')) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => { this.previewUrl = e.target.result; };
+                                    reader.readAsDataURL(file);
+                                } else {
+                                    this.previewUrl = null;
+                                }
+                            }
+                        }" class="p-3.5 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/40 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Foto Profil Penghuni (Maks 2MB)</label>
-                            <input type="file" name="tenant_photo" accept="image/jpeg,image/png,image/webp"
-                                   class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
-                            @error('tenant_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                            
+                            <div x-show="previewUrl" x-cloak class="mb-2.5">
+                                <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 block mb-1">Preview Foto Profil:</span>
+                                <img :src="previewUrl" alt="Preview Profil" class="h-24 w-24 object-cover rounded-xl border-2 border-indigo-500/80 shadow-xs">
+                            </div>
+
+                            <input type="file" name="tenant_photo" @change="handleFileChange($event)" accept="image/jpeg,image/png,image/webp"
+                                   class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300 cursor-pointer">
+                            @error('tenant_photo') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
                     </div>
 

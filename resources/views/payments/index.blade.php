@@ -100,11 +100,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                        Belum ada data pembayaran.
-                                    </td>
-                                </tr>
+                                <x-ui.empty-state colspan="7" icon="payment" title="Belum Ada Pembayaran" description="Catat transaksi pembayaran sewa yang diterima dari penghuni kost." action-text="Catat Pembayaran" action-url="{{ route('payments.create') }}" />
                             @endforelse
                 </x-ui.table-wrapper>
 

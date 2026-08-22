@@ -45,13 +45,7 @@
             </div>
 
             @if ($bankAccounts->isEmpty())
-                <div class="py-12 text-center">
-                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/60 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"></path></svg>
-                    </div>
-                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Belum Ada Rekening Bank</h4>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tambahkan rekening bank untuk mempermudah transfer sewa penghuni.</p>
-                </div>
+                <x-ui.empty-state icon="payment" title="Belum Ada Rekening Bank" description="Tambahkan rekening bank penerima pembayaran untuk dicantumkan pada tagihan sewa." action-text="Tambah Rekening Bank" action-url="{{ route('bank_accounts.create') }}" />
             @else
                 <x-ui.table-wrapper>
                     <x-slot name="header">

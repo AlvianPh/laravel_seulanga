@@ -33,16 +33,36 @@
                                 @error('kost_name')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
                             </div>
 
-                            <div>
+                            <div x-data="{
+                                previewUrl: null,
+                                handleFileChange(event) {
+                                    const file = event.target.files[0];
+                                    if (file && file.type.startsWith('image/')) {
+                                        const reader = new FileReader();
+                                        reader.onload = (e) => { this.previewUrl = e.target.result; };
+                                        reader.readAsDataURL(file);
+                                    } else {
+                                        this.previewUrl = null;
+                                    }
+                                }
+                            }" class="p-3.5 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/40 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
                                 <label for="kost_logo" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Logo Kost (Opsional)</label>
+                                
                                 @if($setting->kost_logo)
-                                    <div class="mb-2 mt-1">
+                                    <div x-show="!previewUrl" class="mb-2.5">
+                                        <span class="text-[11px] font-semibold text-gray-500 dark:text-gray-400 block mb-1">Logo Saat Ini:</span>
                                         <img src="{{ Storage::url($setting->kost_logo) }}" alt="Logo Kost" class="h-16 w-auto rounded-xl border border-gray-200 dark:border-gray-700 shadow-xs">
                                     </div>
                                 @endif
-                                <input type="file" name="kost_logo" id="kost_logo" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
-                                <p class="mt-1 text-[11px] text-gray-400">Format: JPG, PNG, GIF, SVG (Maks 2MB).</p>
-                                @error('kost_logo')<p class="mt-1 text-xs text-red-600">{{ $message }}</p>@enderror
+
+                                <div x-show="previewUrl" x-cloak class="mb-2.5">
+                                    <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 block mb-1">Preview Logo Baru:</span>
+                                    <img :src="previewUrl" alt="Preview Logo Baru" class="h-16 w-auto rounded-xl border-2 border-indigo-500/80 shadow-xs">
+                                </div>
+
+                                <input type="file" name="kost_logo" id="kost_logo" @change="handleFileChange($event)" accept="image/*" class="mt-1 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300 cursor-pointer">
+                                <p class="mt-1.5 text-[11px] text-gray-400">Format: JPG, PNG, WebP, SVG (Maks 2MB).</p>
+                                @error('kost_logo')<p class="mt-1 text-xs text-rose-500">{{ $message }}</p>@enderror
                             </div>
 
                             <div>

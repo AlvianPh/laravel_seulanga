@@ -102,11 +102,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                        Tidak ada data pengeluaran operasional.
-                                    </td>
-                                </tr>
+                                <x-ui.empty-state colspan="6" icon="expense" title="Belum Ada Data Pengeluaran" description="Catat biaya operasional, listrik, air, internet, dan pemeliharaan kost." action-text="Tambah Pengeluaran" action-url="{{ route('expenses.create') }}" />
                             @endforelse
                 </x-ui.table-wrapper>
 

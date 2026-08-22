@@ -109,13 +109,44 @@
                     @endif
                     @error('facilities') <p class="text-red-500 text-xs mt-1 mb-4">{{ $message }}</p> @enderror
 
-                    <div class="mb-6">
+                    <div x-data="{
+                        previewUrls: [],
+                        handleFilesChange(event) {
+                            this.previewUrls = [];
+                            const files = Array.from(event.target.files);
+                            files.forEach((file) => {
+                                if (file && file.type.startsWith('image/')) {
+                                    const reader = new FileReader();
+                                    reader.onload = (e) => {
+                                        this.previewUrls.push(e.target.result);
+                                    };
+                                    reader.readAsDataURL(file);
+                                }
+                            });
+                        }
+                    }" class="mb-6 p-4 rounded-2xl border border-dashed border-gray-300 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/40 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
                         <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Foto Kamar (Maksimal 5 foto, @2MB)</label>
-                        <input type="file" name="photos[]" multiple accept="image/jpeg,image/png,image/webp"
-                               class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
+                        
+                        <!-- Client-side Multiple Preview -->
+                        <div x-show="previewUrls.length > 0" x-cloak class="mb-4">
+                            <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 block mb-2">
+                                Preview Foto Baru (<span x-text="previewUrls.length"></span> foto dipilih):
+                            </span>
+                            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                                <template x-for="(url, idx) in previewUrls" :key="idx">
+                                    <div class="relative group rounded-xl overflow-hidden border-2 border-indigo-500/80 shadow-xs">
+                                        <img :src="url" alt="Preview Kamar" class="w-full h-24 object-cover">
+                                        <div class="absolute bottom-1 left-1 bg-gray-900/80 text-white text-[9px] font-bold px-1.5 py-0.5 rounded" x-text="idx === 0 ? 'Sampul' : '#' + (idx + 1)"></div>
+                                    </div>
+                                </template>
+                            </div>
+                        </div>
+
+                        <input type="file" name="photos[]" multiple @change="handleFilesChange($event)" accept="image/jpeg,image/png,image/webp"
+                               class="w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300 cursor-pointer">
                         <p class="text-[11px] text-gray-400 mt-1.5">Foto pertama yang diupload akan otomatis menjadi sampul (thumbnail) utama kamar.</p>
-                        @error('photos') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                        @error('photos.*') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('photos') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        @error('photos.*') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                     </div>
                 </div>
 

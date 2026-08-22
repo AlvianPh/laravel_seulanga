@@ -76,11 +76,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="6" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                        Tidak ada data penghuni ditemukan.
-                                    </td>
-                                </tr>
+                                <x-ui.empty-state colspan="6" icon="tenant" title="Belum Ada Data Penghuni" description="Daftarkan identitas dan kontak penghuni penyewa kost." action-text="Tambah Penghuni" action-url="{{ route('tenants.create') }}" />
                             @endforelse
                 </x-ui.table-wrapper>
 
