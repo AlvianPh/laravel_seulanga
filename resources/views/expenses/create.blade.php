@@ -27,7 +27,7 @@
                     <label for="expense_category_id" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Kategori Pengeluaran <span class="text-red-500">*</span></label>
                     <x-ui.select name="expense_category_id" id="expense_category_id" required class="text-sm">
                         <option value="">-- Pilih Kategori --</option>
-                        @foreach($expenseCategories as $cat)
+                        @foreach(($categories ?? $expenseCategories ?? []) as $cat)
                             <option value="{{ $cat->id }}" {{ old('expense_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
                         @endforeach
                     </x-ui.select>
