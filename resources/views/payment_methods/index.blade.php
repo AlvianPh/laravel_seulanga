@@ -45,13 +45,7 @@
             </div>
 
             @if ($methods->isEmpty())
-                <div class="py-12 text-center">
-                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/60 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"></path></svg>
-                    </div>
-                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Belum Ada Metode Pembayaran</h4>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tambahkan metode pembayaran untuk proses pencatatan kas masuk.</p>
-                </div>
+                <x-ui.empty-state icon="payment" title="Belum Ada Metode Pembayaran" description="Tambahkan opsi cara bayar seperti Transfer Bank, Tunai / Cash, QRIS, dll." action-text="Tambah Metode" action-url="{{ route('payment_methods.create') }}" />
             @else
                 <x-ui.table-wrapper>
                     <x-slot name="header">

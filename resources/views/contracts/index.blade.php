@@ -91,11 +91,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                        Tidak ada data kontrak ditemukan.
-                                    </td>
-                                </tr>
+                                <x-ui.empty-state colspan="7" icon="contract" title="Belum Ada Kontrak Sewa" description="Buat kontrak sewa baru antara penghuni dan kamar kost yang tersedia." action-text="Buat Kontrak" action-url="{{ route('contracts.create') }}" />
                             @endforelse
                 </x-ui.table-wrapper>
 

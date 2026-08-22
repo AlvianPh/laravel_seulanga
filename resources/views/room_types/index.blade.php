@@ -33,13 +33,7 @@
             </div>
 
             @if ($roomTypes->isEmpty())
-                <div class="py-12 text-center">
-                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/60 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1v1H9V7zm5 0h1v1h-1V7zm-5 4h1v1H9v-1zm5 0h1v1h-1v-1zm-3 4h2a1 1 0 011 1v4h-4v-4a1 1 0 011-1z"></path></svg>
-                    </div>
-                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Belum Ada Data Tipe Kamar</h4>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tambahkan tipe kamar seperti Standard, VIP, atau Suite.</p>
-                </div>
+                <x-ui.empty-state icon="room" title="Belum Ada Tipe Kamar" description="Tambahkan kategori tipe kamar seperti Standard, VIP, atau Suite beserta harga rekomendasi." action-text="Tambah Tipe Kamar" action-url="{{ route('room_types.create') }}" />
             @else
                 <x-ui.table-wrapper>
                     <x-slot name="header">

@@ -29,7 +29,7 @@
         {{ $slot }}
     </div>
     @if ($dismissible)
-        <button type="button" @click="show = false" class="ml-3 inline-flex text-current hover:opacity-75 focus:outline-none" aria-label="Close">
+        <button type="button" @click="show = false" class="ml-3 inline-flex items-center justify-center min-w-[32px] min-h-[32px] p-1.5 rounded-lg text-current hover:bg-black/5 dark:hover:bg-white/10 focus:outline-none transition-colors" aria-label="Close">
             <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
         </button>
     @endif

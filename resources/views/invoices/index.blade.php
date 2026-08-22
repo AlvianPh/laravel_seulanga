@@ -133,11 +133,7 @@
                                     </td>
                                 </tr>
                             @empty
-                                <tr>
-                                    <td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                        Tidak ada data tagihan ditemukan.
-                                    </td>
-                                </tr>
+                                <x-ui.empty-state colspan="7" icon="invoice" title="Belum Ada Tagihan" description="Belum ada tagihan sewa bulanan yang dibuat untuk periode ini." />
                             @endforelse
                 </x-ui.table-wrapper>
 

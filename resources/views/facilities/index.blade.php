@@ -33,13 +33,7 @@
             </div>
 
             @if ($facilities->isEmpty())
-                <div class="py-12 text-center">
-                    <div class="w-16 h-16 bg-gray-100 dark:bg-gray-700/60 rounded-full flex items-center justify-center mx-auto mb-3 text-gray-400">
-                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
-                    </div>
-                    <h4 class="text-sm font-bold text-gray-800 dark:text-gray-200">Belum Ada Data Fasilitas</h4>
-                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-1">Tambahkan fasilitas kamar kost untuk memudahkan pemilihan fasilitas.</p>
-                </div>
+                <x-ui.empty-state icon="facility" title="Belum Ada Fasilitas" description="Tambahkan daftar fasilitas kamar dan fasilitas umum kost seperti AC, WiFi, Water Heater, dll." action-text="Tambah Fasilitas" action-url="{{ route('facilities.create') }}" />
             @else
                 <x-ui.table-wrapper>
                     <x-slot name="header">

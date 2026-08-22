@@ -33,7 +33,7 @@
                             <th class="px-4 py-3.5 text-right">Aksi</th>
                         </tr>
                     </x-slot>
-                        @foreach ($users as $user)
+                        @forelse ($users as $user)
                             <tr class="hover:bg-gray-50/60 dark:hover:bg-gray-700/40 transition-colors">
                                 <td class="px-4 py-3.5 font-bold text-gray-900 dark:text-white">
                                     <div class="flex items-center gap-3">
@@ -60,7 +60,9 @@
                                     @endif
                                 </td>
                             </tr>
-                        @endforeach
+                        @empty
+                            <x-ui.empty-state colspan="4" icon="user" title="Belum Ada Akun Pengguna" description="Tambahkan akun staf admin untuk membantu pengelolaan operasional kost." action-text="Tambah User" action-url="{{ route('users.create') }}" />
+                        @endforelse
                 </x-ui.table-wrapper>
         </x-ui.card>
     </div>

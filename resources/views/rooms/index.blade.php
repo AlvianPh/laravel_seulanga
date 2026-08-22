@@ -234,11 +234,7 @@
                                             </td>
                                         </tr>
                                     @empty
-                                        <tr>
-                                            <td colspan="7" class="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
-                                                Belum ada data kamar.
-                                            </td>
-                                        </tr>
+                                        <x-ui.empty-state colspan="7" icon="room" title="Belum Ada Data Kamar" description="Tambahkan unit kamar baru untuk mulai mengelola hunian kost." action-text="Tambah Kamar" action-url="{{ route('rooms.create') }}" />
                                     @endforelse
                         </x-ui.table-wrapper>
                     </div>

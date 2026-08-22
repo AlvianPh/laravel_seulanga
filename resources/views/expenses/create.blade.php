@@ -51,14 +51,32 @@
                 </div>
 
                 <!-- Upload Struk -->
-                <div class="border border-dashed border-gray-200 dark:border-gray-700 p-4 rounded-2xl bg-gray-50/50 dark:bg-gray-800/40">
-                    <label for="receipt_photo" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                <div x-data="{
+                    previewUrl: null,
+                    handleFileChange(event) {
+                        const file = event.target.files[0];
+                        if (file && file.type.startsWith('image/')) {
+                            const reader = new FileReader();
+                            reader.onload = (e) => { this.previewUrl = e.target.result; };
+                            reader.readAsDataURL(file);
+                        } else {
+                            this.previewUrl = null;
+                        }
+                    }
+                }" class="border border-dashed border-gray-300 dark:border-gray-700 p-4 rounded-2xl bg-gray-50/50 dark:bg-gray-800/40 hover:border-indigo-400 dark:hover:border-indigo-500 transition-colors">
+                    <label for="receipt_photo" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">
                         Upload Foto Struk / Nota (Opsional)
                     </label>
-                    <input type="file" name="receipt_photo" id="receipt_photo" accept="image/*"
-                           class="mt-2 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
+
+                    <div x-show="previewUrl" x-cloak class="mb-3">
+                        <span class="text-[11px] font-semibold text-indigo-600 dark:text-indigo-400 block mb-1">Preview Struk:</span>
+                        <img :src="previewUrl" alt="Preview Struk" class="h-32 w-auto max-w-[200px] object-cover rounded-xl border-2 border-indigo-500/80 shadow-xs">
+                    </div>
+
+                    <input type="file" name="receipt_photo" id="receipt_photo" @change="handleFileChange($event)" accept="image/*"
+                           class="block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300 cursor-pointer">
                     <p class="text-[11px] text-gray-400 mt-2">Maksimal ukuran gambar 2MB (JPG, PNG, WebP).</p>
-                    @error('receipt_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                    @error('receipt_photo') <p class="text-rose-500 text-xs mt-1">{{ $message }}</p> @enderror
                 </div>
 
                 <div class="flex items-center gap-3 pt-6 border-t border-gray-100 dark:border-gray-700/60">
