@@ -38,7 +38,7 @@ class DashboardTest extends TestCase
         $this->authenticate('owner');
         $response = $this->get('/dashboard');
         $response->assertOk();
-        $response->assertViewHasAll(['stats', 'financials', 'chartData']);
+        $response->assertViewHasAll(['stats', 'financials', 'chartData', 'urgentActions']);
     }
 
     public function test_dashboard_metrics_calculation_is_correct()

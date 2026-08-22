@@ -5,70 +5,72 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-3xl mx-auto sm:px-6 lg:px-8">
-            <x-ui.card>
+    <div class="max-w-xl mx-auto space-y-6">
+        <x-ui.card>
+            <div class="mb-6">
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">Catat Pengeluaran Operasional</h3>
+                <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">Input biaya operasional kost, pemeliharaan gedung, atau tagihan utilitas</p>
+            </div>
 
-                <form method="POST" action="{{ route('expenses.store') }}" enctype="multipart/form-data">
-                    @csrf
+            <form method="POST" action="{{ route('expenses.store') }}" enctype="multipart/form-data" class="space-y-4">
+                @csrf
 
-                    <!-- Tanggal Pengeluaran -->
-                    <div class="mb-4">
-                        <label for="expense_date" class="block font-medium text-gray-700 dark:text-gray-300">Tanggal Pengeluaran</label>
-                        <x-ui.input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', date('Y-m-d')) }}" required />
-                        @error('expense_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
+                <!-- Tanggal Pengeluaran -->
+                <div>
+                    <label for="expense_date" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Tanggal Transaksi Pengeluaran <span class="text-red-500">*</span></label>
+                    <x-ui.input type="date" name="expense_date" id="expense_date" value="{{ old('expense_date', date('Y-m-d')) }}" required class="text-sm" />
+                    @error('expense_date') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
 
-                    <!-- Kategori -->
-                    <div class="mb-4">
-                        <label for="category" class="block font-medium text-gray-700 dark:text-gray-300">Kategori</label>
-                        <x-ui.select name="expense_category_id" id="expense_category_id" required>
-                            <option value="">-- Pilih Kategori --</option>
-                            @foreach($expenseCategories as $cat)
-                                <option value="{{ $cat->id }}" {{ old('expense_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
-                            @endforeach
-                        </x-ui.select>
-                        @error('expense_category_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
+                <!-- Kategori -->
+                <div>
+                    <label for="expense_category_id" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Kategori Pengeluaran <span class="text-red-500">*</span></label>
+                    <x-ui.select name="expense_category_id" id="expense_category_id" required class="text-sm">
+                        <option value="">-- Pilih Kategori --</option>
+                        @foreach($expenseCategories as $cat)
+                            <option value="{{ $cat->id }}" {{ old('expense_category_id') == $cat->id ? 'selected' : '' }}>{{ $cat->name }}</option>
+                        @endforeach
+                    </x-ui.select>
+                    @error('expense_category_id') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
 
-                    <!-- Keterangan -->
-                    <div class="mb-4">
-                        <label for="description" class="block font-medium text-gray-700 dark:text-gray-300">Deskripsi Singkat</label>
-                        <x-ui.input type="text" name="description" id="description" value="{{ old('description') }}" required
-                               placeholder="Contoh: Beli token listrik token 500rb, Bayar tukang AC..." />
-                        @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
+                <!-- Keterangan -->
+                <div>
+                    <label for="description" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Deskripsi / Keterangan Pengeluaran <span class="text-red-500">*</span></label>
+                    <x-ui.input type="text" name="description" id="description" value="{{ old('description') }}" required
+                           placeholder="Contoh: Beli token listrik utama 500rb, Service AC kamar 101..." class="text-sm" />
+                    @error('description') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
 
-                    <!-- Nominal -->
-                    <div class="mb-4">
-                        <label for="amount" class="block font-medium text-gray-700 dark:text-gray-300">Nominal (Rp)</label>
-                        <x-ui.input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="1"
-                               placeholder="Contoh: 150000" />
-                        @error('amount') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
+                <!-- Nominal -->
+                <div>
+                    <label for="amount" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Nominal Pengeluaran (Rp) <span class="text-red-500">*</span></label>
+                    <x-ui.input type="number" name="amount" id="amount" value="{{ old('amount') }}" required min="1" step="1000"
+                           placeholder="Contoh: 150000" class="text-sm" />
+                    @error('amount') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
 
-                    <!-- Upload Struk -->
-                    <div class="mb-6 border border-dashed border-gray-300 dark:border-gray-600 p-4 rounded bg-gray-50 dark:bg-gray-700">
-                        <label for="receipt_photo" class="block font-medium text-gray-700 dark:text-gray-300">
-                            Upload Foto Struk / Nota (Opsional)
-                        </label>
-                        <input type="file" name="receipt_photo" id="receipt_photo" accept="image/*"
-                               class="mt-2 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded file:border-0 file:text-sm file:font-semibold file:bg-white file:text-gray-700 hover:file:bg-gray-100 dark:text-gray-300">
-                        <p class="text-xs text-gray-500 mt-2">Maksimal ukuran file 2MB.</p>
-                        @error('receipt_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                    </div>
+                <!-- Upload Struk -->
+                <div class="border border-dashed border-gray-200 dark:border-gray-700 p-4 rounded-2xl bg-gray-50/50 dark:bg-gray-800/40">
+                    <label for="receipt_photo" class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300">
+                        Upload Foto Struk / Nota (Opsional)
+                    </label>
+                    <input type="file" name="receipt_photo" id="receipt_photo" accept="image/*"
+                           class="mt-2 block w-full text-sm text-gray-500 dark:text-gray-400 file:mr-4 file:py-2 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100 dark:file:bg-indigo-950/60 dark:file:text-indigo-300">
+                    <p class="text-[11px] text-gray-400 mt-2">Maksimal ukuran gambar 2MB (JPG, PNG, WebP).</p>
+                    @error('receipt_photo') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                </div>
 
-                    <div class="flex items-center justify-end gap-3">
-                        <x-ui.button variant="secondary" href="{{ route('expenses.index') }}">
-                            Batal
-                        </x-ui.button>
-                        <x-ui.button type="submit">
-                            Simpan Pengeluaran
-                        </x-ui.button>
-                    </div>
-                </form>
+                <div class="flex items-center gap-3 pt-6 border-t border-gray-100 dark:border-gray-700/60">
+                    <x-ui.button type="submit" variant="primary">
+                        Simpan Pengeluaran
+                    </x-ui.button>
+                    <x-ui.button variant="secondary" href="{{ route('expenses.index') }}">
+                        Batal
+                    </x-ui.button>
+                </div>
+            </form>
 
-            </x-ui.card>
-        </div>
+        </x-ui.card>
     </div>
 </x-app-layout>

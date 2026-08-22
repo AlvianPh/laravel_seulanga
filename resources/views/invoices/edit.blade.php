@@ -5,130 +5,128 @@
         </h2>
     </x-slot>
 
-    <div class="py-12">
-        <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-            <x-ui.card>
+    <div class="max-w-4xl mx-auto space-y-6">
+        <x-ui.card>
 
-                <div class="mb-6 p-4 bg-indigo-50 dark:bg-indigo-900 border border-indigo-200 dark:border-indigo-700 rounded flex justify-between items-center">
-                    <div>
-                        <h3 class="font-bold text-indigo-800 dark:text-indigo-200">
-                            Tagihan Bulan {{ $invoice->month }} Tahun {{ $invoice->year }}
-                        </h3>
-                        <p class="text-sm text-indigo-700 dark:text-indigo-300">
-                            Penghuni: {{ $invoice->tenant->name ?? 'Dihapus' }} (Kamar {{ $invoice->room->room_number ?? '?' }})
-                        </p>
-                    </div>
-                    <div class="text-right">
-                        <span class="text-xs text-gray-500 uppercase tracking-wide">Jatuh Tempo</span>
-                        <div class="font-bold text-red-600">{{ $invoice->due_date->format('d M Y') }}</div>
-                    </div>
+            <div class="mb-6 p-4 bg-indigo-50/80 dark:bg-indigo-950/40 border border-indigo-100 dark:border-indigo-900/60 rounded-2xl flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                <div>
+                    <h3 class="font-bold text-gray-900 dark:text-white">
+                        Tagihan Bulan {{ $invoice->month }} Tahun {{ $invoice->year }} (INV-{{ $invoice->id }})
+                    </h3>
+                    <p class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        Penghuni: <span class="font-semibold text-gray-800 dark:text-gray-200">{{ $invoice->tenant->name ?? 'Dihapus' }}</span> (Kamar {{ $invoice->room->room_number ?? '?' }})
+                    </p>
                 </div>
+                <div class="sm:text-right">
+                    <span class="text-[10px] font-bold uppercase tracking-wider text-gray-400 block">Jatuh Tempo</span>
+                    <div class="text-sm font-bold text-rose-600 dark:text-rose-400">{{ $invoice->due_date->format('d M Y') }}</div>
+                </div>
+            </div>
 
-                <form method="POST" action="{{ route('invoices.update', $invoice) }}" x-data="{
-                    rent: {{ (float)$invoice->rent_amount }},
-                    electricity: {{ (float)$invoice->electricity_fee ?? 0 }},
-                    water: {{ (float)$invoice->water_fee ?? 0 }},
-                    internet: {{ (float)$invoice->internet_fee ?? 0 }},
-                    penalty: {{ (float)$invoice->penalty_fee ?? 0 }},
-                    other: {{ (float)$invoice->other_fee ?? 0 }},
-                    
-                    get total() {
-                        return this.rent + 
-                               (parseFloat(this.electricity) || 0) + 
-                               (parseFloat(this.water) || 0) + 
-                               (parseFloat(this.internet) || 0) + 
-                               (parseFloat(this.penalty) || 0) + 
-                               (parseFloat(this.other) || 0);
-                    },
-                    
-                    formatRupiah(number) {
-                        return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
-                    }
-                }">
-                    @csrf
-                    @method('PATCH')
+            <form method="POST" action="{{ route('invoices.update', $invoice) }}" x-data="{
+                rent: {{ (float)$invoice->rent_amount }},
+                electricity: {{ (float)$invoice->electricity_fee ?? 0 }},
+                water: {{ (float)$invoice->water_fee ?? 0 }},
+                internet: {{ (float)$invoice->internet_fee ?? 0 }},
+                penalty: {{ (float)$invoice->penalty_fee ?? 0 }},
+                other: {{ (float)$invoice->other_fee ?? 0 }},
+                
+                get total() {
+                    return this.rent + 
+                           (parseFloat(this.electricity) || 0) + 
+                           (parseFloat(this.water) || 0) + 
+                           (parseFloat(this.internet) || 0) + 
+                           (parseFloat(this.penalty) || 0) + 
+                           (parseFloat(this.other) || 0);
+                },
+                
+                formatRupiah(number) {
+                    return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', minimumFractionDigits: 0 }).format(number);
+                }
+            }">
+                @csrf
+                @method('PATCH')
 
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        
-                        <!-- Form Edit Fee -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    
+                    <!-- Form Edit Fee -->
+                    <div class="space-y-4">
+                        <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 border-b border-gray-100 dark:border-gray-700/70 pb-2">Komponen Biaya (Rp)</h4>
+
                         <div>
-                            <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-4 border-b pb-2">Komponen Biaya (Rp)</h4>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-500 mb-1">Sewa Kamar Dasar (Tetap)</label>
-                                <input type="number" readonly value="{{ (int)$invoice->rent_amount }}" class="w-full border rounded px-3 py-2 bg-gray-100 text-gray-600 cursor-not-allowed">
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Listrik</label>
-                                <x-ui.input type="number" name="electricity_fee" x-model.number="electricity" min="0" />
-                                @error('electricity_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Air</label>
-                                <x-ui.input type="number" name="water_fee" x-model.number="water" min="0" />
-                                @error('water_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Internet / WiFi</label>
-                                <x-ui.input type="number" name="internet_fee" x-model.number="internet" min="0" />
-                                @error('internet_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Denda Keterlambatan / Kerusakan</label>
-                                <x-ui.input type="number" name="penalty_fee" x-model.number="penalty" min="0" />
-                                @error('penalty_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <div class="mb-4">
-                                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Lain-lain</label>
-                                <x-ui.input type="number" name="other_fee" x-model.number="other" min="0" />
-                                @error('other_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-500 mb-1.5">Sewa Kamar Dasar (Tetap)</label>
+                            <input type="number" readonly value="{{ (int)$invoice->rent_amount }}" class="w-full text-sm border border-gray-200 dark:border-gray-700 rounded-xl px-3 py-2 bg-gray-50 dark:bg-gray-800 text-gray-500 cursor-not-allowed">
                         </div>
 
-                        <!-- Panel Status & Live Preview -->
-                        <div class="flex flex-col gap-6">
-                            
-                            <!-- Status Update -->
-                            <div class="bg-gray-50 dark:bg-gray-700 border dark:border-gray-600 rounded p-4">
-                                <h4 class="font-semibold text-gray-700 dark:text-gray-300 mb-3 border-b pb-1">Status Tagihan</h4>
-                                
-                                <x-ui.select name="status">
-                                    @foreach($statuses as $status)
-                                        <option value="{{ $status->value }}" {{ $invoice->status->value === $status->value ? 'selected' : '' }}>
-                                            {{ $status->label() }}
-                                        </option>
-                                    @endforeach
-                                </x-ui.select>
-                                <p class="text-xs text-gray-500 mt-2">Ubah manual jika ada penyesuaian khusus. Idealnya diubah jadi 'Paid' saat pembayaran diterima.</p>
-                                @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
-                            </div>
-
-                            <!-- Live Total -->
-                            <div class="bg-indigo-600 text-white rounded p-6 shadow-lg text-center mt-auto">
-                                <span class="block text-indigo-200 text-sm font-medium mb-1 uppercase tracking-wider">Estimasi Total Tagihan</span>
-                                <div class="text-3xl font-bold font-mono" x-text="formatRupiah(total)">Rp 0</div>
-                                <p class="text-xs text-indigo-300 mt-2">Total akan dihitung ulang secara akurat saat disave.</p>
-                            </div>
-
-                            <div class="flex gap-3">
-                                <x-ui.button type="submit" class="w-full">
-                                    Simpan Perubahan
-                                </x-ui.button>
-                                <x-ui.button variant="secondary" href="{{ route('invoices.show', $invoice) }}" class="w-full">
-                                    Batal
-                                </x-ui.button>
-                            </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Biaya Listrik</label>
+                            <x-ui.input type="number" name="electricity_fee" x-model.number="electricity" min="0" step="1000" class="text-sm" />
+                            @error('electricity_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
                         </div>
-                        
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Biaya Air</label>
+                            <x-ui.input type="number" name="water_fee" x-model.number="water" min="0" step="1000" class="text-sm" />
+                            @error('water_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Internet / WiFi</label>
+                            <x-ui.input type="number" name="internet_fee" x-model.number="internet" min="0" step="1000" class="text-sm" />
+                            @error('internet_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Denda Keterlambatan / Kerusakan</label>
+                            <x-ui.input type="number" name="penalty_fee" x-model.number="penalty" min="0" step="1000" class="text-sm" />
+                            @error('penalty_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <div>
+                            <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Biaya Lain-lain</label>
+                            <x-ui.input type="number" name="other_fee" x-model.number="other" min="0" step="1000" class="text-sm" />
+                            @error('other_fee') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
                     </div>
-                </form>
 
-            </x-ui.card>
-        </div>
+                    <!-- Panel Status & Live Preview -->
+                    <div class="flex flex-col gap-6">
+                        
+                        <!-- Status Update -->
+                        <div class="bg-gray-50/80 dark:bg-gray-800/50 border border-gray-100 dark:border-gray-700/70 rounded-2xl p-5 space-y-2">
+                            <h4 class="text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 border-b border-gray-100 dark:border-gray-700/60 pb-2">Status Pembayaran Tagihan</h4>
+                            
+                            <x-ui.select name="status" class="text-sm">
+                                @foreach($statuses as $status)
+                                    <option value="{{ $status->value }}" {{ $invoice->status->value === $status->value ? 'selected' : '' }}>
+                                        {{ $status->label() }}
+                                    </option>
+                                @endforeach
+                            </x-ui.select>
+                            <p class="text-[11px] text-gray-400">Gunakan opsi ini jika Anda ingin memperbarui status invoice secara manual.</p>
+                            @error('status') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+                        </div>
+
+                        <!-- Live Total -->
+                        <div class="bg-indigo-600 dark:bg-indigo-700 text-white rounded-2xl p-6 shadow-sm text-center mt-auto">
+                            <span class="block text-indigo-200 text-xs font-bold uppercase tracking-wider mb-1">Estimasi Total Tagihan</span>
+                            <div class="text-3xl font-black font-mono tracking-tight" x-text="formatRupiah(total)">Rp 0</div>
+                            <p class="text-[11px] text-indigo-200/80 mt-2">Total akan tersimpan dan tercatat di rincian invoice.</p>
+                        </div>
+
+                        <div class="flex items-center gap-3">
+                            <x-ui.button type="submit" variant="primary" class="w-full">
+                                Simpan Perubahan
+                            </x-ui.button>
+                            <x-ui.button variant="secondary" href="{{ route('invoices.show', $invoice) }}" class="w-full">
+                                Batal
+                            </x-ui.button>
+                        </div>
+                    </div>
+                    
+                </div>
+            </form>
+
+        </x-ui.card>
     </div>
 </x-app-layout>

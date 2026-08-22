@@ -25,7 +25,8 @@ class DashboardController extends Controller
         $stats = $this->dashboardService->getSummaryStats();
         $financials = $this->dashboardService->getMonthlyFinancials();
         $chartData = $this->dashboardService->getChartData();
+        $urgentActions = $this->dashboardService->getUrgentActions();
 
-        return view('dashboard', compact('stats', 'financials', 'chartData'));
+        return view('dashboard', compact('stats', 'financials', 'chartData', 'urgentActions'));
     }
 }

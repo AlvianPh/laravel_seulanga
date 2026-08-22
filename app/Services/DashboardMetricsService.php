@@ -123,4 +123,40 @@ class DashboardMetricsService
             'profits' => $profits,
         ];
     }
+
+    public function getUrgentActions(): array
+    {
+        $now = Carbon::now();
+
+        // 1. Pembayaran menunggu verifikasi
+        $pendingPayments = Payment::with(['tenant', 'invoice.room'])
+            ->where('status', StatusPembayaran::Pending->value)
+            ->latest()
+            ->take(5)
+            ->get();
+
+        // 2. Kontrak akan berakhir dalam 14 hari ke depan
+        $fourteenDaysFromNow = $now->copy()->addDays(14);
+        $expiringContracts = Contract::with(['tenant', 'room'])
+            ->where('status', StatusKontrak::Active->value)
+            ->whereBetween('end_date', [$now->toDateString(), $fourteenDaysFromNow->toDateString()])
+            ->orderBy('end_date')
+            ->take(5)
+            ->get();
+
+        // 3. Tagihan overdue / menunggak
+        $overdueInvoices = Invoice::with(['tenant', 'room'])
+            ->whereIn('status', [StatusTagihan::Overdue->value, StatusTagihan::Pending->value])
+            ->where('due_date', '<', $now->toDateString())
+            ->orderBy('due_date')
+            ->take(5)
+            ->get();
+
+        return [
+            'pendingPayments' => $pendingPayments,
+            'expiringContracts' => $expiringContracts,
+            'overdueInvoices' => $overdueInvoices,
+            'totalUrgentCount' => $pendingPayments->count() + $expiringContracts->count() + $overdueInvoices->count(),
+        ];
+    }
 }
