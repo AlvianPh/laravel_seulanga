@@ -14,13 +14,13 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 /**
  * Model Room — data kamar kost.
  *
- * @property int         $id
- * @property string      $room_number
- * @property int         $floor
- * @property int         $room_type_id
- * @property float|null  $size_m2
- * @property float       $monthly_price
- * @property float       $deposit_price
+ * @property int $id
+ * @property string $room_number
+ * @property int $floor
+ * @property int $room_type_id
+ * @property float|null $size_m2
+ * @property float $monthly_price
+ * @property float $deposit_price
  * @property StatusKamar $status
  */
 class Room extends Model
@@ -41,10 +41,10 @@ class Room extends Model
     protected function casts(): array
     {
         return [
-            'status'        => StatusKamar::class,
+            'status' => StatusKamar::class,
             'monthly_price' => 'decimal:2',
             'deposit_price' => 'decimal:2',
-            'size_m2'       => 'decimal:2',
+            'size_m2' => 'decimal:2',
         ];
     }
 

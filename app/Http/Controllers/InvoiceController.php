@@ -16,9 +16,7 @@ class InvoiceController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(private GenerateInvoiceService $invoiceService)
-    {
-    }
+    public function __construct(private GenerateInvoiceService $invoiceService) {}
 
     /**
      * Display a listing of the resource.
@@ -93,7 +91,7 @@ class InvoiceController extends Controller
         $validated = $request->validated();
 
         $invoice->fill($validated);
-        
+
         // Recalculate total amount from fees
         $invoice->total_amount = $invoice->calculateTotal();
         $invoice->save();
@@ -124,12 +122,12 @@ class InvoiceController extends Controller
         $month = $request->input('month', Carbon::now()->month);
         $year = $request->input('year', Carbon::now()->year);
 
-        $count = $this->invoiceService->generateMonthlyInvoices((int)$month, (int)$year);
+        $count = $this->invoiceService->generateMonthlyInvoices((int) $month, (int) $year);
 
         if ($count > 0) {
             return back()->with('success', "Berhasil men-generate {$count} tagihan baru untuk {$month}/{$year}.");
         }
 
-        return back()->with('info', "Tidak ada tagihan baru yang perlu dibuat (sudah di-generate atau tidak ada kontrak aktif).");
+        return back()->with('info', 'Tidak ada tagihan baru yang perlu dibuat (sudah di-generate atau tidak ada kontrak aktif).');
     }
 }

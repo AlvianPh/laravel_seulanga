@@ -30,11 +30,11 @@ class RoomController extends Controller
         $this->authorize('viewAny', Room::class);
 
         $query = Room::query()->with([
-            'roomType', 
-            'photos', 
+            'roomType',
+            'photos',
             'contracts' => function ($q) {
                 $q->where('status', 'active')->with('tenant');
-            }
+            },
         ]); // Eager load tipe, foto & penghuni aktif
 
         // Filter status
@@ -53,8 +53,8 @@ class RoomController extends Controller
             $query->where('room_number', 'like', "%{$search}%");
         }
 
-        $rooms     = $query->orderBy('room_number')->paginate(10)->withQueryString();
-        $statuses  = StatusKamar::cases();
+        $rooms = $query->orderBy('room_number')->paginate(10)->withQueryString();
+        $statuses = StatusKamar::cases();
         $roomTypes = RoomType::orderBy('name')->get();
 
         return view('rooms.index', compact('rooms', 'statuses', 'roomTypes'));
@@ -67,8 +67,8 @@ class RoomController extends Controller
     {
         $this->authorize('create', Room::class);
 
-        $statuses   = StatusKamar::cases();
-        $roomTypes  = RoomType::orderBy('name')->get();
+        $statuses = StatusKamar::cases();
+        $roomTypes = RoomType::orderBy('name')->get();
         $facilities = Facility::orderBy('name')->get();
 
         return view('rooms.create', compact('statuses', 'roomTypes', 'facilities'));
@@ -85,13 +85,13 @@ class RoomController extends Controller
 
         // Simpan data kamar
         $room = Room::create([
-            'room_number'   => $validated['room_number'],
-            'floor'         => $validated['floor'],
-            'room_type_id'  => $validated['room_type_id'],
-            'size_m2'       => $validated['size_m2'],
+            'room_number' => $validated['room_number'],
+            'floor' => $validated['floor'],
+            'room_type_id' => $validated['room_type_id'],
+            'size_m2' => $validated['size_m2'],
             'monthly_price' => $validated['monthly_price'],
             'deposit_price' => $validated['deposit_price'],
-            'status'        => $validated['status'],
+            'status' => $validated['status'],
         ]);
 
         // Sync fasilitas via pivot
@@ -104,8 +104,8 @@ class RoomController extends Controller
                 $path = $photo->store('rooms', 'public');
 
                 RoomPhoto::create([
-                    'room_id'    => $room->id,
-                    'file_path'  => $path,
+                    'room_id' => $room->id,
+                    'file_path' => $path,
                     'is_primary' => $isFirst, // Foto pertama otomatis jadi primary
                 ]);
                 $isFirst = false;
@@ -137,8 +137,8 @@ class RoomController extends Controller
         $this->authorize('update', $room);
         $room->load(['photos', 'facilities']);
 
-        $statuses   = StatusKamar::cases();
-        $roomTypes  = RoomType::orderBy('name')->get();
+        $statuses = StatusKamar::cases();
+        $roomTypes = RoomType::orderBy('name')->get();
         $facilities = Facility::orderBy('name')->get();
 
         return view('rooms.edit', compact('room', 'statuses', 'roomTypes', 'facilities'));
@@ -154,13 +154,13 @@ class RoomController extends Controller
         $validated = $request->validated();
 
         $room->update([
-            'room_number'   => $validated['room_number'],
-            'floor'         => $validated['floor'],
-            'room_type_id'  => $validated['room_type_id'],
-            'size_m2'       => $validated['size_m2'],
+            'room_number' => $validated['room_number'],
+            'floor' => $validated['floor'],
+            'room_type_id' => $validated['room_type_id'],
+            'size_m2' => $validated['size_m2'],
             'monthly_price' => $validated['monthly_price'],
             'deposit_price' => $validated['deposit_price'],
-            'status'        => $validated['status'],
+            'status' => $validated['status'],
         ]);
 
         // Sync fasilitas via pivot
@@ -170,14 +170,14 @@ class RoomController extends Controller
         if ($request->hasFile('photos')) {
             // Jika kamar belum punya foto sama sekali, set foto baru pertama sebagai primary
             $hasPrimary = $room->photos()->where('is_primary', true)->exists();
-            $isFirst    = ! $hasPrimary;
+            $isFirst = ! $hasPrimary;
 
             foreach ($request->file('photos') as $photo) {
                 $path = $photo->store('rooms', 'public');
 
                 RoomPhoto::create([
-                    'room_id'    => $room->id,
-                    'file_path'  => $path,
+                    'room_id' => $room->id,
+                    'file_path' => $path,
                     'is_primary' => $isFirst,
                 ]);
                 $isFirst = false;

@@ -2,18 +2,17 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
-
 /**
  * Model RoomType — master data tipe kamar kost.
  *
- * @property int         $id
- * @property string      $name
+ * @property int $id
+ * @property string $name
  * @property string|null $description
- * @property float|null  $default_price
+ * @property float|null $default_price
  */
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class RoomType extends Model
 {

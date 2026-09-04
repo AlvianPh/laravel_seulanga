@@ -17,9 +17,7 @@ class PaymentController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(private VerifyPaymentService $verifyService)
-    {
-    }
+    public function __construct(private VerifyPaymentService $verifyService) {}
 
     /**
      * Display a listing of the resource.
@@ -45,7 +43,7 @@ class PaymentController extends Controller
 
         $payments = $query->latest('payment_date')->paginate(10)->withQueryString();
         $statuses = StatusPembayaran::cases();
-        $paymentMethods = \App\Models\PaymentMethod::orderBy('name')->get();
+        $paymentMethods = PaymentMethod::orderBy('name')->get();
 
         return view('payments.index', compact('payments', 'statuses', 'paymentMethods'));
     }
@@ -61,7 +59,7 @@ class PaymentController extends Controller
             ->whereIn('status', ['pending', 'overdue'])
             ->orderBy('due_date')
             ->get();
-            
+
         $paymentMethods = PaymentMethod::all();
         $selectedInvoiceId = $request->query('invoice_id');
 
@@ -77,9 +75,9 @@ class PaymentController extends Controller
 
         $data = $request->validated();
         $invoice = Invoice::findOrFail($data['invoice_id']);
-        
+
         $data['tenant_id'] = $invoice->tenant_id;
-        $data['status']    = StatusPembayaran::Pending;
+        $data['status'] = StatusPembayaran::Pending;
 
         if ($request->hasFile('proof_photo')) {
             $data['proof_path'] = $request->file('proof_photo')->store('payments', 'public');
@@ -88,7 +86,7 @@ class PaymentController extends Controller
         Payment::create($data);
 
         return redirect()->route('payments.index')
-                         ->with('success', 'Pembayaran berhasil dicatat dan menunggu verifikasi.');
+            ->with('success', 'Pembayaran berhasil dicatat dan menunggu verifikasi.');
     }
 
     /**
@@ -171,7 +169,7 @@ class PaymentController extends Controller
 
         $request->validate([
             'action' => 'required|in:verify,reject',
-            'notes'  => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         try {

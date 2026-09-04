@@ -32,7 +32,7 @@ class TenantController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('nik', 'like', "%{$search}%");
+                    ->orWhere('nik', 'like', "%{$search}%");
             });
         }
 
@@ -48,6 +48,7 @@ class TenantController extends Controller
     {
         $this->authorize('create', Tenant::class);
         $genders = JenisKelamin::cases();
+
         return view('tenants.create', compact('genders'));
     }
 
@@ -59,7 +60,7 @@ class TenantController extends Controller
         $this->authorize('create', Tenant::class);
 
         $validated = $request->validated();
-        
+
         // Handle upload foto KTP
         if ($request->hasFile('ktp_photo')) {
             $validated['ktp_photo_path'] = $request->file('ktp_photo')->store('tenants/ktp', 'public');
@@ -82,7 +83,7 @@ class TenantController extends Controller
     public function show(Tenant $tenant): View
     {
         $this->authorize('view', $tenant);
-        
+
         // Eager load relasi contracts beserta kamar yang bersangkutan
         $tenant->load(['contracts.room' => function ($q) {
             $q->latest('start_date');
@@ -98,6 +99,7 @@ class TenantController extends Controller
     {
         $this->authorize('update', $tenant);
         $genders = JenisKelamin::cases();
+
         return view('tenants.edit', compact('tenant', 'genders'));
     }
 

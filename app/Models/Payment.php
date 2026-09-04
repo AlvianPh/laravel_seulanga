@@ -11,16 +11,16 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Model Payment — pencatatan pembayaran tagihan.
  *
- * @property int               $id
- * @property int               $invoice_id
- * @property int               $tenant_id
- * @property float             $amount
- * @property string            $payment_date
- * @property int               $payment_method_id
- * @property StatusPembayaran  $status
- * @property string|null       $proof_path
- * @property string|null       $notes
- * @property int|null          $verified_by
+ * @property int $id
+ * @property int $invoice_id
+ * @property int $tenant_id
+ * @property float $amount
+ * @property string $payment_date
+ * @property int $payment_method_id
+ * @property StatusPembayaran $status
+ * @property string|null $proof_path
+ * @property string|null $notes
+ * @property int|null $verified_by
  */
 class Payment extends Model
 {
@@ -42,9 +42,9 @@ class Payment extends Model
     protected function casts(): array
     {
         return [
-            'status'       => StatusPembayaran::class,
+            'status' => StatusPembayaran::class,
             'payment_date' => 'date',
-            'amount'       => 'decimal:2',
+            'amount' => 'decimal:2',
         ];
     }
 

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\ExpenseCategoryRequest;
 use App\Models\ExpenseCategory;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class ExpenseCategoryController extends Controller
@@ -14,13 +15,14 @@ class ExpenseCategoryController extends Controller
     {
         $this->authorize('viewAny', ExpenseCategory::class);
         $expense_categories = ExpenseCategory::withCount('expenses')->paginate(10);
-        
+
         return view('expense_categories.index', compact('expense_categories'));
     }
 
     public function create()
     {
         $this->authorize('create', ExpenseCategory::class);
+
         return view('expense_categories.create');
     }
 
@@ -30,12 +32,13 @@ class ExpenseCategoryController extends Controller
         ExpenseCategory::create($request->validated());
 
         return redirect()->route('expense_categories.index')
-                         ->with('success', 'Kategori pengeluaran berhasil ditambahkan.');
+            ->with('success', 'Kategori pengeluaran berhasil ditambahkan.');
     }
 
     public function edit(ExpenseCategory $expenseCategory)
     {
         $this->authorize('update', $expenseCategory);
+
         return view('expense_categories.edit', compact('expenseCategory'));
     }
 
@@ -45,7 +48,7 @@ class ExpenseCategoryController extends Controller
         $expenseCategory->update($request->validated());
 
         return redirect()->route('expense_categories.index')
-                         ->with('success', 'Kategori pengeluaran berhasil diperbarui.');
+            ->with('success', 'Kategori pengeluaran berhasil diperbarui.');
     }
 
     public function destroy(ExpenseCategory $expenseCategory)
@@ -54,12 +57,13 @@ class ExpenseCategoryController extends Controller
 
         try {
             $expenseCategory->delete();
+
             return redirect()->route('expense_categories.index')
-                             ->with('success', 'Kategori pengeluaran berhasil dihapus.');
-        } catch (\Illuminate\Database\QueryException $e) {
+                ->with('success', 'Kategori pengeluaran berhasil dihapus.');
+        } catch (QueryException $e) {
             if ($e->getCode() === '23000') {
                 return redirect()->back()
-                                 ->with('error', 'Kategori pengeluaran tidak dapat dihapus karena masih digunakan pada data pengeluaran.');
+                    ->with('error', 'Kategori pengeluaran tidak dapat dihapus karena masih digunakan pada data pengeluaran.');
             }
             throw $e;
         }

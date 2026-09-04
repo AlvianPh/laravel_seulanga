@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ReportExport;
+use App\Models\Setting;
 use App\Services\ReportGeneratorService;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Illuminate\Http\Request;
@@ -36,7 +37,7 @@ class ReportController extends Controller
             'filter' => 'required|in:daily,weekly,monthly,yearly,custom',
             'start_date' => 'nullable|date',
             'end_date' => 'nullable|date|after_or_equal:start_date',
-            'action' => 'required|in:view,pdf,excel,csv'
+            'action' => 'required|in:view,pdf,excel,csv',
         ]);
 
         $type = $request->input('type');
@@ -100,14 +101,15 @@ class ReportController extends Controller
                 'title' => $reportTitle,
                 'dateLabel' => $dateLabel,
                 'viewName' => $viewName,
-                'data' => $data
+                'data' => $data,
             ]);
         }
 
         // Action: PDF
         if ($action === 'pdf') {
             $pdf = Pdf::loadView('reports.pdf_template', ['viewName' => $viewName, 'data' => $data]);
-            return $pdf->download(strtolower(str_replace(' ', '_', $reportTitle)) . '.pdf');
+
+            return $pdf->download(strtolower(str_replace(' ', '_', $reportTitle)).'.pdf');
         }
 
         // Action: Excel / CSV
@@ -116,9 +118,9 @@ class ReportController extends Controller
         $ext = $action === 'csv' ? '.csv' : '.xlsx';
 
         return Excel::download(new ReportExport('reports.excel_template', [
-            'viewName' => $viewName, 
+            'viewName' => $viewName,
             'data' => $data,
-            'setting' => \App\Models\Setting::getInstance()
-        ]), $filename . $ext, $exportFormat);
+            'setting' => Setting::getInstance(),
+        ]), $filename.$ext, $exportFormat);
     }
 }

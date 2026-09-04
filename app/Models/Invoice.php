@@ -12,20 +12,20 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Model Invoice — tagihan bulanan penghuni.
  *
- * @property int           $id
- * @property int           $contract_id
- * @property int           $tenant_id
- * @property int           $room_id
- * @property int           $year
- * @property int           $month
- * @property float         $rent_amount
- * @property float|null    $electricity_fee
- * @property float|null    $water_fee
- * @property float|null    $internet_fee
- * @property float|null    $penalty_fee
- * @property float|null    $other_fee
- * @property float         $total_amount
- * @property string        $due_date
+ * @property int $id
+ * @property int $contract_id
+ * @property int $tenant_id
+ * @property int $room_id
+ * @property int $year
+ * @property int $month
+ * @property float $rent_amount
+ * @property float|null $electricity_fee
+ * @property float|null $water_fee
+ * @property float|null $internet_fee
+ * @property float|null $penalty_fee
+ * @property float|null $other_fee
+ * @property float $total_amount
+ * @property string $due_date
  * @property StatusTagihan $status
  */
 class Invoice extends Model
@@ -53,15 +53,15 @@ class Invoice extends Model
     protected function casts(): array
     {
         return [
-            'status'          => StatusTagihan::class,
-            'due_date'        => 'date',
-            'rent_amount'     => 'decimal:2',
+            'status' => StatusTagihan::class,
+            'due_date' => 'date',
+            'rent_amount' => 'decimal:2',
             'electricity_fee' => 'decimal:2',
-            'water_fee'       => 'decimal:2',
-            'internet_fee'    => 'decimal:2',
-            'penalty_fee'     => 'decimal:2',
-            'other_fee'       => 'decimal:2',
-            'total_amount'    => 'decimal:2',
+            'water_fee' => 'decimal:2',
+            'internet_fee' => 'decimal:2',
+            'penalty_fee' => 'decimal:2',
+            'other_fee' => 'decimal:2',
+            'total_amount' => 'decimal:2',
         ];
     }
 

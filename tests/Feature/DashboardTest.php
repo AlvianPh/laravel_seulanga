@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Enums\KategoriPengeluaran;
 use App\Enums\StatusKamar;
 use App\Enums\StatusKontrak;
 use App\Enums\StatusPembayaran;
 use App\Models\Contract;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Room;
@@ -25,6 +25,7 @@ class DashboardTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -70,14 +71,14 @@ class DashboardTest extends TestCase
             'tenant_id' => $tenant->id,
             'amount' => 1000000,
             'status' => StatusPembayaran::Verified->value,
-            'payment_date' => Carbon::now()->toDateString()
+            'payment_date' => Carbon::now()->toDateString(),
         ]);
 
         // Expense Today = 400.000
         Expense::factory()->create([
             'amount' => 400000,
-            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Listrik'])->id,
-            'expense_date' => Carbon::now()->toDateString()
+            'expense_category_id' => ExpenseCategory::firstOrCreate(['name' => 'Listrik'])->id,
+            'expense_date' => Carbon::now()->toDateString(),
         ]);
 
         $response = $this->get('/dashboard');

@@ -7,6 +7,7 @@ enum RoleUser: string
 {
     case Owner = 'owner';
     case Admin = 'admin';
+    case Tenant = 'tenant';
 
     /** Label tampilan untuk UI. */
     public function label(): string
@@ -14,6 +15,7 @@ enum RoleUser: string
         return match ($this) {
             self::Owner => 'Owner',
             self::Admin => 'Admin',
+            self::Tenant => 'Penghuni',
         };
     }
 }

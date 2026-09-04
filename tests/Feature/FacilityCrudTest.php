@@ -21,6 +21,7 @@ class FacilityCrudTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -89,7 +90,7 @@ class FacilityCrudTest extends TestCase
     public function test_cannot_delete_facility_used_by_rooms()
     {
         $roomType = RoomType::firstOrCreate(['name' => 'Standard'], ['default_price' => 1000000]);
-        $room     = Room::factory()->create(['room_number' => 'Y001', 'room_type_id' => $roomType->id]);
+        $room = Room::factory()->create(['room_number' => 'Y001', 'room_type_id' => $roomType->id]);
         $facility = Facility::create(['name' => 'TV Tidak Boleh Hapus']);
         $room->facilities()->attach($facility->id);
 

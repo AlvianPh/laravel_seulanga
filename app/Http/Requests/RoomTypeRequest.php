@@ -21,13 +21,13 @@ class RoomTypeRequest extends FormRequest
         $roomTypeId = $this->route('room_type') ? $this->route('room_type')->id : null;
 
         return [
-            'name'          => [
+            'name' => [
                 'required',
                 'string',
                 'max:100',
                 Rule::unique('room_types')->ignore($roomTypeId),
             ],
-            'description'   => ['nullable', 'string', 'max:500'],
+            'description' => ['nullable', 'string', 'max:500'],
             'default_price' => ['nullable', 'numeric', 'min:0'],
         ];
     }
@@ -35,8 +35,8 @@ class RoomTypeRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'name'          => 'Nama Tipe',
-            'description'   => 'Deskripsi',
+            'name' => 'Nama Tipe',
+            'description' => 'Deskripsi',
             'default_price' => 'Harga Rekomendasi',
         ];
     }

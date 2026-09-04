@@ -7,7 +7,7 @@ use App\Models\User;
 
 /**
  * Policy TenantPolicy — mengatur otorisasi manajemen penghuni.
- * 
+ *
  * Owner dan Admin memiliki akses CRUD penuh ke penghuni.
  */
 class TenantPolicy

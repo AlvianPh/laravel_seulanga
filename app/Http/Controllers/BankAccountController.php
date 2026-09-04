@@ -14,13 +14,14 @@ class BankAccountController extends Controller
     {
         $this->authorize('viewAny', BankAccount::class);
         $bankAccounts = BankAccount::paginate(10);
-        
+
         return view('bank_accounts.index', compact('bankAccounts'));
     }
 
     public function create()
     {
         $this->authorize('create', BankAccount::class);
+
         return view('bank_accounts.create');
     }
 
@@ -30,12 +31,13 @@ class BankAccountController extends Controller
         BankAccount::create($request->validated());
 
         return redirect()->route('bank_accounts.index')
-                         ->with('success', 'Rekening berhasil ditambahkan.');
+            ->with('success', 'Rekening berhasil ditambahkan.');
     }
 
     public function edit(BankAccount $bankAccount)
     {
         $this->authorize('update', $bankAccount);
+
         return view('bank_accounts.edit', compact('bankAccount'));
     }
 
@@ -45,7 +47,7 @@ class BankAccountController extends Controller
         $bankAccount->update($request->validated());
 
         return redirect()->route('bank_accounts.index')
-                         ->with('success', 'Rekening berhasil diperbarui.');
+            ->with('success', 'Rekening berhasil diperbarui.');
     }
 
     public function destroy(BankAccount $bankAccount)
@@ -54,6 +56,6 @@ class BankAccountController extends Controller
         $bankAccount->delete();
 
         return redirect()->route('bank_accounts.index')
-                         ->with('success', 'Rekening berhasil dihapus.');
+            ->with('success', 'Rekening berhasil dihapus.');
     }
 }

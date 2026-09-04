@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Services\DashboardMetricsService;
-use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 /**

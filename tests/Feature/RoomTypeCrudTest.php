@@ -20,6 +20,7 @@ class RoomTypeCrudTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -42,8 +43,8 @@ class RoomTypeCrudTest extends TestCase
         $this->authenticate('admin');
 
         $response = $this->post('/room_types', [
-            'name'          => 'VIP',
-            'description'   => 'Kamar VIP eksklusif',
+            'name' => 'VIP',
+            'description' => 'Kamar VIP eksklusif',
             'default_price' => 3000000,
         ]);
 
@@ -67,7 +68,7 @@ class RoomTypeCrudTest extends TestCase
         $this->authenticate('admin');
 
         $response = $this->patch("/room_types/{$roomType->id}", [
-            'name'        => 'Biasa Updated',
+            'name' => 'Biasa Updated',
             'description' => 'Baru',
         ]);
 

@@ -31,7 +31,7 @@ class PaymentPolicy
     {
         // Secara umum payment tidak dihapus, hanya diverifikasi atau direject.
         // Tapi kita biarkan role apa saja jika memang nanti perlu.
-        return true; 
+        return true;
     }
 
     /**

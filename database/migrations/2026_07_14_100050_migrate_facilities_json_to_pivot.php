@@ -19,9 +19,9 @@ return new class extends Migration
             ->whereNotNull('facilities')
             ->get(['id', 'facilities']);
 
-        $totalRooms      = 0;
-        $totalPivotRows  = 0;
-        $skipped         = 0;
+        $totalRooms = 0;
+        $totalPivotRows = 0;
+        $skipped = 0;
 
         foreach ($rooms as $room) {
             $facilitiesJson = $room->facilities;
@@ -33,6 +33,7 @@ return new class extends Migration
 
             if (! is_array($names) || empty($names)) {
                 $skipped++;
+
                 continue;
             }
 
@@ -52,8 +53,8 @@ return new class extends Migration
                     $facilityId = $existing->id;
                 } else {
                     $facilityId = DB::table('facilities')->insertGetId([
-                        'name'       => $name,
-                        'icon'       => null,
+                        'name' => $name,
+                        'icon' => null,
                         'created_at' => now(),
                         'updated_at' => now(),
                     ]);
@@ -71,7 +72,7 @@ return new class extends Migration
 
                 if (! $exists) {
                     DB::table('room_facilities')->insert([
-                        'room_id'     => $room->id,
+                        'room_id' => $room->id,
                         'facility_id' => $fId,
                     ]);
                     $totalPivotRows++;

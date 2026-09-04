@@ -14,12 +14,12 @@ return new class extends Migration
             $table->string('kost_name')->default('Kost App');
             $table->text('kost_address')->nullable();
             $table->integer('default_due_date_day')->default(10);
-            
+
             $table->foreignId('default_late_fee_id')->nullable()
-                  ->constrained('additional_fee_types')->nullOnDelete();
-                  
+                ->constrained('additional_fee_types')->nullOnDelete();
+
             $table->foreignId('default_bank_account_id')->nullable()
-                  ->constrained('bank_accounts')->nullOnDelete();
+                ->constrained('bank_accounts')->nullOnDelete();
 
             $table->timestamps();
         });

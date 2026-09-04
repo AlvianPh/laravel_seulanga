@@ -21,12 +21,12 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name'              => fake()->name(),
-            'email'             => fake()->unique()->safeEmail(),
+            'name' => fake()->name(),
+            'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => now(),
-            'password'          => static::$password ??= Hash::make('password'),
-            'role'              => RoleUser::Admin,
-            'remember_token'    => Str::random(10),
+            'password' => static::$password ??= Hash::make('password'),
+            'role' => RoleUser::Admin,
+            'remember_token' => Str::random(10),
         ];
     }
 
@@ -43,6 +43,14 @@ class UserFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'role' => RoleUser::Admin,
+        ]);
+    }
+
+    /** State: jadikan user sebagai Tenant/Penghuni. */
+    public function tenant(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => RoleUser::Tenant,
         ]);
     }
 

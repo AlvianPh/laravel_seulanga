@@ -19,12 +19,12 @@ return new class extends Migration
         // 2. Mapping data enum lama -> id di expense_categories
         $mapping = [
             'electricity' => 'Listrik',
-            'water'       => 'Air',
-            'internet'    => 'Internet',
-            'repair'      => 'Perbaikan',
-            'cleaning'    => 'Kebersihan',
-            'salary'      => 'Gaji',
-            'other'       => 'Lainnya',
+            'water' => 'Air',
+            'internet' => 'Internet',
+            'repair' => 'Perbaikan',
+            'cleaning' => 'Kebersihan',
+            'salary' => 'Gaji',
+            'other' => 'Lainnya',
         ];
 
         $migrated = 0;
@@ -38,7 +38,7 @@ return new class extends Migration
                 $migrated += $updated;
             }
         }
-        
+
         echo "\n[expense_category_id migration] Berhasil migrasi {$migrated} baris pengeluaran.\n";
 
         // 3. Ubah kolom expense_category_id menjadi NOT NULL
@@ -60,7 +60,7 @@ return new class extends Migration
             Schema::table('expenses', function (Blueprint $table) {
                 $table->dropIndex('expenses_category_index');
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Abaikan jika index tidak ada
         }
 
@@ -83,13 +83,13 @@ return new class extends Migration
 
         // Restore data
         $mapping = [
-            'Listrik'    => 'electricity',
-            'Air'        => 'water',
-            'Internet'   => 'internet',
-            'Perbaikan'  => 'repair',
+            'Listrik' => 'electricity',
+            'Air' => 'water',
+            'Internet' => 'internet',
+            'Perbaikan' => 'repair',
             'Kebersihan' => 'cleaning',
-            'Gaji'       => 'salary',
-            'Lainnya'    => 'other',
+            'Gaji' => 'salary',
+            'Lainnya' => 'other',
         ];
 
         foreach ($mapping as $categoryName => $enumValue) {

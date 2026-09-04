@@ -25,8 +25,8 @@ return new class extends Migration
         // Langkah 2: Mapping ENUM lama → row di room_types
         $mapping = [
             'standard' => 'Standard',
-            'deluxe'   => 'Deluxe',
-            'suite'    => 'Suite',
+            'deluxe' => 'Deluxe',
+            'suite' => 'Suite',
         ];
 
         $migrated = 0;
@@ -69,7 +69,7 @@ return new class extends Migration
             Schema::table('rooms', function (Blueprint $table) {
                 $table->dropIndex('rooms_type_index');
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Index mungkin tidak ada — abaikan
         }
 
@@ -93,8 +93,8 @@ return new class extends Migration
         // Kembalikan data dari room_type_id ke type
         $mapping = [
             'Standard' => 'standard',
-            'Deluxe'   => 'deluxe',
-            'Suite'    => 'suite',
+            'Deluxe' => 'deluxe',
+            'Suite' => 'suite',
         ];
 
         foreach ($mapping as $typeName => $enumValue) {

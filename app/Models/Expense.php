@@ -10,13 +10,13 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Model Expense — pengeluaran operasional kost.
  *
- * @property int                  $id
- * @property int                  $expense_category_id
- * @property string               $description
- * @property float                $amount
- * @property string               $expense_date
- * @property string|null          $receipt_path
- * @property int                  $created_by
+ * @property int $id
+ * @property int $expense_category_id
+ * @property string $description
+ * @property float $amount
+ * @property string $expense_date
+ * @property string|null $receipt_path
+ * @property int $created_by
  */
 class Expense extends Model
 {
@@ -36,7 +36,7 @@ class Expense extends Model
     {
         return [
             'expense_date' => 'date',
-            'amount'       => 'decimal:2',
+            'amount' => 'decimal:2',
         ];
     }
 

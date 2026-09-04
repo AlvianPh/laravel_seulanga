@@ -22,7 +22,7 @@ class VerifyPaymentService
 
             // Update status pembayaran
             $payment->update([
-                'status'      => StatusPembayaran::Verified,
+                'status' => StatusPembayaran::Verified,
                 'verified_by' => $verifierId,
             ]);
 
@@ -54,9 +54,9 @@ class VerifyPaymentService
             }
 
             $payment->update([
-                'status'      => StatusPembayaran::Rejected,
+                'status' => StatusPembayaran::Rejected,
                 'verified_by' => $verifierId,
-                'notes'       => $notes ?: $payment->notes, // Simpan atau update notes alasan penolakan
+                'notes' => $notes ?: $payment->notes, // Simpan atau update notes alasan penolakan
             ]);
 
             return $payment;

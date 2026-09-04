@@ -18,9 +18,7 @@ class ContractController extends Controller
 {
     use AuthorizesRequests;
 
-    public function __construct(private ContractService $contractService)
-    {
-    }
+    public function __construct(private ContractService $contractService) {}
 
     /**
      * Display a listing of the resource.
@@ -143,11 +141,11 @@ class ContractController extends Controller
         $this->authorize('update', $contract);
 
         $request->validate([
-            'start_date'     => 'required|date',
-            'end_date'       => 'required|date|after:start_date',
-            'rent_price'     => 'required|numeric|min:0',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+            'rent_price' => 'required|numeric|min:0',
             'deposit_amount' => 'required|numeric|min:0',
-            'notes'          => 'nullable|string|max:1000',
+            'notes' => 'nullable|string|max:1000',
         ]);
 
         try {

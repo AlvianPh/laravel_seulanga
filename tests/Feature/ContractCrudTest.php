@@ -23,6 +23,7 @@ class ContractCrudTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -44,11 +45,11 @@ class ContractCrudTest extends TestCase
         $tenant = Tenant::factory()->create();
 
         $response = $this->post('/contracts', [
-            'tenant_id'      => $tenant->id,
-            'room_id'        => $room->id,
-            'start_date'     => now()->format('Y-m-d'),
-            'end_date'       => now()->addMonths(6)->format('Y-m-d'),
-            'rent_price'     => 1500000,
+            'tenant_id' => $tenant->id,
+            'room_id' => $room->id,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => now()->addMonths(6)->format('Y-m-d'),
+            'rent_price' => 1500000,
             'deposit_amount' => 500000,
         ]);
 
@@ -63,24 +64,24 @@ class ContractCrudTest extends TestCase
         $tenant = Tenant::factory()->create();
 
         $response = $this->post('/contracts', [
-            'tenant_id'      => $tenant->id,
-            'room_id'        => $room->id,
-            'start_date'     => now()->format('Y-m-d'),
-            'end_date'       => now()->addMonths(6)->format('Y-m-d'),
-            'rent_price'     => 1500000,
+            'tenant_id' => $tenant->id,
+            'room_id' => $room->id,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => now()->addMonths(6)->format('Y-m-d'),
+            'rent_price' => 1500000,
             'deposit_amount' => 500000,
         ]);
 
         $response->assertRedirect('/contracts');
-        
+
         $this->assertDatabaseHas('contracts', [
             'tenant_id' => $tenant->id,
-            'room_id'   => $room->id,
-            'status'    => StatusKontrak::Active->value,
+            'room_id' => $room->id,
+            'status' => StatusKontrak::Active->value,
         ]);
 
         $this->assertDatabaseHas('rooms', [
-            'id'     => $room->id,
+            'id' => $room->id,
             'status' => StatusKamar::Occupied->value,
         ]);
     }
@@ -88,14 +89,14 @@ class ContractCrudTest extends TestCase
     public function test_terminate_contract_success_and_room_becomes_available()
     {
         $this->authenticate('owner');
-        
+
         // Simulasi keadaan awal: Kamar occupied, Kontrak aktif
         $room = Room::factory()->create(['status' => StatusKamar::Occupied->value, 'room_number' => 'OCC2']);
         $tenant = Tenant::factory()->create();
         $contract = Contract::factory()->create([
-            'room_id'   => $room->id,
+            'room_id' => $room->id,
             'tenant_id' => $tenant->id,
-            'status'    => StatusKontrak::Active->value,
+            'status' => StatusKontrak::Active->value,
         ]);
 
         $response = $this->post("/contracts/{$contract->id}/terminate");
@@ -104,12 +105,12 @@ class ContractCrudTest extends TestCase
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('contracts', [
-            'id'     => $contract->id,
+            'id' => $contract->id,
             'status' => StatusKontrak::Terminated->value,
         ]);
 
         $this->assertDatabaseHas('rooms', [
-            'id'     => $room->id,
+            'id' => $room->id,
             'status' => StatusKamar::Available->value,
         ]);
     }
@@ -117,51 +118,51 @@ class ContractCrudTest extends TestCase
     public function test_renew_contract_creates_new_contract_and_ends_old_one()
     {
         $user = $this->authenticate('admin');
-        
+
         // Simulasi keadaan awal
         $room = Room::factory()->create(['status' => StatusKamar::Occupied->value, 'room_number' => 'OCC3']);
         $tenant = Tenant::factory()->create();
         $oldContract = Contract::factory()->create([
-            'room_id'   => $room->id,
+            'room_id' => $room->id,
             'tenant_id' => $tenant->id,
-            'status'    => StatusKontrak::Active->value,
+            'status' => StatusKontrak::Active->value,
             'start_date' => now()->subMonths(6)->format('Y-m-d'),
-            'end_date'   => now()->format('Y-m-d'),
+            'end_date' => now()->format('Y-m-d'),
         ]);
 
         $newStartDate = now()->addDay()->format('Y-m-d');
         $newEndDate = now()->addMonths(6)->addDay()->format('Y-m-d');
 
         $response = $this->post("/contracts/{$oldContract->id}/renew", [
-            'start_date'     => $newStartDate,
-            'end_date'       => $newEndDate,
-            'rent_price'     => 1600000,
+            'start_date' => $newStartDate,
+            'end_date' => $newEndDate,
+            'rent_price' => 1600000,
             'deposit_amount' => 500000,
-            'notes'          => 'Perpanjangan test',
+            'notes' => 'Perpanjangan test',
         ]);
 
         $response->assertRedirect('/contracts');
 
         // Kontrak lama harus Ended
         $this->assertDatabaseHas('contracts', [
-            'id'     => $oldContract->id,
+            'id' => $oldContract->id,
             'status' => StatusKontrak::Ended->value,
         ]);
 
         // Kontrak baru harus dibuat dan Active
         $this->assertDatabaseHas('contracts', [
-            'tenant_id'  => $tenant->id,
-            'room_id'    => $room->id,
-            'start_date' => $newStartDate . ' 00:00:00',
-            'end_date'   => $newEndDate . ' 00:00:00',
+            'tenant_id' => $tenant->id,
+            'room_id' => $room->id,
+            'start_date' => $newStartDate.' 00:00:00',
+            'end_date' => $newEndDate.' 00:00:00',
             'rent_price' => 1600000,
-            'status'     => StatusKontrak::Active->value,
+            'status' => StatusKontrak::Active->value,
             'created_by' => $user->id,
         ]);
 
         // Kamar tetap occupied
         $this->assertDatabaseHas('rooms', [
-            'id'     => $room->id,
+            'id' => $room->id,
             'status' => StatusKamar::Occupied->value,
         ]);
     }
@@ -173,11 +174,11 @@ class ContractCrudTest extends TestCase
         $tenant = Tenant::factory()->create();
 
         $response = $this->post('/contracts', [
-            'tenant_id'      => $tenant->id,
-            'room_id'        => $room->id,
-            'start_date'     => now()->format('Y-m-d'),
-            'end_date'       => now()->subDays(5)->format('Y-m-d'), // Selesai lebih awal dari mulai
-            'rent_price'     => 1500000,
+            'tenant_id' => $tenant->id,
+            'room_id' => $room->id,
+            'start_date' => now()->format('Y-m-d'),
+            'end_date' => now()->subDays(5)->format('Y-m-d'), // Selesai lebih awal dari mulai
+            'rent_price' => 1500000,
             'deposit_amount' => 500000,
         ]);
 

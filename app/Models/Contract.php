@@ -12,16 +12,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Model Contract — perjanjian sewa antara penghuni dan kamar.
  *
- * @property int            $id
- * @property int            $tenant_id
- * @property int            $room_id
- * @property string         $start_date
- * @property string         $end_date
- * @property float          $rent_price   Snapshot harga sewa saat kontrak dibuat
- * @property float          $deposit_amount
- * @property StatusKontrak  $status
- * @property string|null    $notes
- * @property int            $created_by
+ * @property int $id
+ * @property int $tenant_id
+ * @property int $room_id
+ * @property string $start_date
+ * @property string $end_date
+ * @property float $rent_price Snapshot harga sewa saat kontrak dibuat
+ * @property float $deposit_amount
+ * @property StatusKontrak $status
+ * @property string|null $notes
+ * @property int $created_by
  */
 class Contract extends Model
 {
@@ -43,10 +43,10 @@ class Contract extends Model
     protected function casts(): array
     {
         return [
-            'status'         => StatusKontrak::class,
-            'start_date'     => 'date',
-            'end_date'       => 'date',
-            'rent_price'     => 'decimal:2',
+            'status' => StatusKontrak::class,
+            'start_date' => 'date',
+            'end_date' => 'date',
+            'rent_price' => 'decimal:2',
             'deposit_amount' => 'decimal:2',
         ];
     }

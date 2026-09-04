@@ -5,19 +5,19 @@ namespace Tests\Feature;
 use App\Enums\RoleUser;
 use App\Enums\StatusKamar;
 use App\Enums\StatusKontrak;
-use App\Enums\StatusTagihan;
 use App\Enums\StatusPembayaran;
+use App\Enums\StatusTagihan;
 use App\Models\Contract;
 use App\Models\Invoice;
 use App\Models\Payment;
+use App\Models\PaymentMethod;
 use App\Models\Room;
+use App\Models\RoomType;
 use App\Models\Tenant;
 use App\Models\User;
-use App\Models\PaymentMethod;
-use App\Models\RoomType;
+use App\Notifications\InvoiceOverdueNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use App\Notifications\InvoiceOverdueNotification;
 use Tests\TestCase;
 
 class EndToEndTest extends TestCase
@@ -28,6 +28,7 @@ class EndToEndTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -39,7 +40,7 @@ class EndToEndTest extends TestCase
         $user = $this->authenticate('admin');
 
         $roomType = RoomType::factory()->create();
-        
+
         // Kamar kosong
         $room = Room::factory()->create([
             'status' => StatusKamar::Available->value,
@@ -74,7 +75,7 @@ class EndToEndTest extends TestCase
             'month' => now()->month,
             'year' => now()->year,
         ]);
-        
+
         $invoice = Invoice::where('contract_id', $contract->id)->first();
         $this->assertNotNull($invoice);
         // By default, generated invoice status is Pending
@@ -82,7 +83,7 @@ class EndToEndTest extends TestCase
 
         // Bayar
         $paymentMethod = PaymentMethod::factory()->create();
-        $response = $this->post("/payments", [
+        $response = $this->post('/payments', [
             'invoice_id' => $invoice->id,
             'payment_method_id' => $paymentMethod->id,
             'amount' => 1500000,
@@ -99,7 +100,7 @@ class EndToEndTest extends TestCase
         $owner = User::factory()->create(['role' => RoleUser::Owner->value]);
         $this->actingAs($owner);
         $response = $this->post("/payments/{$payment->id}/verify", [
-            'action' => 'verify'
+            'action' => 'verify',
         ]);
         $response->assertRedirect();
 
@@ -115,18 +116,18 @@ class EndToEndTest extends TestCase
         // 2. Alur "Kontrak berakhir → Status kamar kembali available → Kamar
         //    bisa dipakai kontrak baru lagi".
         $this->authenticate('owner');
-        
+
         $room = Room::factory()->create(['status' => StatusKamar::Occupied->value]);
         $tenant = Tenant::factory()->create();
         $contract = Contract::factory()->create([
-            'room_id'   => $room->id,
+            'room_id' => $room->id,
             'tenant_id' => $tenant->id,
-            'status'    => StatusKontrak::Active->value,
+            'status' => StatusKontrak::Active->value,
         ]);
 
         // Terminate
         $this->post("/contracts/{$contract->id}/terminate");
-        
+
         $room->refresh();
         $this->assertEquals(StatusKamar::Available, $room->status);
 
@@ -183,9 +184,9 @@ class EndToEndTest extends TestCase
         $room = Room::factory()->create(['status' => StatusKamar::Occupied->value]);
         $tenant = Tenant::factory()->create();
         $contract = Contract::factory()->create([
-            'room_id'   => $room->id,
+            'room_id' => $room->id,
             'tenant_id' => $tenant->id,
-            'status'    => StatusKontrak::Active->value,
+            'status' => StatusKontrak::Active->value,
         ]);
 
         // Hapus kamar
@@ -203,7 +204,7 @@ class EndToEndTest extends TestCase
     {
         // 5. Alur otorisasi: user role Admin BISA akses laporan keuangan, TAPI
         //    HANYA Owner yang bisa akses menu manajemen user (create/edit/delete akun).
-        
+
         $admin = User::factory()->create(['role' => RoleUser::Admin->value]);
         $owner = User::factory()->create(['role' => RoleUser::Owner->value]);
 

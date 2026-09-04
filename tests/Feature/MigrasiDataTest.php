@@ -67,12 +67,12 @@ class MigrasiDataTest extends TestCase
         $roomType = RoomType::firstOrCreate(['name' => 'Standard'], ['default_price' => 800000]);
 
         $room = Room::factory()->create([
-            'room_number'  => 'TEST001',
+            'room_number' => 'TEST001',
             'room_type_id' => $roomType->id,
         ]);
 
         $this->assertDatabaseHas('rooms', [
-            'room_number'  => 'TEST001',
+            'room_number' => 'TEST001',
             'room_type_id' => $roomType->id,
         ]);
 
@@ -82,9 +82,9 @@ class MigrasiDataTest extends TestCase
 
     public function test_room_facilities_pivot_works_correctly()
     {
-        $roomType  = RoomType::firstOrCreate(['name' => 'Deluxe'], ['default_price' => 1500000]);
-        $room      = Room::factory()->create(['room_number' => 'TEST002', 'room_type_id' => $roomType->id]);
-        $facilityAc   = Facility::create(['name' => 'AC']);
+        $roomType = RoomType::firstOrCreate(['name' => 'Deluxe'], ['default_price' => 1500000]);
+        $room = Room::factory()->create(['room_number' => 'TEST002', 'room_type_id' => $roomType->id]);
+        $facilityAc = Facility::create(['name' => 'AC']);
         $facilityWifi = Facility::create(['name' => 'WiFi']);
         $facilityKasur = Facility::create(['name' => 'Kasur']);
 
@@ -113,10 +113,10 @@ class MigrasiDataTest extends TestCase
 
     public function test_facility_room_relationship_integrity()
     {
-        $roomType  = RoomType::firstOrCreate(['name' => 'Standard'], ['default_price' => 800000]);
-        $facility  = Facility::create(['name' => 'TV']);
-        $room1     = Room::factory()->create(['room_number' => 'R001', 'room_type_id' => $roomType->id]);
-        $room2     = Room::factory()->create(['room_number' => 'R002', 'room_type_id' => $roomType->id]);
+        $roomType = RoomType::firstOrCreate(['name' => 'Standard'], ['default_price' => 800000]);
+        $facility = Facility::create(['name' => 'TV']);
+        $room1 = Room::factory()->create(['room_number' => 'R001', 'room_type_id' => $roomType->id]);
+        $room2 = Room::factory()->create(['room_number' => 'R002', 'room_type_id' => $roomType->id]);
 
         $room1->facilities()->attach($facility->id);
         $room2->facilities()->attach($facility->id);
@@ -127,7 +127,7 @@ class MigrasiDataTest extends TestCase
     public function test_soft_deleted_rooms_retain_room_type_id()
     {
         $roomType = RoomType::firstOrCreate(['name' => 'Standard'], ['default_price' => 800000]);
-        $room     = Room::factory()->create(['room_number' => 'SD001', 'room_type_id' => $roomType->id]);
+        $room = Room::factory()->create(['room_number' => 'SD001', 'room_type_id' => $roomType->id]);
 
         $room->delete(); // soft delete
 
@@ -135,7 +135,7 @@ class MigrasiDataTest extends TestCase
 
         // Room type ID harus tetap ada setelah soft delete
         $this->assertDatabaseHas('rooms', [
-            'id'           => $room->id,
+            'id' => $room->id,
             'room_type_id' => $roomType->id,
         ]);
     }

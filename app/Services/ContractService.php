@@ -27,15 +27,15 @@ class ContractService
             }
 
             $contract = Contract::create([
-                'tenant_id'      => $data['tenant_id'],
-                'room_id'        => $data['room_id'],
-                'start_date'     => $data['start_date'],
-                'end_date'       => $data['end_date'],
-                'rent_price'     => $data['rent_price'],
+                'tenant_id' => $data['tenant_id'],
+                'room_id' => $data['room_id'],
+                'start_date' => $data['start_date'],
+                'end_date' => $data['end_date'],
+                'rent_price' => $data['rent_price'],
                 'deposit_amount' => $data['deposit_amount'],
-                'status'         => StatusKontrak::Active,
-                'notes'          => $data['notes'] ?? null,
-                'created_by'     => $creatorId,
+                'status' => StatusKontrak::Active,
+                'notes' => $data['notes'] ?? null,
+                'created_by' => $creatorId,
             ]);
 
             // Ubah status kamar menjadi occupied
@@ -46,7 +46,7 @@ class ContractService
     }
 
     /**
-     * Memperpanjang kontrak: mengakhiri kontrak lama (ended) 
+     * Memperpanjang kontrak: mengakhiri kontrak lama (ended)
      * dan membuat kontrak baru untuk periode berikutnya.
      */
     public function renewContract(Contract $oldContract, array $newData, int $creatorId): Contract
@@ -61,18 +61,18 @@ class ContractService
 
             // Kamar tetap di-set Occupied (karena penghuni lanjut)
             // tapi tidak perlu diubah, karena sudah Occupied dari kontrak sebelumnya.
-            
+
             // Buat kontrak baru
             $newContract = Contract::create([
-                'tenant_id'      => $oldContract->tenant_id,
-                'room_id'        => $oldContract->room_id,
-                'start_date'     => $newData['start_date'],
-                'end_date'       => $newData['end_date'],
-                'rent_price'     => $newData['rent_price'],
+                'tenant_id' => $oldContract->tenant_id,
+                'room_id' => $oldContract->room_id,
+                'start_date' => $newData['start_date'],
+                'end_date' => $newData['end_date'],
+                'rent_price' => $newData['rent_price'],
                 'deposit_amount' => $newData['deposit_amount'], // Deposit mungkin ditambah/tetap
-                'status'         => StatusKontrak::Active,
-                'notes'          => $newData['notes'] ?? "Perpanjangan dari kontrak #{$oldContract->id}",
-                'created_by'     => $creatorId,
+                'status' => StatusKontrak::Active,
+                'notes' => $newData['notes'] ?? "Perpanjangan dari kontrak #{$oldContract->id}",
+                'created_by' => $creatorId,
             ]);
 
             return $newContract;
@@ -80,7 +80,7 @@ class ContractService
     }
 
     /**
-     * Mengakhiri kontrak secara paksa/normal sebelum waktunya, 
+     * Mengakhiri kontrak secara paksa/normal sebelum waktunya,
      * atau menandai selesai, dan membebaskan kamar.
      */
     public function terminateContract(Contract $contract, StatusKontrak $status = StatusKontrak::Terminated): void

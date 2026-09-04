@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\RoomType;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\RoomType>
+ * @extends Factory<RoomType>
  */
 class RoomTypeFactory extends Factory
 {
@@ -17,7 +18,7 @@ class RoomTypeFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'Tipe ' . $this->faker->unique()->word(),
+            'name' => 'Tipe '.$this->faker->unique()->word(),
             'description' => $this->faker->sentence(),
             'default_price' => $this->faker->randomElement([1000000, 1500000, 2000000]),
         ];

@@ -14,13 +14,14 @@ class AdditionalFeeTypeController extends Controller
     {
         $this->authorize('viewAny', AdditionalFeeType::class);
         $feeTypes = AdditionalFeeType::paginate(10);
-        
+
         return view('additional_fee_types.index', compact('feeTypes'));
     }
 
     public function create()
     {
         $this->authorize('create', AdditionalFeeType::class);
+
         return view('additional_fee_types.create');
     }
 
@@ -30,12 +31,13 @@ class AdditionalFeeTypeController extends Controller
         AdditionalFeeType::create($request->validated());
 
         return redirect()->route('additional_fee_types.index')
-                         ->with('success', 'Jenis Denda/Biaya berhasil ditambahkan.');
+            ->with('success', 'Jenis Denda/Biaya berhasil ditambahkan.');
     }
 
     public function edit(AdditionalFeeType $additionalFeeType)
     {
         $this->authorize('update', $additionalFeeType);
+
         return view('additional_fee_types.edit', compact('additionalFeeType'));
     }
 
@@ -45,7 +47,7 @@ class AdditionalFeeTypeController extends Controller
         $additionalFeeType->update($request->validated());
 
         return redirect()->route('additional_fee_types.index')
-                         ->with('success', 'Jenis Denda/Biaya berhasil diperbarui.');
+            ->with('success', 'Jenis Denda/Biaya berhasil diperbarui.');
     }
 
     public function destroy(AdditionalFeeType $additionalFeeType)
@@ -54,6 +56,6 @@ class AdditionalFeeTypeController extends Controller
         $additionalFeeType->delete();
 
         return redirect()->route('additional_fee_types.index')
-                         ->with('success', 'Jenis Denda/Biaya berhasil dihapus.');
+            ->with('success', 'Jenis Denda/Biaya berhasil dihapus.');
     }
 }

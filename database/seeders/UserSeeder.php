@@ -14,12 +14,12 @@ class UserSeeder extends Seeder
     {
         // ── USER ────────────────────────────────────────────────────────────
         User::factory()->owner()->create([
-            'name'  => 'Budi Santoso',
+            'name' => 'Budi Santoso',
             'email' => 'owner@kost.test',
         ]);
 
         User::factory()->admin()->create([
-            'name'  => 'Rina Wijaya',
+            'name' => 'Rina Wijaya',
             'email' => 'admin@kost.test',
         ]);
     }

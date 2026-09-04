@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 /**
  * Model ExpenseCategory — master data kategori pengeluaran.
  *
- * @property int    $id
+ * @property int $id
  * @property string $name
  */
 class ExpenseCategory extends Model
