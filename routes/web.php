@@ -16,6 +16,7 @@ use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoomController;
 use App\Http\Controllers\RoomTypeController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\TenantApplicationController;
 use App\Http\Controllers\TenantController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -32,7 +33,7 @@ use Illuminate\Support\Facades\Route;
 |   - 'tenant' : hanya Role Tenant (EnsureTenant middleware)
 |
 | Modul operasional (dashboard, kamar, penghuni, kontrak, tagihan,
-| pembayaran, pengeluaran) bisa diakses Owner MAUPUN Admin ('staff').
+| pembayaran, pengeluaran, pengajuan sewa) bisa diakses Owner MAUPUN Admin ('staff').
 |
 | Manajemen User (CRUD akun) HANYA bisa diakses Owner ('owner').
 |
@@ -73,6 +74,10 @@ Route::middleware(['auth', 'verified', 'staff'])->group(function () {
     Route::delete('/tenants/{tenant}/ktp', [TenantController::class, 'deleteKtp'])->name('tenants.ktp.destroy');
     Route::delete('/tenants/{tenant}/photo', [TenantController::class, 'deletePhoto'])->name('tenants.photo.destroy');
 
+    // Modul Pengajuan Sewa Kamar (F2.2)
+    Route::resource('tenant-applications', TenantApplicationController::class)->only(['index', 'show']);
+    Route::post('/tenant-applications/{tenantApplication}/review', [TenantApplicationController::class, 'review'])->name('tenant-applications.review');
+
     // Modul Kontrak
     Route::resource('contracts', ContractController::class);
     Route::post('/contracts/{contract}/renew', [ContractController::class, 'renew'])->name('contracts.renew');
@@ -107,6 +112,15 @@ Route::middleware(['auth', 'verified', 'staff'])->group(function () {
 // ── Portal Khusus Penghuni (Tenant) ──────────────────────────────────────
 Route::middleware(['auth', 'verified', 'tenant'])->prefix('portal')->name('portal.')->group(function () {
     Route::get('/', [App\Http\Controllers\Portal\DashboardController::class, 'index'])->name('dashboard');
+
+    // Eksplorasi & Pengajuan Kamar (F2.2)
+    Route::get('/rooms', [App\Http\Controllers\Portal\RoomController::class, 'index'])->name('rooms.index');
+    Route::get('/rooms/{room}', [App\Http\Controllers\Portal\RoomController::class, 'show'])->name('rooms.show');
+    Route::get('/applications', [App\Http\Controllers\Portal\TenantApplicationController::class, 'index'])->name('applications.index');
+    Route::post('/applications', [App\Http\Controllers\Portal\TenantApplicationController::class, 'store'])->name('applications.store');
+    Route::patch('/applications/{application}/cancel', [App\Http\Controllers\Portal\TenantApplicationController::class, 'cancel'])->name('applications.cancel');
+
+    // Profil Mandiri
     Route::get('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'update'])->name('profile.update');
 });

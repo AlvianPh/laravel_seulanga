@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\JenisKelamin;
+use App\Enums\StatusApplication;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -77,11 +78,23 @@ class Tenant extends Model
         return $this->hasMany(Payment::class);
     }
 
+    /** Semua pengajuan kamar calon penghuni ini. */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(TenantApplication::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Ambil kontrak yang sedang aktif (jika ada). */
     public function activeContract(): ?Contract
     {
         return $this->contracts()->where('status', 'active')->latest()->first();
+    }
+
+    /** Ambil pengajuan kamar yang masih pending (jika ada). */
+    public function pendingApplication(): ?TenantApplication
+    {
+        return $this->applications()->where('status', StatusApplication::Pending)->latest()->first();
     }
 }

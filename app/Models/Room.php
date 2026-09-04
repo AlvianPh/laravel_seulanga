@@ -80,6 +80,12 @@ class Room extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    /** Semua pengajuan sewa untuk kamar ini. */
+    public function applications(): HasMany
+    {
+        return $this->hasMany(TenantApplication::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Cek apakah kamar sedang tersedia. */
