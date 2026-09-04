@@ -105,7 +105,66 @@
                 <x-ui.card>
                     <h4 class="text-sm font-bold uppercase tracking-wider text-gray-900 dark:text-gray-100 mb-4 border-b border-gray-100 dark:border-gray-700/70 pb-2">Tindakan Kontrak</h4>
                     
-                    @if($contract->isActive())
+                    @if($contract->isDraft())
+                        <!-- Onboarding Draft Actions -->
+                        <div class="space-y-4">
+                            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3 text-xs">
+                                <span class="font-bold text-slate-700 dark:text-slate-300 block">Status Prasyarat Onboarding:</span>
+                                
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-600 dark:text-slate-400">Persetujuan Tata Tertib:</span>
+                                    @if ($contract->isAgreementAccepted())
+                                        <span class="font-bold text-emerald-600 dark:text-emerald-400">✓ Disetujui</span>
+                                    @else
+                                        <span class="font-bold text-amber-600 dark:text-amber-400">Belum Disetujui</span>
+                                    @endif
+                                </div>
+
+                                <div class="flex items-center justify-between">
+                                    <span class="text-slate-600 dark:text-slate-400">Pembayaran Awal:</span>
+                                    @if ($contract->hasVerifiedInitialPayment())
+                                        <span class="font-bold text-emerald-600 dark:text-emerald-400">✓ Terverifikasi</span>
+                                    @else
+                                        <span class="font-bold text-amber-600 dark:text-amber-400">Belum Lunas</span>
+                                    @endif
+                                </div>
+                            </div>
+
+                            @if ($contract->isAgreementAccepted() && $contract->hasVerifiedInitialPayment())
+                                <form method="POST" action="{{ route('contracts.activate', $contract) }}" onsubmit="return confirm('Aktivasi kontrak ini sekarang? Status kamar akan otomatis berubah menjadi Occupied.')">
+                                    @csrf
+                                    <x-ui.button variant="primary" type="submit" class="w-full text-xs justify-center">
+                                        <svg class="w-4 h-4 mr-1.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                                        </svg>
+                                        Aktivasi Kontrak Sekarang
+                                    </x-ui.button>
+                                </form>
+                            @else
+                                <div class="p-3.5 rounded-xl bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/60 text-xs text-amber-800 dark:text-amber-300">
+                                    <p class="font-semibold">Menunggu Penghuni Menyelesaikan Onboarding:</p>
+                                    <ul class="list-disc pl-4 mt-1 space-y-0.5 text-[11px]">
+                                        @if (! $contract->isAgreementAccepted())
+                                            <li>Penghuni harus menyetujui tata tertib di portal.</li>
+                                        @endif
+                                        @if (! $contract->hasVerifiedInitialPayment())
+                                            <li>Tagihan sewa awal / deposit harus diverifikasi lunas.</li>
+                                        @endif
+                                    </ul>
+                                </div>
+                            @endif
+
+                            <div class="pt-2">
+                                <form method="POST" action="{{ route('contracts.terminate', $contract) }}" onsubmit="return confirm('Batalkan draft kontrak ini?')">
+                                    @csrf
+                                    <x-ui.button variant="danger" type="submit" class="w-full text-xs justify-center">
+                                        Batalkan Draft Kontrak
+                                    </x-ui.button>
+                                </form>
+                            </div>
+                        </div>
+
+                    @elseif($contract->isActive())
                         <div class="space-y-4">
                             <!-- Form Perpanjang -->
                             <div class="bg-indigo-50/70 dark:bg-indigo-950/40 p-4 rounded-2xl border border-indigo-100 dark:border-indigo-900/60" x-data="{ open: false }">

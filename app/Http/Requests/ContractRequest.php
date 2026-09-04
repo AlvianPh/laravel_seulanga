@@ -36,6 +36,8 @@ class ContractRequest extends FormRequest
             'rent_price' => ['required', 'numeric', 'min:0'],
             'deposit_amount' => ['required', 'numeric', 'min:0'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'application_id' => ['nullable', 'exists:tenant_applications,id'],
+            'is_draft' => ['nullable', 'boolean'],
         ];
 
         // Validasi kombinasi unik

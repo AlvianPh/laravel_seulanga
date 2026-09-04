@@ -219,9 +219,9 @@
 
                         @if ($tenantApplication->status === \App\Enums\StatusApplication::Approved)
                             <div class="mt-4 pt-4 border-t border-slate-100 dark:border-slate-800">
-                                <a href="{{ route('contracts.create', ['tenant_id' => $tenantApplication->tenant_id, 'room_id' => $tenantApplication->room_id]) }}"
+                                <a href="{{ route('contracts.create', ['application_id' => $tenantApplication->id, 'tenant_id' => $tenantApplication->tenant_id, 'room_id' => $tenantApplication->room_id]) }}"
                                    class="w-full flex items-center justify-center gap-1.5 py-2.5 px-4 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors">
-                                    Buat Kontrak Sewa Sekarang &rarr;
+                                    Buat Draft Kontrak Sewa &rarr;
                                 </a>
                             </div>
                         @endif

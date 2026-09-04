@@ -8,10 +8,12 @@ use App\Http\Requests\ContractRequest;
 use App\Models\Contract;
 use App\Models\Room;
 use App\Models\Tenant;
+use App\Models\TenantApplication;
 use App\Services\ContractService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
 class ContractController extends Controller
@@ -51,7 +53,7 @@ class ContractController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create(): View
+    public function create(Request $request): View
     {
         $this->authorize('create', Contract::class);
 
@@ -59,7 +61,19 @@ class ContractController extends Controller
         $rooms = Room::where('status', StatusKamar::Available)->orderBy('room_number')->get();
         $tenants = Tenant::orderBy('name')->get();
 
-        return view('contracts.create', compact('rooms', 'tenants'));
+        $selectedTenantId = $request->query('tenant_id');
+        $selectedRoomId = $request->query('room_id');
+        $applicationId = $request->query('application_id');
+
+        if ($applicationId) {
+            $application = TenantApplication::find($applicationId);
+            if ($application) {
+                $selectedTenantId = $application->tenant_id;
+                $selectedRoomId = $application->room_id;
+            }
+        }
+
+        return view('contracts.create', compact('rooms', 'tenants', 'selectedTenantId', 'selectedRoomId', 'applicationId'));
     }
 
     /**
@@ -69,10 +83,19 @@ class ContractController extends Controller
     {
         $this->authorize('create', Contract::class);
 
-        $this->contractService->createContract($request->validated(), $request->user()->id);
+        $asDraft = $request->boolean('is_draft');
 
-        return redirect()->route('contracts.index')
-            ->with('success', 'Kontrak baru berhasil dibuat dan kamar ditandai sebagai terisi.');
+        try {
+            $this->contractService->createContract($request->validated(), $request->user()->id, $asDraft);
+        } catch (\InvalidArgumentException $e) {
+            return back()->withInput()->withErrors(['error' => $e->getMessage()]);
+        }
+
+        $msg = $asDraft
+            ? 'Draft kontrak sewa berhasil dibuat. Menunggu persetujuan tata tertib dan pembayaran awal dari penghuni.'
+            : 'Kontrak baru berhasil dibuat dan kamar ditandai sebagai terisi (Occupied).';
+
+        return redirect()->route('contracts.index')->with('success', $msg);
     }
 
     /**
@@ -81,7 +104,7 @@ class ContractController extends Controller
     public function show(Contract $contract): View
     {
         $this->authorize('view', $contract);
-        $contract->load(['tenant', 'room', 'creator', 'invoices']);
+        $contract->load(['tenant', 'room', 'creator', 'application', 'agreementAcceptedBy', 'invoices.payments']);
 
         return view('contracts.show', compact('contract'));
     }
@@ -105,7 +128,6 @@ class ContractController extends Controller
     {
         $this->authorize('update', $contract);
 
-        // Update tidak memakai service khusus, hanya edit basic properties
         $contract->update($request->validated());
 
         return redirect()->route('contracts.index')
@@ -131,6 +153,23 @@ class ContractController extends Controller
 
         return redirect()->route('contracts.index')
             ->with('success', 'Data kontrak berhasil dihapus.');
+    }
+
+    /**
+     * Mengaktifkan contract draft setelah onboarding terpenuhi.
+     */
+    public function activate(Contract $contract): RedirectResponse
+    {
+        $this->authorize('activate', $contract);
+
+        try {
+            $this->contractService->activateContract($contract, Auth::id());
+        } catch (\InvalidArgumentException $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
+
+        return redirect()->route('contracts.show', $contract)
+            ->with('success', 'Kontrak sewa berhasil diaktifkan. Kamar kini berstatus Terisi (Occupied) dan penghuni aktif.');
     }
 
     /**

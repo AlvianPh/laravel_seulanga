@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\JenisKelamin;
 use App\Enums\StatusApplication;
+use App\Enums\StatusKontrak;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -89,7 +90,19 @@ class Tenant extends Model
     /** Ambil kontrak yang sedang aktif (jika ada). */
     public function activeContract(): ?Contract
     {
-        return $this->contracts()->where('status', 'active')->latest()->first();
+        return $this->contracts()->where('status', StatusKontrak::Active)->latest()->first();
+    }
+
+    /** Ambil draft kontrak yang sedang menunggu onboarding (jika ada). */
+    public function draftContract(): ?Contract
+    {
+        return $this->contracts()->where('status', StatusKontrak::Draft)->latest()->first();
+    }
+
+    /** Ambil kontrak terkini (prioritas Active, lalu Draft, lalu riwayat terbaru). */
+    public function currentContract(): ?Contract
+    {
+        return $this->activeContract() ?? $this->draftContract() ?? $this->contracts()->latest()->first();
     }
 
     /** Ambil pengajuan kamar yang masih pending (jika ada). */

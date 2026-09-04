@@ -80,6 +80,7 @@ Route::middleware(['auth', 'verified', 'staff'])->group(function () {
 
     // Modul Kontrak
     Route::resource('contracts', ContractController::class);
+    Route::post('/contracts/{contract}/activate', [ContractController::class, 'activate'])->name('contracts.activate');
     Route::post('/contracts/{contract}/renew', [ContractController::class, 'renew'])->name('contracts.renew');
     Route::post('/contracts/{contract}/terminate', [ContractController::class, 'terminate'])->name('contracts.terminate');
 
@@ -119,6 +120,10 @@ Route::middleware(['auth', 'verified', 'tenant'])->prefix('portal')->name('porta
     Route::get('/applications', [App\Http\Controllers\Portal\TenantApplicationController::class, 'index'])->name('applications.index');
     Route::post('/applications', [App\Http\Controllers\Portal\TenantApplicationController::class, 'store'])->name('applications.store');
     Route::patch('/applications/{application}/cancel', [App\Http\Controllers\Portal\TenantApplicationController::class, 'cancel'])->name('applications.cancel');
+
+    // Kontrak & Onboarding Agreement (F2.3)
+    Route::get('/contract', [App\Http\Controllers\Portal\ContractController::class, 'index'])->name('contract.index');
+    Route::post('/contract/{contract}/agreement', [App\Http\Controllers\Portal\ContractController::class, 'acceptAgreement'])->name('contract.agreement');
 
     // Profil Mandiri
     Route::get('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'edit'])->name('profile.edit');
