@@ -103,8 +103,9 @@
                         @endif
                     </div>
                     <div class="mt-4 pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center justify-between text-xs">
-                        <span class="text-slate-500 dark:text-slate-400">Pembayaran Online</span>
-                        <span class="text-slate-400 dark:text-slate-500 font-medium">Fase F2.4 Segera</span>
+                        <a href="{{ route('portal.invoices.index') }}" class="text-emerald-600 dark:text-emerald-400 font-semibold hover:underline">
+                            Lihat Semua Tagihan &rarr;
+                        </a>
                     </div>
                 </div>
 
@@ -157,7 +158,7 @@
                 </div>
 
                 <!-- Tagihan & Pembayaran -->
-                <div class="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm opacity-90">
+                <a href="{{ route('portal.invoices.index') }}" class="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 transition-all block">
                     <div class="w-10 h-10 rounded-lg bg-amber-50 dark:bg-amber-950/60 text-amber-600 dark:text-amber-400 flex items-center justify-center mb-3">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
@@ -165,10 +166,10 @@
                     </div>
                     <h3 class="font-bold text-slate-900 dark:text-white text-sm">Tagihan & Bayar</h3>
                     <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Upload bukti bayar dan download kuitansi.</p>
-                    <span class="inline-block mt-3 text-[10px] font-semibold text-amber-700 dark:text-amber-400 bg-amber-50 dark:bg-amber-950/60 px-2 py-0.5 rounded">
+                    <span class="inline-block mt-3 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">
                         Rilis Fase F2.4
                     </span>
-                </div>
+                </a>
 
                 <!-- Lapor Kerusakan & Izin -->
                 <div class="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm opacity-90">

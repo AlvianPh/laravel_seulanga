@@ -7,6 +7,7 @@ use Database\Factories\PaymentFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Carbon;
 
 /**
  * Model Payment — pencatatan pembayaran tagihan.
@@ -15,7 +16,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  * @property int $invoice_id
  * @property int $tenant_id
  * @property float $amount
- * @property string $payment_date
+ * @property Carbon $payment_date
  * @property int $payment_method_id
  * @property StatusPembayaran $status
  * @property string|null $proof_path
@@ -72,5 +73,33 @@ class Payment extends Model
     public function verifier(): BelongsTo
     {
         return $this->belongsTo(User::class, 'verified_by');
+    }
+
+    // ─── Helper ──────────────────────────────────────────────────────────────
+
+    /** Format nomor kuitansi resmi. */
+    public function receiptNumber(): string
+    {
+        $dateStr = $this->payment_date ? $this->payment_date->format('Ymd') : date('Ymd');
+
+        return 'RCP-'.$dateStr.'-'.str_pad((string) $this->id, 4, '0', STR_PAD_LEFT);
+    }
+
+    /** Cek apakah pembayaran telah diverifikasi. */
+    public function isVerified(): bool
+    {
+        return $this->status === StatusPembayaran::Verified;
+    }
+
+    /** Cek apakah pembayaran masih menunggu verifikasi. */
+    public function isPending(): bool
+    {
+        return $this->status === StatusPembayaran::Pending;
+    }
+
+    /** Cek apakah pembayaran ditolak. */
+    public function isRejected(): bool
+    {
+        return $this->status === StatusPembayaran::Rejected;
     }
 }

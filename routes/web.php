@@ -125,6 +125,14 @@ Route::middleware(['auth', 'verified', 'tenant'])->prefix('portal')->name('porta
     Route::get('/contract', [App\Http\Controllers\Portal\ContractController::class, 'index'])->name('contract.index');
     Route::post('/contract/{contract}/agreement', [App\Http\Controllers\Portal\ContractController::class, 'acceptAgreement'])->name('contract.agreement');
 
+    // Tagihan & Pembayaran (F2.4)
+    Route::get('/invoices', [App\Http\Controllers\Portal\InvoiceController::class, 'index'])->name('invoices.index');
+    Route::get('/invoices/{invoice}', [App\Http\Controllers\Portal\InvoiceController::class, 'show'])->name('invoices.show');
+    Route::post('/invoices/{invoice}/payments', [App\Http\Controllers\Portal\PaymentController::class, 'store'])->name('invoices.payments.store');
+    Route::get('/payments', [App\Http\Controllers\Portal\PaymentController::class, 'index'])->name('payments.index');
+    Route::get('/payments/{payment}', [App\Http\Controllers\Portal\PaymentController::class, 'show'])->name('payments.show');
+    Route::get('/payments/{payment}/receipt', [App\Http\Controllers\Portal\PaymentController::class, 'receipt'])->name('payments.receipt');
+
     // Profil Mandiri
     Route::get('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'update'])->name('profile.update');

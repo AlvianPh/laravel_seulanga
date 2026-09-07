@@ -305,8 +305,14 @@
                                 Pembayaran Lunas
                             </div>
                         @else
-                            <div class="text-xs text-slate-500 dark:text-slate-400">
-                                Lakukan transfer ke salah satu rekening bank pengelola di bawah ini.
+                            <div class="flex items-center gap-3">
+                                <a href="{{ route('portal.invoices.show', $initialInvoice) }}"
+                                   class="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors">
+                                    <span>Bayar Tagihan Sekarang</span>
+                                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+                                    </svg>
+                                </a>
                             </div>
                         @endif
                     </div>

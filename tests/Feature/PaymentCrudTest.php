@@ -92,7 +92,7 @@ class PaymentCrudTest extends TestCase
         $response->assertSessionHasErrors('proof_photo');
     }
 
-    public function test_admin_cannot_access_verification_page()
+    public function test_admin_can_access_verification_page()
     {
         $this->authenticate('admin');
         $invoice = $this->createPendingInvoice();
@@ -104,7 +104,7 @@ class PaymentCrudTest extends TestCase
         ]);
 
         $response = $this->get("/payments/{$payment->id}/verify");
-        $response->assertForbidden(); // 403
+        $response->assertOk();
     }
 
     public function test_owner_can_verify_payment_and_update_invoice_status()
@@ -129,9 +129,9 @@ class PaymentCrudTest extends TestCase
         // Verifikasi payment 1
         $this->post("/payments/{$payment1->id}/verify", ['action' => 'verify']);
 
-        // Cek DB payment 1 jadi verified, tp invoice masih pending
+        // Cek DB payment 1 jadi verified, dan invoice menjadi partially_paid
         $this->assertDatabaseHas('payments', ['id' => $payment1->id, 'status' => StatusPembayaran::Verified->value, 'verified_by' => $owner->id]);
-        $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'status' => StatusTagihan::Pending->value]);
+        $this->assertDatabaseHas('invoices', ['id' => $invoice->id, 'status' => StatusTagihan::PartiallyPaid->value]);
 
         // Verifikasi payment 2
         $this->post("/payments/{$payment2->id}/verify", ['action' => 'verify']);
