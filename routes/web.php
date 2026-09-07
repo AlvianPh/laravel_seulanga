@@ -8,9 +8,11 @@ use App\Http\Controllers\ExpenseCategoryController;
 use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\MaintenanceRequestController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\Portal\MaintenanceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoomController;
@@ -96,6 +98,11 @@ Route::middleware(['auth', 'verified', 'staff'])->group(function () {
     // Modul Pengeluaran
     Route::resource('expenses', ExpenseController::class);
 
+    // Modul Perbaikan Kamar / Maintenance (F2.5)
+    Route::get('/maintenance', [MaintenanceRequestController::class, 'index'])->name('maintenance.index');
+    Route::get('/maintenance/{maintenance}', [MaintenanceRequestController::class, 'show'])->name('maintenance.show');
+    Route::patch('/maintenance/{maintenance}/status', [MaintenanceRequestController::class, 'updateStatus'])->name('maintenance.update-status');
+
     // Modul Laporan (Tahap 5b)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
@@ -132,6 +139,12 @@ Route::middleware(['auth', 'verified', 'tenant'])->prefix('portal')->name('porta
     Route::get('/payments', [App\Http\Controllers\Portal\PaymentController::class, 'index'])->name('payments.index');
     Route::get('/payments/{payment}', [App\Http\Controllers\Portal\PaymentController::class, 'show'])->name('payments.show');
     Route::get('/payments/{payment}/receipt', [App\Http\Controllers\Portal\PaymentController::class, 'receipt'])->name('payments.receipt');
+
+    // Pemeliharaan & Perbaikan Kamar (F2.5)
+    Route::get('/maintenance', [MaintenanceController::class, 'index'])->name('maintenance.index');
+    Route::get('/maintenance/create', [MaintenanceController::class, 'create'])->name('maintenance.create');
+    Route::post('/maintenance', [MaintenanceController::class, 'store'])->name('maintenance.store');
+    Route::get('/maintenance/{maintenance}', [MaintenanceController::class, 'show'])->name('maintenance.show');
 
     // Profil Mandiri
     Route::get('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'edit'])->name('profile.edit');

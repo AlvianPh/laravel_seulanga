@@ -59,9 +59,10 @@
                        class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('portal.invoices.*', 'portal.payments.*') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-semibold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Tagihan
                     </a>
-                    <span class="px-3.5 py-2 rounded-lg text-sm font-medium text-slate-400 dark:text-slate-600 cursor-not-allowed flex items-center gap-1.5" title="Tersedia di rilis berikutnya">
-                        Dokumen <span class="text-[10px] px-1.5 py-0.2 bg-slate-100 dark:bg-slate-800 text-slate-400 rounded">F2.8</span>
-                    </span>
+                    <a href="{{ route('portal.maintenance.index') }}"
+                       class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('portal.maintenance.*') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-semibold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                        Perbaikan
+                    </a>
                     <a href="{{ route('portal.profile.edit') }}"
                        class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('portal.profile.*') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-semibold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Profil
@@ -139,12 +140,12 @@
 
     <!-- Main Content Body -->
     <main class="flex-1 max-w-6xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        @if (session('status'))
+        @if (session('status') || session('success'))
             <div class="mb-5 p-4 rounded-xl bg-emerald-50 dark:bg-emerald-950/60 border border-emerald-200 dark:border-emerald-800 text-emerald-800 dark:text-emerald-300 text-sm flex items-center gap-3">
                 <svg class="w-5 h-5 text-emerald-500 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
                 </svg>
-                <span>{{ session('status') }}</span>
+                <span>{{ session('status') ?? session('success') }}</span>
             </div>
         @endif
 
@@ -162,9 +163,9 @@
 
     <!-- Mobile Bottom Navigation Bar (Fixed) -->
     <nav class="md:hidden fixed bottom-0 left-0 right-0 z-40 bg-white/95 dark:bg-slate-900/95 backdrop-blur-md border-t border-slate-200 dark:border-slate-800 px-2 py-1.5 shadow-lg">
-        <div class="grid grid-cols-5 items-center justify-around gap-1 text-center">
+        <div class="grid grid-cols-6 items-center justify-around gap-1 text-center">
             <a href="{{ route('portal.dashboard') }}"
-               class="flex flex-col items-center py-1.5 px-1 rounded-lg text-[11px] font-medium transition-colors {{ request()->routeIs('portal.dashboard') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+               class="flex flex-col items-center py-1.5 px-0.5 rounded-lg text-[10px] font-medium transition-colors {{ request()->routeIs('portal.dashboard') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
                 </svg>
@@ -172,7 +173,7 @@
             </a>
 
             <a href="{{ route('portal.rooms.index') }}"
-               class="flex flex-col items-center py-1.5 px-1 rounded-lg text-[11px] font-medium transition-colors {{ request()->routeIs('portal.rooms.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+               class="flex flex-col items-center py-1.5 px-0.5 rounded-lg text-[10px] font-medium transition-colors {{ request()->routeIs('portal.rooms.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/>
                 </svg>
@@ -180,7 +181,7 @@
             </a>
 
             <a href="{{ route('portal.contract.index') }}"
-               class="flex flex-col items-center py-1.5 px-1 rounded-lg text-[11px] font-medium transition-colors {{ request()->routeIs('portal.contract.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+               class="flex flex-col items-center py-1.5 px-0.5 rounded-lg text-[10px] font-medium transition-colors {{ request()->routeIs('portal.contract.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                 </svg>
@@ -188,15 +189,23 @@
             </a>
 
             <a href="{{ route('portal.invoices.index') }}"
-               class="flex flex-col items-center py-1.5 px-1 rounded-lg text-[11px] font-medium transition-colors {{ request()->routeIs('portal.invoices.*', 'portal.payments.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+               class="flex flex-col items-center py-1.5 px-0.5 rounded-lg text-[10px] font-medium transition-colors {{ request()->routeIs('portal.invoices.*', 'portal.payments.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/>
                 </svg>
                 Tagihan
             </a>
 
+            <a href="{{ route('portal.maintenance.index') }}"
+               class="flex flex-col items-center py-1.5 px-0.5 rounded-lg text-[10px] font-medium transition-colors {{ request()->routeIs('portal.maintenance.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+                <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+                </svg>
+                Perbaikan
+            </a>
+
             <a href="{{ route('portal.profile.edit') }}"
-               class="flex flex-col items-center py-1.5 px-1 rounded-lg text-[11px] font-medium transition-colors {{ request()->routeIs('portal.profile.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
+               class="flex flex-col items-center py-1.5 px-0.5 rounded-lg text-[10px] font-medium transition-colors {{ request()->routeIs('portal.profile.*') ? 'text-emerald-600 dark:text-emerald-400 font-bold' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white' }}">
                 <svg class="w-4 h-4 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                 </svg>

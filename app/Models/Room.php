@@ -86,6 +86,12 @@ class Room extends Model
         return $this->hasMany(TenantApplication::class);
     }
 
+    /** Semua permintaan maintenance untuk kamar ini. */
+    public function maintenanceRequests(): HasMany
+    {
+        return $this->hasMany(MaintenanceRequest::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Cek apakah kamar sedang tersedia. */

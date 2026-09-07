@@ -24,6 +24,7 @@ class ExpenseRequest extends FormRequest
     {
         return [
             'expense_category_id' => ['required', 'exists:expense_categories,id'],
+            'maintenance_request_id' => ['nullable', 'exists:maintenance_requests,id'],
             'description' => ['required', 'string', 'max:255'],
             'amount' => ['required', 'numeric', 'min:1'],
             'expense_date' => ['required', 'date'],

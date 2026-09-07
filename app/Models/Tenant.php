@@ -85,6 +85,12 @@ class Tenant extends Model
         return $this->hasMany(TenantApplication::class);
     }
 
+    /** Semua permintaan maintenance penghuni ini. */
+    public function maintenanceRequests(): HasMany
+    {
+        return $this->hasMany(MaintenanceRequest::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Ambil kontrak yang sedang aktif (jika ada). */

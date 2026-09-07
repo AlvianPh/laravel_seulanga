@@ -25,6 +25,7 @@ class Expense extends Model
 
     protected $fillable = [
         'expense_category_id',
+        'maintenance_request_id',
         'description',
         'amount',
         'expense_date',
@@ -46,6 +47,12 @@ class Expense extends Model
     public function expenseCategory(): BelongsTo
     {
         return $this->belongsTo(ExpenseCategory::class);
+    }
+
+    /** Maintenance Request yang terkait (jika ada). */
+    public function maintenanceRequest(): BelongsTo
+    {
+        return $this->belongsTo(MaintenanceRequest::class);
     }
 
     /** User yang menginput pengeluaran ini. */
