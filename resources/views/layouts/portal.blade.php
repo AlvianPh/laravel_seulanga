@@ -67,6 +67,10 @@
                        class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('portal.permissions.*') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-semibold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Izin
                     </a>
+                    <a href="{{ route('portal.move-outs.index') }}"
+                       class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('portal.move-outs.*') ? 'bg-rose-50 text-rose-700 dark:bg-rose-950/60 dark:text-rose-400 font-semibold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800' }}">
+                        Move-Out
+                    </a>
                     <a href="{{ route('portal.profile.edit') }}"
                        class="px-3.5 py-2 rounded-lg text-sm font-medium transition-all {{ request()->routeIs('portal.profile.*') ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-950/60 dark:text-emerald-400 font-semibold' : 'text-slate-600 hover:text-slate-900 dark:text-slate-400 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-800' }}">
                         Profil

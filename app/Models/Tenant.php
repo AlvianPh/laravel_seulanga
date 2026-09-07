@@ -97,6 +97,12 @@ class Tenant extends Model
         return $this->hasMany(TenantPermission::class);
     }
 
+    /** Semua permohonan move-out / keluar kost penghuni ini. */
+    public function moveOutRequests(): HasMany
+    {
+        return $this->hasMany(MoveOutRequest::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Ambil kontrak yang sedang aktif (jika ada). */

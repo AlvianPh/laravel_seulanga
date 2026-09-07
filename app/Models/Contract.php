@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\StatusKontrak;
+use App\Enums\StatusMoveOut;
 use App\Enums\StatusPembayaran;
 use App\Enums\StatusTagihan;
 use Database\Factories\ContractFactory;
@@ -105,6 +106,21 @@ class Contract extends Model
     public function permissions(): HasMany
     {
         return $this->hasMany(TenantPermission::class);
+    }
+
+    /** Permohonan move-out terkait kontrak ini. */
+    public function moveOutRequests(): HasMany
+    {
+        return $this->hasMany(MoveOutRequest::class);
+    }
+
+    /** Ambil permohonan move-out yang sedang berjalan jika ada. */
+    public function activeMoveOutRequest(): ?MoveOutRequest
+    {
+        return $this->moveOutRequests()
+            ->whereNotIn('status', [StatusMoveOut::Completed, StatusMoveOut::Rejected, StatusMoveOut::Cancelled])
+            ->latest()
+            ->first();
     }
 
     // ─── Helper ──────────────────────────────────────────────────────────────

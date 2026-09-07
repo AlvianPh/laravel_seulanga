@@ -199,6 +199,20 @@
                     </span>
                 </a>
 
+                <!-- Keluar Kost (Move-Out) -->
+                <a href="{{ route('portal.move-outs.index') }}" class="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-rose-500 transition-all block">
+                    <div class="w-10 h-10 rounded-lg bg-rose-50 dark:bg-rose-950/60 text-rose-600 dark:text-rose-400 flex items-center justify-center mb-3">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                    </div>
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm">Keluar Kost (Move-Out)</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Pengajuan keluar kost, inspeksi kamar, dan settlement deposit.</p>
+                    <span class="inline-block mt-3 text-[10px] font-semibold text-rose-700 dark:text-rose-400 bg-rose-50 dark:bg-rose-950/60 px-2 py-0.5 rounded">
+                        Rilis Fase F2.7
+                    </span>
+                </a>
+
                 <!-- Dokumen Kontrak -->
                 <div class="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm opacity-90">
                     <div class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3">

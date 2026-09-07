@@ -9,6 +9,7 @@ use App\Http\Controllers\ExpenseController;
 use App\Http\Controllers\FacilityController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\MaintenanceRequestController;
+use App\Http\Controllers\MoveOutController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
@@ -110,6 +111,13 @@ Route::middleware(['auth', 'verified', 'staff'])->group(function () {
     Route::get('/permissions/{permission}', [TenantPermissionController::class, 'show'])->name('permissions.show');
     Route::post('/permissions/{permission}/review', [TenantPermissionController::class, 'review'])->name('permissions.review');
 
+    // Modul Move-Out & Pengakhiran Kontrak (F2.7)
+    Route::get('/move-outs', [MoveOutController::class, 'index'])->name('move-outs.index');
+    Route::get('/move-outs/{moveOut}', [MoveOutController::class, 'show'])->name('move-outs.show');
+    Route::post('/move-outs/{moveOut}/review', [MoveOutController::class, 'review'])->name('move-outs.review');
+    Route::post('/move-outs/{moveOut}/inspect', [MoveOutController::class, 'inspect'])->name('move-outs.inspect');
+    Route::post('/move-outs/{moveOut}/finalize', [MoveOutController::class, 'finalize'])->name('move-outs.finalize');
+
     // Modul Laporan (Tahap 5b)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
@@ -159,6 +167,13 @@ Route::middleware(['auth', 'verified', 'tenant'])->prefix('portal')->name('porta
     Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
     Route::get('/permissions/{permission}', [PermissionController::class, 'show'])->name('permissions.show');
     Route::patch('/permissions/{permission}/cancel', [PermissionController::class, 'cancel'])->name('permissions.cancel');
+
+    // Permohonan Keluar Kost / Move-Out (F2.7)
+    Route::get('/move-outs', [App\Http\Controllers\Portal\MoveOutController::class, 'index'])->name('move-outs.index');
+    Route::get('/move-outs/create', [App\Http\Controllers\Portal\MoveOutController::class, 'create'])->name('move-outs.create');
+    Route::post('/move-outs', [App\Http\Controllers\Portal\MoveOutController::class, 'store'])->name('move-outs.store');
+    Route::get('/move-outs/{moveOut}', [App\Http\Controllers\Portal\MoveOutController::class, 'show'])->name('move-outs.show');
+    Route::patch('/move-outs/{moveOut}/cancel', [App\Http\Controllers\Portal\MoveOutController::class, 'cancel'])->name('move-outs.cancel');
 
     // Profil Mandiri
     Route::get('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'edit'])->name('profile.edit');
