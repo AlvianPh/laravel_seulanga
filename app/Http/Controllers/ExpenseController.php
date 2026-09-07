@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\ExpenseCategory;
 use App\Http\Requests\ExpenseRequest;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -66,7 +66,7 @@ class ExpenseController extends Controller
         $this->authorize('create', Expense::class);
 
         $validated = $request->validated();
-        
+
         // Auto assign creator
         $validated['created_by'] = $request->user()->id;
 
@@ -135,7 +135,7 @@ class ExpenseController extends Controller
         if ($expense->receipt_path) {
             Storage::disk('public')->delete($expense->receipt_path);
         }
-        
+
         $expense->delete();
 
         return redirect()->route('expenses.index')

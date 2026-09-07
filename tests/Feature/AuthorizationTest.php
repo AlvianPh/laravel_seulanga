@@ -2,7 +2,6 @@
 
 namespace Tests\Feature;
 
-use App\Enums\RoleUser;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -78,10 +77,10 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($admin)
             ->post('/users', [
-                'name'                  => 'User Baru',
-                'email'                 => 'baru@test.com',
-                'role'                  => 'admin',
-                'password'              => 'password123',
+                'name' => 'User Baru',
+                'email' => 'baru@test.com',
+                'role' => 'admin',
+                'password' => 'password123',
                 'password_confirmation' => 'password123',
             ])
             ->assertForbidden();
@@ -89,8 +88,8 @@ class AuthorizationTest extends TestCase
 
     public function test_admin_mendapat_403_saat_akses_form_edit_user(): void
     {
-        $admin       = $this->admin();
-        $targetUser  = $this->owner();
+        $admin = $this->admin();
+        $targetUser = $this->owner();
 
         $this->actingAs($admin)
             ->get("/users/{$targetUser->id}/edit")
@@ -99,21 +98,21 @@ class AuthorizationTest extends TestCase
 
     public function test_admin_mendapat_403_saat_update_user(): void
     {
-        $admin      = $this->admin();
+        $admin = $this->admin();
         $targetUser = $this->owner();
 
         $this->actingAs($admin)
             ->patch("/users/{$targetUser->id}", [
-                'name'  => 'Diubah',
+                'name' => 'Diubah',
                 'email' => $targetUser->email,
-                'role'  => 'admin',
+                'role' => 'admin',
             ])
             ->assertForbidden();
     }
 
     public function test_admin_mendapat_403_saat_hapus_user(): void
     {
-        $admin      = $this->admin();
+        $admin = $this->admin();
         $targetUser = $this->owner();
 
         $this->actingAs($admin)
@@ -143,7 +142,7 @@ class AuthorizationTest extends TestCase
 
     public function test_owner_bisa_akses_detail_user(): void
     {
-        $owner      = $this->owner();
+        $owner = $this->owner();
         $targetUser = $this->admin();
 
         $this->actingAs($owner)
@@ -153,7 +152,7 @@ class AuthorizationTest extends TestCase
 
     public function test_owner_bisa_akses_form_edit_user(): void
     {
-        $owner      = $this->owner();
+        $owner = $this->owner();
         $targetUser = $this->admin();
 
         $this->actingAs($owner)
@@ -189,17 +188,17 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($owner)
             ->post('/users', [
-                'name'                  => 'Admin Baru',
-                'email'                 => 'adminbaru@kost.test',
-                'role'                  => 'admin',
-                'password'              => 'Password123!',
+                'name' => 'Admin Baru',
+                'email' => 'adminbaru@kost.test',
+                'role' => 'admin',
+                'password' => 'Password123!',
                 'password_confirmation' => 'Password123!',
             ])
             ->assertRedirect('/users');
 
         $this->assertDatabaseHas('users', [
             'email' => 'adminbaru@kost.test',
-            'role'  => 'admin',
+            'role' => 'admin',
         ]);
     }
 
@@ -209,17 +208,17 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($owner)
             ->post('/users', [
-                'name'                  => 'Owner Baru',
-                'email'                 => 'owner2@kost.test',
-                'role'                  => 'owner',
-                'password'              => 'Password123!',
+                'name' => 'Owner Baru',
+                'email' => 'owner2@kost.test',
+                'role' => 'owner',
+                'password' => 'Password123!',
                 'password_confirmation' => 'Password123!',
             ])
             ->assertRedirect('/users');
 
         $this->assertDatabaseHas('users', [
             'email' => 'owner2@kost.test',
-            'role'  => 'owner',
+            'role' => 'owner',
         ]);
     }
 
@@ -227,19 +226,19 @@ class AuthorizationTest extends TestCase
 
     public function test_owner_bisa_update_user_lain(): void
     {
-        $owner      = $this->owner();
+        $owner = $this->owner();
         $targetUser = $this->admin();
 
         $this->actingAs($owner)
             ->patch("/users/{$targetUser->id}", [
-                'name'  => 'Nama Diubah',
+                'name' => 'Nama Diubah',
                 'email' => $targetUser->email,
-                'role'  => 'owner',
+                'role' => 'owner',
             ])
             ->assertRedirect('/users');
 
         $this->assertDatabaseHas('users', [
-            'id'   => $targetUser->id,
+            'id' => $targetUser->id,
             'name' => 'Nama Diubah',
             'role' => 'owner',
         ]);
@@ -253,9 +252,9 @@ class AuthorizationTest extends TestCase
 
         $this->actingAs($owner)
             ->patch("/users/{$owner->id}", [
-                'name'  => 'Diubah Sendiri',
+                'name' => 'Diubah Sendiri',
                 'email' => $owner->email,
-                'role'  => 'admin',
+                'role' => 'admin',
             ])
             ->assertForbidden();
     }
@@ -264,7 +263,7 @@ class AuthorizationTest extends TestCase
 
     public function test_owner_bisa_hapus_user_lain(): void
     {
-        $owner      = $this->owner();
+        $owner = $this->owner();
         $targetUser = $this->admin();
 
         $this->actingAs($owner)
@@ -298,9 +297,9 @@ class AuthorizationTest extends TestCase
     public function test_post_registrasi_publik_diarahkan_ke_login(): void
     {
         $this->post('/register', [
-            'name'                  => 'Siapapun',
-            'email'                 => 'siapapun@test.com',
-            'password'              => 'Password123!',
+            'name' => 'Siapapun',
+            'email' => 'siapapun@test.com',
+            'password' => 'Password123!',
             'password_confirmation' => 'Password123!',
         ])->assertRedirect('/login');
 

@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Models\Invoice;
 use App\Models\PaymentMethod;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -20,27 +21,30 @@ class PaymentRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
-            'invoice_id'        => ['required', 'exists:invoices,id'],
-            'amount'            => ['required', 'numeric', 'min:1'],
-            'payment_date'      => ['required', 'date'],
+            'invoice_id' => ['required', 'exists:invoices,id'],
+            'amount' => ['required', 'numeric', 'min:1'],
+            'payment_date' => ['required', 'date'],
             'payment_method_id' => ['required', 'exists:payment_methods,id'],
-            'notes'             => ['nullable', 'string', 'max:1000'],
-            'proof_photo'       => [
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'proof_photo' => [
                 // Wajib upload bukti jika metodenya Transfer Bank atau QRIS
                 Rule::requiredIf(function () {
                     $methodId = $this->input('payment_method_id');
-                    if (!$methodId) return false;
+                    if (! $methodId) {
+                        return false;
+                    }
                     $method = PaymentMethod::find($methodId);
+
                     return $method && in_array($method->name, ['Transfer Bank', 'QRIS']);
                 }),
                 'nullable', // Jika cash, boleh null
                 'image',
-                'max:2048'
+                'max:2048',
             ],
         ];
     }
@@ -54,14 +58,14 @@ class PaymentRequest extends FormRequest
             function ($validator) {
                 if ($this->invoice_id) {
                     $invoice = Invoice::find($this->invoice_id);
-                    if ($invoice && !in_array($invoice->status->value, ['pending', 'overdue'])) {
+                    if ($invoice && ! in_array($invoice->status->value, ['pending', 'overdue'])) {
                         $validator->errors()->add(
                             'invoice_id',
                             'Pembayaran hanya bisa dilakukan untuk tagihan yang masih Pending atau Overdue.'
                         );
                     }
                 }
-            }
+            },
         ];
     }
 
@@ -69,7 +73,7 @@ class PaymentRequest extends FormRequest
     {
         return [
             'proof_photo.required' => 'Bukti pembayaran wajib dilampirkan untuk metode Transfer atau QRIS.',
-            'amount.min'           => 'Jumlah pembayaran harus lebih dari 0.',
+            'amount.min' => 'Jumlah pembayaran harus lebih dari 0.',
         ];
     }
 }

@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 /**
  * Model Facility — master data fasilitas kamar kost.
  *
- * @property int         $id
- * @property string      $name
+ * @property int $id
+ * @property string $name
  * @property string|null $icon
  */
 class Facility extends Model

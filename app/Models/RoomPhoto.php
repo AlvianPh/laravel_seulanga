@@ -10,10 +10,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 /**
  * Model RoomPhoto — foto kamar kost.
  *
- * @property int    $id
- * @property int    $room_id
+ * @property int $id
+ * @property int $room_id
  * @property string $file_path
- * @property bool   $is_primary
+ * @property bool $is_primary
  */
 class RoomPhoto extends Model
 {

@@ -2,6 +2,8 @@
 
 namespace App\Policies;
 
+use App\Enums\RoleUser;
+use App\Enums\StatusPembayaran;
 use App\Models\Payment;
 use App\Models\User;
 
@@ -14,7 +16,11 @@ class PaymentPolicy
 
     public function view(User $user, Payment $payment): bool
     {
-        return true;
+        if ($user->role === RoleUser::Tenant) {
+            return $user->tenant !== null && $user->tenant->id === $payment->tenant_id;
+        }
+
+        return in_array($user->role, [RoleUser::Owner, RoleUser::Admin], true);
     }
 
     public function create(User $user): bool
@@ -24,21 +30,36 @@ class PaymentPolicy
 
     public function update(User $user, Payment $payment): bool
     {
-        return true;
+        return in_array($user->role, [RoleUser::Owner, RoleUser::Admin], true);
     }
 
     public function delete(User $user, Payment $payment): bool
     {
-        // Secara umum payment tidak dihapus, hanya diverifikasi atau direject.
-        // Tapi kita biarkan role apa saja jika memang nanti perlu.
-        return true; 
+        return in_array($user->role, [RoleUser::Owner, RoleUser::Admin], true);
     }
 
     /**
-     * HANYA Owner yang boleh memverifikasi pembayaran.
+     * Owner dan Admin boleh memverifikasi pembayaran pada endpoint staff.
      */
     public function verify(User $user, Payment $payment): bool
     {
-        return $user->role->value === 'owner';
+        return in_array($user->role, [RoleUser::Owner, RoleUser::Admin], true);
+    }
+
+    /**
+     * Otorisasi melihat/mencetak kuitansi pembayaran.
+     * Kuitansi hanya tersedia jika pembayaran sudah diverifikasi.
+     */
+    public function receipt(User $user, Payment $payment): bool
+    {
+        if ($payment->status !== StatusPembayaran::Verified) {
+            return false;
+        }
+
+        if ($user->role === RoleUser::Tenant) {
+            return $user->tenant !== null && $user->tenant->id === $payment->tenant_id;
+        }
+
+        return in_array($user->role, [RoleUser::Owner, RoleUser::Admin], true);
     }
 }

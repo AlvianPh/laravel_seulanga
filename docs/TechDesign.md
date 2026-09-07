@@ -1,15 +1,40 @@
-﻿# TechDesign — Aplikasi Management Kost Pribadi
+# TechDesign — Aplikasi Management Kost Pribadi (Seulanga)
 
-> Dokumen ini adalah referensi teknis utama. Dibaca oleh developer maupun
-> non-programmer untuk memahami bagaimana sistem bekerja secara keseluruhan.
+> Dokumen ini adalah referensi teknis dan arsitektur utama untuk sistem Management Kost (Seulanga).
+> Berisi rancangan skema database, arsitektur 4 pilar produk, use case, alur bisnis (*state machines*), dan matriks otorisasi.
 
 ---
 
-## 1. Entity Relationship Diagram (ERD)
+## 1. Arsitektur 4 Pilar Produk
 
-Diagram berikut menunjukkan semua tabel dalam database beserta relasinya.
-Garis penghubung berarti satu data di tabel A bisa berhubungan dengan
-banyak data di tabel B (relasi "satu ke banyak").
+Sistem dibagi menjadi 4 pilar fungsional yang saling terhubung:
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────┐
+│                                    SEULANGA PLATFORM                                    │
+├──────────────────────────┬──────────────────────────┬───────────────────────────────────┤
+│ 1. OPERATIONAL CORE      │ 2. TENANT PORTAL         │ 3. MANAGEMENT & DECISION SUPPORT │
+│ (Admin & Owner)          │ (Penghuni / Tenant)      │ (Owner / Executive)               │
+├──────────────────────────┼──────────────────────────┼───────────────────────────────────┤
+│ • Manajemen Kamar        │ • Profil & Ganti Sandi   │ • Dashboard Eksekutif KPI         │
+│ • Data Penghuni & NIK    │ • Kamar Saya & Fasilitas │ • Analisis BEP (Break-Even Point) │
+│ • Kontrak Sewa & Deposit │ • Kontrak & Riwayat Sewa │ • Analisis Okupansi & Retensi     │
+│ • Tagihan (Invoices)     │ • Tagihan & Riwayat Bayar│ • Manajemen & Aging Piutang       │
+│ • Pembayaran & Verifikasi│ • Upload Bukti Bayar     │ • Analisis Cash Flow & Proyeksi   │
+│ • Pengeluaran & Kategori │ • Arsip Dokumen Perjanjian│ • Expense Breakdown & Anomali    │
+│ • Pengaturan & Rekening  │ • Laporan Kerusakan      │ • Maintenance Cost Analysis       │
+│                          │ • Pengajuan Perizinan    │ • Laporan Laba Rugi Komprehensif  │
+├──────────────────────────┴──────────────────────────┴───────────────────────────────────┤
+│                                4. COMMUNICATION ENGINE                                  │
+│  • In-App Notifications (Web Realtime)   • Email Transactional & Invoice PDF            │
+│  • WhatsApp Automated Gateway (API)      • Payment & Contract Due Reminders             │
+│  • Maintenance Updates & Ticket Status   • Request Approval Workflows                   │
+└─────────────────────────────────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## 2. Entity Relationship Diagram (ERD)
 
 ```mermaid
 erDiagram
@@ -17,9 +42,9 @@ erDiagram
     USERS {
         bigint      id              PK  "Auto increment"
         string      name            NN  "Nama lengkap"
-        string      email           NN  "Unik"
-        string      password        NN
-        enum        role            NN  "owner | admin"
+        string      email           NN  "Unik, untuk login"
+        string      password        NN  "Hashed"
+        enum        role            NN  "owner | admin | tenant"
         timestamp   email_verified_at
         timestamp   created_at
         timestamp   updated_at
@@ -27,7 +52,7 @@ erDiagram
 
     ROOM_TYPES {
         bigint      id              PK
-        string      name            NN  "Unik, cth: Standard"
+        string      name            NN  "Unik, cth: Deluxe, Standard"
         text        description
         decimal     default_price
         timestamp   created_at
@@ -36,7 +61,7 @@ erDiagram
 
     FACILITIES {
         bigint      id              PK
-        string      name            NN  "Unik, cth: AC"
+        string      name            NN  "Unik, cth: AC, WiFi, Water Heater"
         string      icon
         timestamp   created_at
         timestamp   updated_at
@@ -49,12 +74,12 @@ erDiagram
 
     ROOMS {
         bigint      id              PK
-        string      room_number     NN  "Unik, cth: 101"
-        tinyint     floor           NN  "Lantai ke-berapa"
-        bigint      room_type_id    FK  "Tipe kamar"
-        decimal     size_m2             "Luas dalam meter persegi"
-        decimal     monthly_price   NN  "Harga sewa per bulan"
-        decimal     deposit_price   NN  "Besaran deposit"
+        string      room_number     NN  "Unik, cth: 101, A2"
+        tinyint     floor           NN  "Lantai"
+        bigint      room_type_id    FK
+        decimal     size_m2
+        decimal     monthly_price   NN
+        decimal     deposit_price   NN
         enum        status          NN  "available | occupied | maintenance"
         timestamp   created_at
         timestamp   updated_at
@@ -63,22 +88,23 @@ erDiagram
     ROOM_PHOTOS {
         bigint      id              PK
         bigint      room_id         FK
-        string      file_path       NN  "Path file di storage"
-        boolean     is_primary          "Foto utama yang ditampilkan"
+        string      file_path       NN
+        boolean     is_primary
         timestamp   created_at
     }
 
     TENANTS {
         bigint      id              PK
-        string      name            NN  "Nama lengkap"
-        string      nik             NN  "Unik, 16 digit KTP"
+        bigint      user_id         FK  "Relasi akun login (Nullable/Unique)"
+        string      name            NN
+        string      nik             NN  "Unik, 16 digit"
         string      phone           NN
         string      email
         enum        gender          NN  "male | female"
         date        birth_date
         text        address
-        string      ktp_photo_path      "Path foto KTP di storage"
-        string      tenant_photo_path   "Path foto penghuni"
+        string      ktp_photo_path
+        string      tenant_photo_path
         string      emergency_contact_name
         string      emergency_contact_phone
         timestamp   created_at
@@ -89,13 +115,13 @@ erDiagram
         bigint      id              PK
         bigint      tenant_id       FK
         bigint      room_id         FK
-        date        start_date      NN  "Tanggal masuk"
-        date        end_date        NN  "Tanggal keluar rencana"
-        decimal     rent_price      NN  "Harga sewa saat kontrak (snapshot)"
-        decimal     deposit_amount  NN  "Nominal deposit yang dibayar"
+        date        start_date      NN
+        date        end_date        NN
+        decimal     rent_price      NN
+        decimal     deposit_amount  NN
         enum        status          NN  "active | ended | terminated"
         text        notes
-        bigint      created_by      FK  "ID user yang buat kontrak"
+        bigint      created_by      FK
         timestamp   created_at
         timestamp   updated_at
     }
@@ -105,16 +131,16 @@ erDiagram
         bigint      contract_id     FK
         bigint      tenant_id       FK
         bigint      room_id         FK
-        year        year            NN  "Tahun tagihan"
-        tinyint     month           NN  "Bulan tagihan (1-12)"
-        decimal     rent_amount     NN  "Komponen: biaya sewa"
-        decimal     electricity_fee     "Komponen: biaya listrik"
-        decimal     water_fee           "Komponen: biaya air"
-        decimal     internet_fee        "Komponen: biaya internet"
-        decimal     penalty_fee         "Komponen: denda keterlambatan"
-        decimal     other_fee           "Komponen: biaya lain"
-        decimal     total_amount    NN  "Total semua komponen"
-        date        due_date        NN  "Tanggal jatuh tempo"
+        year        year            NN
+        tinyint     month           NN
+        decimal     rent_amount     NN
+        decimal     electricity_fee
+        decimal     water_fee
+        decimal     internet_fee
+        decimal     penalty_fee
+        decimal     other_fee
+        decimal     total_amount    NN
+        date        due_date        NN
         enum        status          NN  "pending | paid | overdue | cancelled"
         timestamp   created_at
         timestamp   updated_at
@@ -122,7 +148,7 @@ erDiagram
 
     PAYMENT_METHODS {
         bigint      id              PK
-        string      name            NN  "Unik, cth: Transfer Bank"
+        string      name            NN  "Cash, Transfer Bank, QRIS"
         timestamp   created_at
         timestamp   updated_at
     }
@@ -131,32 +157,64 @@ erDiagram
         bigint      id              PK
         bigint      invoice_id      FK
         bigint      tenant_id       FK
-        decimal     amount          NN  "Nominal yang dibayar"
+        decimal     amount          NN
         date        payment_date    NN
-        bigint      payment_method_id FK "Metode bayar"
+        bigint      payment_method_id FK
         enum        status          NN  "verified | pending | rejected"
-        string      proof_path          "Path bukti transfer di storage"
+        string      proof_path
         text        notes
-        bigint      verified_by         "ID user yang verifikasi"
+        bigint      verified_by     FK
         timestamp   created_at
         timestamp   updated_at
     }
 
     EXPENSE_CATEGORIES {
         bigint      id              PK
-        string      name            NN  "Unik, cth: Listrik"
+        string      name            NN
         timestamp   created_at
         timestamp   updated_at
     }
 
     EXPENSES {
         bigint      id              PK
-        bigint      expense_category_id FK "Kategori pengeluaran"
-        string      description     NN  "Keterangan pengeluaran"
-        decimal     amount          NN  "Nominal pengeluaran"
+        bigint      expense_category_id FK
+        string      description     NN
+        decimal     amount          NN
         date        expense_date    NN
-        string      receipt_path        "Path struk/bukti pengeluaran"
-        bigint      created_by      FK  "ID user yang input"
+        string      receipt_path
+        bigint      created_by      FK
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
+    MAINTENANCE_REQUESTS {
+        bigint      id              PK
+        bigint      tenant_id       FK
+        bigint      room_id         FK
+        string      title           NN
+        text        description     NN
+        string      photo_path
+        enum        priority        NN  "low | medium | high | urgent"
+        enum        status          NN  "pending | in_progress | resolved | rejected"
+        decimal     cost_incurred       "Biaya perbaikan jika ada"
+        text        resolution_notes
+        bigint      resolved_by     FK
+        timestamp   resolved_at
+        timestamp   created_at
+        timestamp   updated_at
+    }
+
+    TENANT_PERMISSIONS {
+        bigint      id              PK
+        bigint      tenant_id       FK
+        enum        type            NN  "guest_stay | electronic_device | late_return | other"
+        date        start_date      NN
+        date        end_date
+        text        description     NN
+        enum        status          NN  "pending | approved | rejected"
+        text        admin_notes
+        bigint      approved_by     FK
+        timestamp   approved_at
         timestamp   created_at
         timestamp   updated_at
     }
@@ -166,7 +224,7 @@ erDiagram
         string      nama_bank       NN
         string      nomor_rekening  NN
         string      nama_pemilik_rekening NN
-        boolean     is_active       NN  "Default true"
+        boolean     is_active       NN
         timestamp   created_at
         timestamp   updated_at
     }
@@ -175,18 +233,21 @@ erDiagram
         bigint      id              PK
         string      nama            NN
         enum        jenis           NN  "nominal_tetap | persentase"
-        decimal     nilai_default   NN  "Default 0"
-        boolean     is_active       NN  "Default true"
+        decimal     nilai_default   NN
+        boolean     is_active       NN
         timestamp   created_at
         timestamp   updated_at
     }
 
     SETTINGS {
         bigint      id              PK
-        string      kost_name       NN  "Default: Kost App"
-        string      kost_logo           "Path logo"
+        string      kost_name       NN
+        string      kost_logo
         text        kost_address
-        integer     default_due_date_day NN "Default 10"
+        string      kost_phone
+        integer     default_due_date_day NN
+        decimal     property_investment_cost "Modal investasi awal untuk analisis BEP"
+        decimal     monthly_fixed_overhead   "Biaya tetap bulanan (operasional dasar)"
         bigint      default_late_fee_id FK
         bigint      default_bank_account_id FK
         timestamp   created_at
@@ -195,567 +256,243 @@ erDiagram
 
     NOTIFICATIONS {
         string      id              PK  "UUID"
-        string      type            NN  "Nama class notifikasi"
-        string      notifiable_type NN  "Biasanya: App\Models\User"
-        bigint      notifiable_id   NN  "ID penerima"
-        text        data            NN  "Isi notifikasi (JSON)"
-        timestamp   read_at             "NULL = belum dibaca"
+        string      type            NN
+        string      notifiable_type NN
+        bigint      notifiable_id   NN
+        text        data            NN  "JSON"
+        timestamp   read_at
         timestamp   created_at
         timestamp   updated_at
     }
 
-    ROOM_TYPES      ||--o{ ROOMS         : "memiliki banyak"
-    ROOMS           ||--o{ ROOM_FACILITIES : "punya fasilitas"
-    FACILITIES      ||--o{ ROOM_FACILITIES : "dimiliki kamar"
-    ROOMS           ||--o{ ROOM_PHOTOS   : "punya banyak foto"
-    ROOMS           ||--o{ CONTRACTS     : "punya banyak kontrak (riwayat)"
-    TENANTS         ||--o{ CONTRACTS     : "punya banyak kontrak"
-    CONTRACTS       ||--o{ INVOICES      : "menghasilkan banyak tagihan"
-    INVOICES        ||--o{ PAYMENTS      : "bisa dibayar berkali-kali"
-    PAYMENT_METHODS ||--o{ PAYMENTS      : "metode dipakai untuk"
-    EXPENSE_CATEGORIES ||--o{ EXPENSES   : "kategori dari"
-    TENANTS         ||--o{ INVOICES      : "tagihan milik penghuni"
-    TENANTS         ||--o{ PAYMENTS      : "pembayaran oleh penghuni"
-    USERS           ||--o{ EXPENSES      : "pengeluaran diinput user"
-    USERS           ||--o{ CONTRACTS     : "kontrak dibuat oleh user"
-    USERS           ||--o{ NOTIFICATIONS : "notifikasi dikirim ke user"
+    COMMUNICATION_LOGS {
+        bigint      id              PK
+        bigint      tenant_id       FK
+        enum        channel         NN  "in_app | whatsapp | email"
+        string      recipient       NN  "Nomor WA / Alamat Email"
+        string      event_type      NN  "payment_reminder | contract_reminder | ticket_update"
+        text        message_payload NN
+        enum        status          NN  "pending | sent | delivered | failed"
+        text        error_message
+        timestamp   sent_at
+        timestamp   created_at
+    }
+
+    ROOM_TYPES           ||--o{ ROOMS                : "memiliki banyak"
+    ROOMS                ||--o{ ROOM_FACILITIES        : "punya fasilitas"
+    FACILITIES           ||--o{ ROOM_FACILITIES        : "dimiliki kamar"
+    ROOMS                ||--o{ ROOM_PHOTOS          : "punya foto"
+    ROOMS                ||--o{ CONTRACTS            : "riwayat kontrak"
+    TENANTS              ||--o{ CONTRACTS            : "punya kontrak"
+    CONTRACTS            ||--o{ INVOICES             : "menghasilkan tagihan"
+    INVOICES             ||--o{ PAYMENTS             : "dicicil/dibayar"
+    PAYMENT_METHODS      ||--o{ PAYMENTS             : "metode bayar"
+    EXPENSE_CATEGORIES   ||--o{ EXPENSES             : "kategori"
+    TENANTS              ||--o{ INVOICES             : "tagihan milik"
+    TENANTS              ||--o{ PAYMENTS             : "pembayaran oleh"
+    TENANTS              ||--o{ MAINTENANCE_REQUESTS : "lapor kerusakan"
+    TENANTS              ||--o{ TENANT_PERMISSIONS   : "mengajukan izin"
+    TENANTS              ||--o{ COMMUNICATION_LOGS   : "riwayat pesan"
+    USERS                ||--o| TENANTS              : "akun portal penghuni"
+    USERS                ||--o{ EXPENSES             : "diinput oleh"
+    USERS                ||--o{ CONTRACTS            : "dibuat oleh"
+    USERS                ||--o{ NOTIFICATIONS        : "notifikasi"
 ```
 
 ---
 
-## 2. Database Schema (Skema Database)
+## 3. Rincian Modul Berdasarkan 4 Pilar Produk
 
-Penjelasan detail setiap tabel: kolom apa saja, tipe datanya, wajib diisi
-atau boleh kosong, dan index apa yang dipasang agar pencarian cepat.
+### 3.1 Pilar 1: Operational Core *(Sudah Selesai & Stabil)*
 
----
-
-### Tabel: `users`
-*Menyimpan akun login Owner dan Admin.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | Nomor unik otomatis |
-| `name` | VARCHAR(255) | ✓ | — | Nama tampilan |
-| `email` | VARCHAR(255) | ✓ | UNIQUE | Dipakai untuk login |
-| `password` | VARCHAR(255) | ✓ | — | Disimpan terenkripsi (bcrypt) |
-| `role` | ENUM | ✓ | INDEX | `owner` atau `admin` |
-| `email_verified_at` | TIMESTAMP | — | — | Waktu verifikasi email |
-| `remember_token` | VARCHAR(100) | — | — | Token "ingat saya" |
-| `created_at` | TIMESTAMP | — | — | Otomatis diisi Laravel |
-| `updated_at` | TIMESTAMP | — | — | Otomatis diisi Laravel |
+| Modul | Controller Utama | Deskripsi & Fitur Kunci |
+|---|---|---|
+| **Kamar & Fasilitas** | `RoomController`, `RoomTypeController`, `FacilityController` | Monitoring ketersediaan kamar, galeri foto kamar, penetapan tarif sewa & deposit dasar. |
+| **Penghuni** | `TenantController` | Database penghuni aktif & arsip, NIK 16 digit, kontak darurat, foto profil & KTP. |
+| **Kontrak Sewa** | `ContractController` | Pembuatan kontrak, *price lock*, perpanjangan kontrak, penghentian & pengembalian kamar ke status *available*. |
+| **Tagihan** | `InvoiceController`, `GenerateMonthlyInvoices` (Schedule) | Otomatisasi generate tagihan tanggal 1, kalkulasi denda, penyesuaian biaya listrik/air. |
+| **Pembayaran** | `PaymentController` | Pencatatan transaksi multi-channel, verifikasi/penolakan bukti transfer, generate kuitansi. |
+| **Pengeluaran** | `ExpenseController`, `ExpenseCategoryController` | Pencatatan biaya operasional, upload bukti nota/struk, pengelompokan kategori. |
 
 ---
 
-### Tabel: `rooms`
-*Menyimpan data semua kamar kost.*
+### 3.2 Pilar 2: Tenant Portal *(Next Development Phase)*
 
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `room_number` | VARCHAR(20) | ✓ | UNIQUE | Nomor kamar, mis: "101", "A2" |
-| `floor` | TINYINT | ✓ | INDEX | Lantai (1, 2, 3, ...) |
-| `room_type_id` | BIGINT | ✓ | FK + INDEX | Relasi ke tipe kamar |
-| `size_m2` | DECIMAL(5,2) | — | — | Luas m2, mis: 12.50 |
-| `monthly_price` | DECIMAL(12,2) | ✓ | — | Harga normal per bulan |
-| `deposit_price` | DECIMAL(12,2) | ✓ | — | Besaran deposit standar |
-| `status` | ENUM | ✓ | INDEX | `available` / `occupied` / `maintenance` |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `room_photos`
-*Menyimpan foto-foto kamar (satu kamar bisa banyak foto).*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `room_id` | BIGINT | ✓ | FK + INDEX | Kamar mana |
-| `file_path` | VARCHAR(500) | ✓ | — | Path file di server |
-| `is_primary` | BOOLEAN | ✓ | — | Default false; hanya 1 foto utama |
-| `created_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `tenants`
-*Menyimpan data diri setiap penghuni kost.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `name` | VARCHAR(255) | ✓ | INDEX | |
-| `nik` | VARCHAR(16) | ✓ | UNIQUE | Nomor KTP 16 digit |
-| `phone` | VARCHAR(20) | ✓ | INDEX | |
-| `email` | VARCHAR(255) | — | INDEX | |
-| `gender` | ENUM | ✓ | — | `male` / `female` |
-| `birth_date` | DATE | — | — | |
-| `address` | TEXT | — | — | Alamat asal |
-| `ktp_photo_path` | VARCHAR(500) | — | — | Foto KTP |
-| `tenant_photo_path` | VARCHAR(500) | — | — | Foto wajah penghuni |
-| `emergency_contact_name` | VARCHAR(255) | — | — | Nama kontak darurat |
-| `emergency_contact_phone` | VARCHAR(20) | — | — | HP kontak darurat |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `contracts`
-*Menyimpan perjanjian sewa antara penghuni dan kamar.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `tenant_id` | BIGINT | ✓ | FK + INDEX | Penghuni siapa |
-| `room_id` | BIGINT | ✓ | FK + INDEX | Kamar mana |
-| `start_date` | DATE | ✓ | INDEX | Tanggal masuk |
-| `end_date` | DATE | ✓ | INDEX | Tanggal keluar rencana |
-| `rent_price` | DECIMAL(12,2) | ✓ | — | Harga sewa yg disepakati (snapshot) |
-| `deposit_amount` | DECIMAL(12,2) | ✓ | — | Deposit yang dibayar |
-| `status` | ENUM | ✓ | INDEX | `active` / `ended` / `terminated` |
-| `notes` | TEXT | — | — | Catatan tambahan |
-| `created_by` | BIGINT | ✓ | FK | User yang membuat kontrak |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
-> **Catatan penting:** Kolom `rent_price` menyimpan harga **saat kontrak dibuat**
-> (snapshot), bukan mengambil dari tabel `rooms`. Ini memastikan riwayat
-> harga tidak berubah meski harga kamar naik di kemudian hari.
->
-> **Unique constraint:** Kombinasi `(tenant_id, room_id, start_date)` harus unik.
-
----
-
-### Tabel: `invoices`
-*Tagihan bulanan yang dibuat otomatis tiap awal bulan.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `contract_id` | BIGINT | ✓ | FK + INDEX | Dari kontrak mana |
-| `tenant_id` | BIGINT | ✓ | FK + INDEX | Penghuni siapa (denormalized) |
-| `room_id` | BIGINT | ✓ | FK + INDEX | Kamar mana (denormalized) |
-| `year` | YEAR | ✓ | — | Tahun tagihan |
-| `month` | TINYINT | ✓ | — | Bulan tagihan (1-12) |
-| `rent_amount` | DECIMAL(12,2) | ✓ | — | Komponen sewa |
-| `electricity_fee` | DECIMAL(10,2) | — | — | Komponen listrik |
-| `water_fee` | DECIMAL(10,2) | — | — | Komponen air |
-| `internet_fee` | DECIMAL(10,2) | — | — | Komponen internet |
-| `penalty_fee` | DECIMAL(10,2) | — | — | Komponen denda |
-| `other_fee` | DECIMAL(10,2) | — | — | Komponen lain-lain |
-| `total_amount` | DECIMAL(12,2) | ✓ | — | Total semua komponen |
-| `due_date` | DATE | ✓ | INDEX | Jatuh tempo pembayaran |
-| `status` | ENUM | ✓ | INDEX | `pending` / `paid` / `overdue` / `cancelled` |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
-> **Unique constraint:** Kombinasi `(contract_id, year, month)` harus unik —
-> tidak boleh ada tagihan dobel untuk bulan yang sama.
-
----
-
-### Tabel: `payments`
-*Pencatatan setiap pembayaran atas tagihan.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `invoice_id` | BIGINT | ✓ | FK + INDEX | Tagihan mana yang dibayar |
-| `tenant_id` | BIGINT | ✓ | FK + INDEX | Denormalized untuk query riwayat |
-| `amount` | DECIMAL(12,2) | ✓ | — | Nominal yang dibayar |
-| `payment_date` | DATE | ✓ | INDEX | Tanggal bayar |
-| `payment_method_id` | BIGINT | ✓ | FK + INDEX | Metode pembayaran |
-| `status` | ENUM | ✓ | INDEX | `pending` / `verified` / `rejected` |
-| `proof_path` | VARCHAR(500) | — | — | Bukti transfer (opsional untuk cash) |
-| `notes` | TEXT | — | — | Catatan |
-| `verified_by` | BIGINT | — | FK | User yang memverifikasi |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `expenses`
-*Pencatatan pengeluaran operasional kost.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `expense_category_id` | BIGINT | ✓ | FK + INDEX | Kategori pengeluaran |
-| `description` | VARCHAR(500) | ✓ | — | Keterangan detail |
-| `amount` | DECIMAL(12,2) | ✓ | — | Nominal |
-| `expense_date` | DATE | ✓ | INDEX | Tanggal pengeluaran |
-| `receipt_path` | VARCHAR(500) | — | — | Foto struk/bukti |
-| `created_by` | BIGINT | ✓ | FK | User yang input |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `room_types`
-*Master data tipe kamar kost.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `name` | VARCHAR(100) | ✓ | UNIQUE | Nama tipe kamar |
-| `description` | TEXT | — | — | Deskripsi |
-| `default_price` | DECIMAL(12,2) | — | — | Harga rekomendasi |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `facilities` & `room_facilities`
-*Master data fasilitas kamar.*
-
-**facilities:**
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `name` | VARCHAR(100) | ✓ | UNIQUE | Nama fasilitas |
-| `icon` | VARCHAR(100) | — | — | Ikon tampilan |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
-**room_facilities:** (Tabel Pivot)
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `room_id` | BIGINT | ✓ | PK, FK | Relasi ke rooms |
-| `facility_id` | BIGINT | ✓ | PK, FK | Relasi ke facilities |
-
----
-
-### Tabel: `payment_methods`
-*Master data metode pembayaran.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `name` | VARCHAR(255) | ✓ | UNIQUE | Nama metode |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `expense_categories`
-*Master data kategori pengeluaran.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `name` | VARCHAR(255) | ✓ | UNIQUE | Nama kategori |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `bank_accounts`
-*Master data rekening bank.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `nama_bank` | VARCHAR(255) | ✓ | — | |
-| `nomor_rekening` | VARCHAR(255) | ✓ | — | |
-| `nama_pemilik_rekening` | VARCHAR(255) | ✓ | — | |
-| `is_active` | BOOLEAN | ✓ | — | Default true |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `additional_fee_types`
-*Master data jenis denda / biaya tambahan.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | |
-| `nama` | VARCHAR(255) | ✓ | — | |
-| `jenis` | ENUM | ✓ | — | `nominal_tetap` / `persentase` |
-| `nilai_default` | DECIMAL(15,2) | ✓ | — | Default 0 |
-| `is_active` | BOOLEAN | ✓ | — | Default true |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `settings`
-*Konfigurasi aplikasi (single-row).*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | BIGINT | ✓ | PK | Selalu 1 |
-| `kost_name` | VARCHAR(255) | ✓ | — | |
-| `kost_logo` | VARCHAR(255) | — | — | Path logo file |
-| `kost_address` | TEXT | — | — | |
-| `default_due_date_day` | INT | ✓ | — | 1-28 |
-| `default_late_fee_id` | BIGINT | — | FK | Relasi ke additional_fee_types |
-| `default_bank_account_id` | BIGINT | — | FK | Relasi ke bank_accounts |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
----
-
-### Tabel: `notifications`
-*Notifikasi dalam aplikasi — menggunakan standar Laravel Notification.*
-
-| Kolom | Tipe | Wajib | Index | Keterangan |
-|---|---|---|---|---|
-| `id` | VARCHAR(36) | ✓ | PK | UUID, bukan auto-increment |
-| `type` | VARCHAR(255) | ✓ | — | Nama class notifikasi |
-| `notifiable_type` | VARCHAR(255) | ✓ | INDEX | Biasanya "App\Models\User" |
-| `notifiable_id` | BIGINT | ✓ | INDEX | ID penerima |
-| `data` | TEXT | ✓ | — | Isi notifikasi (JSON) |
-| `read_at` | TIMESTAMP | — | — | NULL = belum dibaca |
-| `created_at` | TIMESTAMP | — | — | |
-| `updated_at` | TIMESTAMP | — | — | |
-
-> Tabel ini dibuat otomatis oleh Laravel, tidak perlu dibuat manual.
-
----
-
-## 3. Use Case Diagram
-
-Diagram teks berikut menggambarkan **siapa bisa melakukan apa** dalam sistem.
+Portal mandiri berbasis web (*mobile-first*) khusus bagi penghuni:
 
 ```
-+==============================================================+
-|                  APLIKASI MANAGEMENT KOST                    |
-+==============================================================+
-|                                                              |
-|  +---------+     +-------------------------------------+    |
-|  |         |     |  MODUL DATA MASTER & PENGATURAN     |    |
-|  |  OWNER  |---->|  - Manajemen Tipe Kamar & Fasilitas |    |
-|  |         |     |  - Manajemen Metode Pembayaran      |    |
-|  |  &      |     |  - Manajemen Kategori Pengeluaran   |    |
-|  |         |     |  - Manajemen Bank & Denda           |    |
-|  |  ADMIN  |     |  - Konfigurasi Aplikasi (Identitas) |    |
-|  |         |     +-------------------------------------+    |
-|  |         |                                                  |
-|  |         |     +-------------------------------------+    |
-|  |         |     |  MODUL KAMAR                        |    |
-|  |         |---->|  - Lihat daftar kamar               |    |
-|  |         |     |  - Tambah / Edit / Hapus kamar      |    |
-|  |         |     |  - Upload foto kamar                 |    |
-|  |         |     |  - Atur relasi Kamar & Tipe/Fasilitas|    |
-|  |         |     +-------------------------------------+    |
-|  |         |                                                  |
-|  +----+----+     +-------------------------------------+    |
-|       |          |  MODUL PENGHUNI                      |    |
-|       +--------->|  - Lihat daftar penghuni             |    |
-|       |          |  - Tambah / Edit / Hapus penghuni    |    |
-|       |          |  - Upload foto KTP & penghuni        |    |
-|       |          |  - Lihat riwayat sewa penghuni       |    |
-|       |          +-------------------------------------+    |
-|       |                                                       |
-|       |          +-------------------------------------+    |
-|       |          |  MODUL KONTRAK                       |    |
-|       +--------->|  - Buat kontrak baru                 |    |
-|       |          |  - Perpanjang kontrak                 |    |
-|       |          |  - Akhiri kontrak                    |    |
-|       |          |  - Lihat riwayat kontrak             |    |
-|       |          +-------------------------------------+    |
-|       |                                                       |
-|       |          +-------------------------------------+    |
-|       |          |  MODUL TAGIHAN                       |    |
-|       +--------->|  - Lihat tagihan per penghuni        |    |
-|       |          |  - Buat tagihan manual (jika perlu)  |    |
-|       |          |  - Edit komponen tagihan             |    |
-|       |          |  [SISTEM] Buat tagihan otomatis      |    |
-|       |          |           setiap awal bulan          |    |
-|       |          +-------------------------------------+    |
-|       |                                                       |
-|       |          +-------------------------------------+    |
-|       |          |  MODUL PEMBAYARAN                    |    |
-|       +--------->|  - Input pembayaran baru             |    |
-|       |          |  - Upload bukti transfer             |    |
-|       |          |  - Verifikasi pembayaran             |    |
-|       |          |  - Cetak kuitansi ber-Kop            |    |
-|       |          |  - Lihat riwayat pembayaran          |    |
-|       |          +-------------------------------------+    |
-|       |                                                       |
-|       |          +-------------------------------------+    |
-|       |          |  MODUL PENGELUARAN                   |    |
-|       +--------->|  - Input / Edit / Hapus pengeluaran  |    |
-|       |          |  - Upload struk/bukti                |    |
-|       |          |  - Filter per kategori & periode     |    |
-|       |          +-------------------------------------+    |
-|       |                                                       |
-|       |          +-------------------------------------+    |
-|       |          |  MODUL NOTIFIKASI                    |    |
-|       +--------->|  - Lihat notifikasi masuk            |    |
-|       |          |  - Tandai sudah dibaca               |    |
-|       |          +-------------------------------------+    |
-|       |                                                       |
-|       |          +-------------------------------------+    |
-|       |          |  DASHBOARD                           |    |
-|       +--------->|  - Lihat ringkasan statistik         |    |
-|                  |  - Lihat chart pendapatan & occupancy|    |
-|                  +-------------------------------------+    |
-|                                                              |
-|  +---------+     +-------------------------------------+    |
-|  |         |     |  MODUL LAPORAN (Owner Only)          |    |
-|  |  OWNER  |---->|  - Laporan pendapatan & pengeluaran  |    |
-|  |  ONLY   |     |  - Laporan laba rugi                 |    |
-|  |         |     |  - Laporan occupancy rate            |    |
-|  +---------+     |  - Laporan piutang                   |    |
-|                  |  - Export PDF / Excel / CSV dgn Kop  |    |
-|                  +-------------------------------------+    |
-+==============================================================+
-
-Keterangan:
-  [SISTEM]   = dilakukan otomatis oleh aplikasi (scheduler), bukan manusia
-  OWNER ONLY = hanya Owner yang bisa mengakses modul laporan keuangan
-               (detail permission ditentukan saat implementasi Authorization)
+Tenant Login (/portal/login)
+  │
+  ├── 🏠 Kamar Saya (/portal/my-room)
+  │     └── Detail spesifikasi kamar, daftar fasilitas aktif, aturan kost.
+  │
+  ├── 📜 Kontrak Saya (/portal/my-contract)
+  │     └── Periode sewa, sisa masa tinggal, riwayat perpanjangan sewa.
+  │
+  ├── 💳 Tagihan & Pembayaran (/portal/my-invoices)
+  │     ├── Daftar tagihan (Pending, Paid, Overdue)
+  │     ├── Instruksi transfer bank & QRIS kost
+  │     └── Form unggah bukti bayar mandiri + download kuitansi resmi
+  │
+  ├── 🛠️ Laporan Kerusakan (/portal/maintenance)
+  │     ├── Buat tiket komplain/kerusakan + foto bukti
+  │     └── Tracking status perbaikan: Pending ➔ In Progress ➔ Resolved
+  │
+  ├── 📝 Pengajuan Izin (/portal/permissions)
+  │     ├── Izin bawa tamu menginap
+  │     ├── Izin bawa barang elektronik bertarif
+  │     └── Tracking approval dari Admin/Owner
+  │
+  └── 📂 Arsip Dokumen (/portal/documents)
+        └── Unduh Surat Perjanjian Sewa Digital & Tata Tertib
 ```
 
 ---
 
-## 4. Flow Sistem Utama
+### 3.3 Pilar 3: Management & Decision Support *(Executive / Owner Suite)*
 
-Bagian ini menjelaskan perjalanan lengkap data dalam sistem, dari kamar kosong
-hingga pembayaran berhasil, dalam bahasa yang mudah dipahami.
+Modul analisis tingkat lanjut untuk evaluasi profitabilitas dan performa bisnis properti:
+
+```
+Owner / Executive Area (/analytics)
+  │
+  ├── 📊 Dashboard Eksekutif
+  │     └── KPI omset, margin laba bersih, tingkat keterisian harian, health index.
+  │
+  ├── 🎯 Analisis BEP (Break-Even Point)
+  │     ├── Formula: Biaya Tetap Bulanan / (Harga Sewa Rata-rata - Biaya Variabel per Kamar)
+  │     ├── Kamar Minimum Terisi untuk Impas Operasional
+  │     └── Estimasi Payback Period Investasi Pokok Properti
+  │
+  ├── 📈 Analisis Okupansi & Churn Rate
+  │     ├── Tren persentase keterisian per bulan
+  │     └── Rata-rata Customer Lifetime Value (LTV) & masa tinggal penghuni
+  │
+  ├── ⏳ Aging Schedule Piutang (Accounts Receivable)
+  │     ├── Klasifikasi tunggakan: Lancar (0-7 hari), Hati-hati (8-30 hari), Macet (>30 hari)
+  │     └── Daftar penghuni dengan skor risiko tunggakan tertinggi
+  │
+  ├── 💵 Proyeksi & Arus Kas (Cash Flow Forecast)
+  │     ├── Perbandingan arus kas masuk riil vs potensi piutang
+  │     └── Proyeksi pendapatan 3 bulan ke depan berbasis kontrak aktif
+  │
+  └── 🔧 Maintenance Cost & Asset Evaluation
+        ├── Rekapitulasi pengeluaran perbaikan per unit kamar
+        └── Deteksi kamar/fasilitas dengan biaya perawatan paling boros
+```
 
 ---
 
-### 4.1 Alur Lengkap: Kamar Kosong → Penghuni → Kontrak → Tagihan → Pembayaran
+### 3.4 Pilar 4: Communication Engine *(Otomasi & Multi-Channel)*
+
+Mesin pengiriman pesan dan notifikasi berbasis event (*event-driven*):
+
+| Jenis Notifikasi | Saluran (Channel) | Pemicu (Trigger) | Target Penerima |
+|---|---|---|---|
+| **Tagihan Terbit** | In-App + WA + Email | Tagihan baru di-generate (awal bulan) | Tenant |
+| **Payment Reminder (H-3 & H-0)** | WA Gateway | Menjelang jatuh tempo | Tenant |
+| **Tagihan Overdue & Denda** | WA + In-App | Melewati tanggal due date | Tenant & Admin |
+| **Konfirmasi Pembayaran Masuk** | In-App + Push | Tenant upload bukti bayar | Owner / Admin |
+| **Kuitansi Lunas** | WA (PDF Link) + Email | Pembayaran diverifikasi | Tenant |
+| **Contract Expiration (H-30 & H-14)** | WA + In-App | Menjelang akhir kontrak | Tenant & Admin |
+| **Maintenance Ticket Update** | In-App + WA | Status tiket diubah Admin | Tenant Pelapor |
+| **Permohonan Izin / Perpanjangan** | In-App | Tenant submit permohonan | Admin / Owner |
+
+---
+
+## 4. Alur Bisnis & State Machines
+
+### 4.1 Siklus Hidup Tiket Kerusakan (`maintenance_requests`)
 
 ```mermaid
-flowchart TD
-    A(["🏠 Kamar Kosong\nStatus: available"]) --> B
+stateDiagram-v2
+    [*] --> Pending: Penghuni submit laporan kerusakan
+    Pending --> In_Progress: Admin jadwalkan perbaikan / teknisi
+    Pending --> Rejected: Komplain tidak valid / di luar tanggungan
+    In_Progress --> Resolved: Teknisi selesai & Admin input biaya
+    Resolved --> [*]
+    Rejected --> [*]
+```
 
-    B["👤 Admin/Owner input\ndata Penghuni baru\n(nama, NIK, HP, foto KTP)"]
-    B --> C
+### 4.2 Siklus Hidup Permohonan Izin (`tenant_permissions`)
 
-    C["📝 Buat Kontrak Sewa\n- Pilih penghuni\n- Pilih kamar\n- Tentukan tgl masuk & keluar\n- Catat harga & deposit"]
-    C --> D
+```mermaid
+stateDiagram-v2
+    [*] --> Pending: Penghuni mengajukan izin
+    Pending --> Approved: Disetujui Admin/Owner (biaya tambahan jika ada)
+    Pending --> Rejected: Ditolak dengan catatan alasan
+    Approved --> [*]
+    Rejected --> [*]
+```
 
-    D{{"Kontrak disimpan?"}}
-    D -- Ya --> E
-    D -- Tidak / Batal --> A
+### 4.3 Siklus Hidup Kontrak & Tagihan
 
-    E["🔄 Status kamar otomatis\nberubah: available → occupied"]
-    E --> F
+```mermaid
+stateDiagram-v2
+    state Kontrak {
+        [*] --> Active: Kontrak Ditandatangani
+        Active --> Active: Perpanjangan Sewa
+        Active --> Ended: Masa Sewa Selesai Normal
+        Active --> Terminated: Dihentikan Lebih Awal
+    }
 
-    F(["⏰ Awal bulan tiba\n(Laravel Scheduler berjalan)"])
-    F --> G
-
-    G["🧾 Sistem membuat Tagihan\notomatis untuk semua\nkontrak ACTIVE\nStatus awal: pending"]
-    G --> H
-
-    H{{"Penghuni bayar?"}}
-
-    H -- Bayar sebelum\njatuh tempo --> I
-    H -- Lewat jatuh tempo --> J
-
-    I["💰 Admin input Pembayaran\n- Nominal\n- Metode: cash/transfer/QRIS\n- Upload bukti transfer"]
-    I --> K
-
-    J["⚠️ Status tagihan → overdue\nNotifikasi dikirim ke Admin"]
-    J --> I
-
-    K{{"Pembayaran diverifikasi?"}}
-    K -- Ya --> L
-    K -- Ditolak --> M
-
-    L["✅ Status tagihan → paid\nKuitansi bisa dicetak"]
-    L --> N
-
-    M["❌ Status pembayaran → rejected\nPenghuni diminta bayar ulang"]
-    M --> I
-
-    N{{"Kontrak sudah habis?"}}
-    N -- Belum --> F
-    N -- Sudah --> O
-
-    O{{"Perpanjang kontrak?"}}
-    O -- Ya --> C
-    O -- Tidak --> P
-
-    P["🚪 Admin akhiri kontrak\n- Status kontrak → ended\n- Status kamar → available\n- Proses pengembalian deposit"]
-    P --> A
+    state Tagihan {
+        [*] --> Pending_Bayar: Terbit Otomatis
+        Pending_Bayar --> Overdue: Lewat Jatuh Tempo
+        Pending_Bayar --> Paid: Pembayaran Diverifikasi
+        Overdue --> Paid: Denda & Tagihan Lunas
+        Pending_Bayar --> Cancelled: Pembatalan Kontrak
+    }
 ```
 
 ---
 
-### 4.2 Alur Detail: Pembuatan Tagihan Otomatis
+## 5. Matriks Hak Akses & Keamanan (RBAC)
 
-Setiap **tanggal 1** setiap bulan, sistem menjalankan proses berikut secara otomatis:
-
-```
-Scheduler berjalan (tgl 1, jam 07:00)
-        |
-        v
-Ambil semua kontrak dengan status = 'active'
-        |
-        v
-Untuk setiap kontrak aktif:
-    |-- Cek: apakah tagihan bulan ini sudah ada?
-    |       |-- Sudah ada  --> lewati (skip)
-    |       +-- Belum ada  --> buat tagihan baru
-    |
-    |-- Isi komponen tagihan:
-    |       |-- rent_amount     = ambil dari contracts.rent_price
-    |       |-- electricity_fee = diisi manual setelah tagihan dibuat
-    |       |-- water_fee       = diisi manual setelah tagihan dibuat
-    |       |-- internet_fee    = tetap (jika ada)
-    |       +-- total_amount    = jumlah semua komponen
-    |
-    |-- Set due_date = tanggal 10 bulan berjalan (bisa dikonfigurasi)
-    |-- Set status   = 'pending'
-    |
-    +-- Kirim notifikasi ke Admin/Owner: "Tagihan bulan X sudah dibuat"
-```
+| Modul / Fitur | Owner | Admin | Tenant |
+|---|:---:|:---:|:---:|
+| **Dashboard Eksekutif & BEP** | ✅ Penuh | ❌ | ❌ |
+| **Laporan Keuangan Komprehensif** | ✅ Penuh | ❌ | ❌ |
+| **Aging Piutang & Cash Flow** | ✅ Penuh | ❌ | ❌ |
+| **Manajemen Kamar & Tipe Kamar** | ✅ Penuh | ✅ Penuh | ❌ |
+| **Data Penghuni & Kontrak** | ✅ Penuh | ✅ Penuh | ❌ |
+| **Input & Verifikasi Pembayaran** | ✅ Penuh | ✅ Penuh | ❌ |
+| **Generate & Kelola Tagihan** | ✅ Penuh | ✅ Penuh | ❌ |
+| **Pengeluaran Operasional** | ✅ Penuh | ✅ Penuh | ❌ |
+| **Penyelesaian Tiket Maintenance** | ✅ Penuh | ✅ Penuh | ❌ |
+| **Approval Izin Penghuni** | ✅ Penuh | ✅ Penuh | ❌ |
+| **Tenant Portal (Kamar/Tagihan Saya)** | ❌ (Bypass view) | ❌ (Bypass view) | ✅ Milik Sendiri |
+| **Submit Laporan Kerusakan & Izin** | ❌ | ❌ | ✅ Milik Sendiri |
+| **Upload Bukti Bayar Mandiri** | ❌ | ❌ | ✅ Milik Sendiri |
+| **Pengaturan Kost & Bank** | ✅ Penuh | ❌ | ❌ |
+| **Manajemen User (Staff/Admin)** | ✅ Penuh | ❌ | ❌ |
 
 ---
 
-### 4.3 Alur Notifikasi
+## 6. Rencana Implementasi Bertahap
 
-Sistem mengirim notifikasi secara otomatis pada kondisi berikut:
-
-| Kondisi | Kapan Dikirim | Penerima |
-|---|---|---|
-| Tagihan baru dibuat | Setiap awal bulan (scheduler) | Admin + Owner |
-| Tagihan hampir jatuh tempo | H-3 sebelum due_date | Admin + Owner |
-| Tagihan overdue | Saat due_date terlewati | Admin + Owner |
-| Kontrak hampir habis | H-14 sebelum end_date | Admin + Owner |
-| Pembayaran baru masuk | Saat pembayaran diinput | Owner (untuk verifikasi) |
-| Pembayaran terverifikasi | Saat diverifikasi | Admin yang input |
-
----
-
-### 4.4 Ringkasan Status dan Transisi
-
-#### Status Kamar (`rooms.status`)
 ```
-available   --[kontrak dibuat]--> occupied
-occupied    --[kontrak selesai]--> available
-available   --[masuk perbaikan]--> maintenance
-maintenance --[perbaikan selesai]--> available
+[FASE 1: OPERATIONAL CORE] ── Selesai 100% (147 Tests Passed)
+    │
+    ▼
+[FASE 2: TENANT PORTAL]
+    ├── Migrasi User Tenant & Relasi Model Tenant <-> User
+    ├── Layout & UI Khusus Tenant Portal (PWA / Mobile Responsive)
+    ├── Fitur Kamar Saya, Kontrak Saya, Tagihan & Pembayaran Mandiri
+    ├── Fitur Tiket Laporan Kerusakan & Modul Approval Izin
+    └── Pengujian Fitur & Policy Tenant
+    │
+    ▼
+[FASE 3: COMMUNICATION ENGINE]
+    ├── Service Integrasi WhatsApp Gateway (Fonnte / Wablas API)
+    ├── Notification Class (Mail, Database, WhatsApp Channel)
+    ├── Command & Scheduler Reminder H-3, H-0, H+3, Kontrak H-14
+    └── Log & Monitoring Pengiriman Pesan
+    │
+    ▼
+[FASE 4: MANAGEMENT & DECISION SUPPORT]
+    ├── Rumus Kalkulasi BEP & Dynamic Payback Period
+    ├── Laporan Aging Piutang & Skor Risiko Tunggakan
+    ├── Evaluasi Biaya Maintenance per Kamar
+    └── Dashboard Visualisasi Eksekutif (Chart.js Deep Insights)
 ```
-
-#### Status Kontrak (`contracts.status`)
-```
-active --[kontrak habis/diperpanjang]--> ended
-active --[diakhiri paksa]-------------> terminated
-```
-
-#### Status Tagihan (`invoices.status`)
-```
-pending --[terlewat due_date]------> overdue
-pending --[pembayaran verified]----> paid
-overdue --[pembayaran verified]----> paid
-pending --[dibatalkan admin]-------> cancelled
-```
-
-#### Status Pembayaran (`payments.status`)
-```
-pending  --[diverifikasi]---> verified
-pending  --[ditolak]-------> rejected
-rejected --[bayar ulang]---> pending (record baru dibuat)
-```
-
----
-
-*Dokumen ini dibuat sebagai bagian dari analisis Tahap 1.*
-*Implementasi teknis (kode, migration, dll) ada di tahap selanjutnya.*

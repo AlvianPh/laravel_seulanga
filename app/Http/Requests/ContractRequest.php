@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use App\Enums\StatusKamar;
 use App\Models\Room;
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -21,27 +22,29 @@ class ContractRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         $contractId = $this->route('contract') ? $this->route('contract')->id : null;
 
         $rules = [
-            'tenant_id'      => ['required', 'exists:tenants,id'],
-            'room_id'        => ['required', 'exists:rooms,id'],
-            'start_date'     => ['required', 'date'],
-            'end_date'       => ['required', 'date', 'after:start_date'],
-            'rent_price'     => ['required', 'numeric', 'min:0'],
+            'tenant_id' => ['required', 'exists:tenants,id'],
+            'room_id' => ['required', 'exists:rooms,id'],
+            'start_date' => ['required', 'date'],
+            'end_date' => ['required', 'date', 'after:start_date'],
+            'rent_price' => ['required', 'numeric', 'min:0'],
             'deposit_amount' => ['required', 'numeric', 'min:0'],
-            'notes'          => ['nullable', 'string', 'max:1000'],
+            'notes' => ['nullable', 'string', 'max:1000'],
+            'application_id' => ['nullable', 'exists:tenant_applications,id'],
+            'is_draft' => ['nullable', 'boolean'],
         ];
 
         // Validasi kombinasi unik
         $rules['start_date'][] = Rule::unique('contracts')->where(function ($query) {
             return $query->where('tenant_id', $this->tenant_id)
-                         ->where('room_id', $this->room_id)
-                         ->where('start_date', $this->start_date);
+                ->where('room_id', $this->room_id)
+                ->where('start_date', $this->start_date);
         })->ignore($contractId);
 
         return $rules;
@@ -61,11 +64,11 @@ class ContractRequest extends FormRequest
                     if ($room && $room->status !== StatusKamar::Available) {
                         $validator->errors()->add(
                             'room_id',
-                            'Kamar yang dipilih tidak tersedia (sedang ' . $room->status->value . ').'
+                            'Kamar yang dipilih tidak tersedia (sedang '.$room->status->value.').'
                         );
                     }
                 }
-            }
+            },
         ];
     }
 
@@ -75,11 +78,11 @@ class ContractRequest extends FormRequest
     public function attributes(): array
     {
         return [
-            'tenant_id'      => 'Penghuni',
-            'room_id'        => 'Kamar',
-            'start_date'     => 'Tanggal Mulai',
-            'end_date'       => 'Tanggal Selesai',
-            'rent_price'     => 'Harga Sewa',
+            'tenant_id' => 'Penghuni',
+            'room_id' => 'Kamar',
+            'start_date' => 'Tanggal Mulai',
+            'end_date' => 'Tanggal Selesai',
+            'rent_price' => 'Harga Sewa',
             'deposit_amount' => 'Jumlah Deposit',
         ];
     }
@@ -88,7 +91,7 @@ class ContractRequest extends FormRequest
     {
         return [
             'start_date.unique' => 'Kontrak dengan kombinasi Penghuni, Kamar, dan Tanggal Mulai ini sudah ada.',
-            'end_date.after'    => 'Tanggal selesai harus lebih besar dari tanggal mulai.',
+            'end_date.after' => 'Tanggal selesai harus lebih besar dari tanggal mulai.',
         ];
     }
 }

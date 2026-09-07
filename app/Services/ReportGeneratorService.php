@@ -3,10 +3,8 @@
 namespace App\Services;
 
 use App\Enums\StatusKamar;
-use App\Enums\StatusKontrak;
 use App\Enums\StatusPembayaran;
 use App\Enums\StatusTagihan;
-use App\Models\Contract;
 use App\Models\Expense;
 use App\Models\Invoice;
 use App\Models\Payment;
@@ -76,16 +74,16 @@ class ReportGeneratorService
     {
         // Gabungkan tabel pendapatan dan pengeluaran secara virtual
         // Mengembalikan array objek
-        $incomes = $this->generateIncomeReport($filterType, $startDate, $endDate)->map(function($item) {
+        $incomes = $this->generateIncomeReport($filterType, $startDate, $endDate)->map(function ($item) {
             return (object) [
                 'date' => $item->payment_date->format('Y-m-d'),
                 'type' => 'income',
-                'description' => 'Pembayaran Tagihan INV-' . $item->invoice_id,
+                'description' => 'Pembayaran Tagihan INV-'.$item->invoice_id,
                 'amount' => $item->amount,
             ];
         });
 
-        $expenses = $this->generateExpenseReport($filterType, $startDate, $endDate)->map(function($item) {
+        $expenses = $this->generateExpenseReport($filterType, $startDate, $endDate)->map(function ($item) {
             return (object) [
                 'date' => $item->expense_date->format('Y-m-d'),
                 'type' => 'expense',
@@ -143,7 +141,7 @@ class ReportGeneratorService
         $expenseBreakdown = $breakdownRows->map(function ($row) {
             return [
                 'label' => $row->expenseCategory?->name ?? '-',
-                'total' => (float) $row->total
+                'total' => (float) $row->total,
             ];
         });
 
@@ -151,7 +149,7 @@ class ReportGeneratorService
             'total_income' => (float) $totalIncome,
             'total_expense' => (float) $totalExpense,
             'net_profit' => (float) ($totalIncome - $totalExpense),
-            'expense_breakdown' => $expenseBreakdown
+            'expense_breakdown' => $expenseBreakdown,
         ];
     }
 
@@ -161,6 +159,7 @@ class ReportGeneratorService
     public function getDateRangeLabel(string $filterType, ?string $startDate, ?string $endDate): string
     {
         [$start, $end] = $this->parseDateRange($filterType, $startDate, $endDate);
-        return $start->format('d M Y') . ' - ' . $end->format('d M Y');
+
+        return $start->format('d M Y').' - '.$end->format('d M Y');
     }
 }

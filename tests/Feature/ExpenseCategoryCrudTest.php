@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Models\ExpenseCategory;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -20,6 +20,7 @@ class ExpenseCategoryCrudTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -87,10 +88,10 @@ class ExpenseCategoryCrudTest extends TestCase
     {
         $expenseCategory = ExpenseCategory::create(['name' => 'Kategori Penting']);
         $user = $this->authenticate('admin');
-        
+
         Expense::factory()->create([
             'expense_category_id' => $expenseCategory->id,
-            'created_by' => $user->id
+            'created_by' => $user->id,
         ]);
 
         $response = $this->delete("/expense_categories/{$expenseCategory->id}");

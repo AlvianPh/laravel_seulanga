@@ -2,13 +2,13 @@
 
 namespace Tests\Feature;
 
-use App\Enums\KategoriPengeluaran;
 use App\Enums\StatusKamar;
 use App\Enums\StatusKontrak;
 use App\Enums\StatusPembayaran;
 use App\Enums\StatusTagihan;
 use App\Models\Contract;
 use App\Models\Expense;
+use App\Models\ExpenseCategory;
 use App\Models\Invoice;
 use App\Models\Payment;
 use App\Models\Room;
@@ -26,6 +26,7 @@ class ReportTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -55,7 +56,7 @@ class ReportTest extends TestCase
             'tenant_id' => $tenant->id,
             'amount' => 1500000,
             'status' => StatusPembayaran::Verified->value,
-            'payment_date' => Carbon::now()->startOfMonth()->addDays(2)
+            'payment_date' => Carbon::now()->startOfMonth()->addDays(2),
         ]);
 
         // 3. Invoice Pending (Receivable)
@@ -72,8 +73,8 @@ class ReportTest extends TestCase
         // 4. Expense
         Expense::factory()->create([
             'amount' => 500000,
-            'expense_category_id' => \App\Models\ExpenseCategory::firstOrCreate(['name'=>'Listrik'])->id,
-            'expense_date' => Carbon::now()->startOfMonth()->addDays(5)
+            'expense_category_id' => ExpenseCategory::firstOrCreate(['name' => 'Listrik'])->id,
+            'expense_date' => Carbon::now()->startOfMonth()->addDays(5),
         ]);
     }
 
@@ -96,7 +97,7 @@ class ReportTest extends TestCase
         $response = $this->post('/reports/generate', [
             'type' => 'profit_loss',
             'filter' => 'monthly',
-            'action' => 'view'
+            'action' => 'view',
         ]);
 
         $response->assertOk();
@@ -115,11 +116,11 @@ class ReportTest extends TestCase
         $response = $this->post('/reports/generate', [
             'type' => 'receivables',
             'filter' => 'monthly',
-            'action' => 'view'
+            'action' => 'view',
         ]);
 
         $data = $response->original->getData()['data'];
-        
+
         // Should contain 1 pending invoice of 1.200.000
         $this->assertCount(1, $data['records']);
         $this->assertEquals(1200000, $data['records']->first()->total_amount);
@@ -133,7 +134,7 @@ class ReportTest extends TestCase
         $response = $this->post('/reports/generate', [
             'type' => 'income',
             'filter' => 'monthly',
-            'action' => 'pdf'
+            'action' => 'pdf',
         ]);
 
         $response->assertOk();
@@ -148,7 +149,7 @@ class ReportTest extends TestCase
         $response = $this->post('/reports/generate', [
             'type' => 'expense',
             'filter' => 'yearly',
-            'action' => 'excel'
+            'action' => 'excel',
         ]);
 
         $response->assertOk();

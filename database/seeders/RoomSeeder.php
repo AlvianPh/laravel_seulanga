@@ -15,12 +15,12 @@ class RoomSeeder extends Seeder
     {
         $rooms = collect();
         $lantai = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3];
-        $nomor  = ['101', '102', '103', '104', '201', '202', '203', '204', '301', '302'];
+        $nomor = ['101', '102', '103', '104', '201', '202', '203', '204', '301', '302'];
 
         foreach (range(0, 9) as $i) {
             $room = Room::factory()->create([
                 'room_number' => $nomor[$i],
-                'floor'       => $lantai[$i],
+                'floor' => $lantai[$i],
             ]);
             $rooms->push($room);
         }

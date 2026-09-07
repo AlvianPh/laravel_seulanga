@@ -17,7 +17,6 @@ use App\Models\Tenant;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 /**
  * DatabaseSeeder — mengisi database dengan data contoh yang realistis.
@@ -37,12 +36,12 @@ class DatabaseSeeder extends Seeder
     {
         // ── 1. USER ────────────────────────────────────────────────────────────
         $owner = User::factory()->owner()->create([
-            'name'  => 'Budi Santoso',
+            'name' => 'Budi Santoso',
             'email' => 'owner@kost.test',
         ]);
 
         $admin = User::factory()->admin()->create([
-            'name'  => 'Rina Wijaya',
+            'name' => 'Rina Wijaya',
             'email' => 'admin@kost.test',
         ]);
 
@@ -50,12 +49,12 @@ class DatabaseSeeder extends Seeder
         // Buat 10 kamar dengan nomor berurutan
         $rooms = collect();
         $lantai = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3];
-        $nomor  = ['101', '102', '103', '104', '201', '202', '203', '204', '301', '302'];
+        $nomor = ['101', '102', '103', '104', '201', '202', '203', '204', '301', '302'];
 
         foreach (range(0, 9) as $i) {
             $room = Room::factory()->create([
                 'room_number' => $nomor[$i],
-                'floor'       => $lantai[$i],
+                'floor' => $lantai[$i],
             ]);
             $rooms->push($room);
         }
@@ -73,20 +72,20 @@ class DatabaseSeeder extends Seeder
         // 4 kontrak ended — pakai kamar 0-3, penghuni 0-3
         $endedContracts = collect();
         foreach (range(0, 3) as $i) {
-            $room      = $rooms[$i];
-            $tenant    = $tenants[$i];
+            $room = $rooms[$i];
+            $tenant = $tenants[$i];
             $startDate = Carbon::now()->subMonths(fake()->numberBetween(14, 24));
-            $endDate   = (clone $startDate)->addMonths(12);
+            $endDate = (clone $startDate)->addMonths(12);
 
             $contract = Contract::create([
-                'tenant_id'      => $tenant->id,
-                'room_id'        => $room->id,
-                'start_date'     => $startDate->format('Y-m-d'),
-                'end_date'       => $endDate->format('Y-m-d'),
-                'rent_price'     => $room->monthly_price,
+                'tenant_id' => $tenant->id,
+                'room_id' => $room->id,
+                'start_date' => $startDate->format('Y-m-d'),
+                'end_date' => $endDate->format('Y-m-d'),
+                'rent_price' => $room->monthly_price,
                 'deposit_amount' => $room->deposit_price,
-                'status'         => StatusKontrak::Ended,
-                'created_by'     => $admin->id,
+                'status' => StatusKontrak::Ended,
+                'created_by' => $admin->id,
             ]);
 
             $endedContracts->push($contract);
@@ -96,20 +95,20 @@ class DatabaseSeeder extends Seeder
         // (kamar 0-3 bisa dipakai ulang karena kontrak sebelumnya sudah ended)
         $activeContracts = collect();
         foreach (range(0, 7) as $i) {
-            $room      = $rooms[$i + 2]; // kamar index 2-9
-            $tenant    = $tenants[$i + 4]; // penghuni index 4-11
+            $room = $rooms[$i + 2]; // kamar index 2-9
+            $tenant = $tenants[$i + 4]; // penghuni index 4-11
             $startDate = Carbon::now()->subMonths(fake()->numberBetween(2, 10));
-            $endDate   = (clone $startDate)->addMonths(12);
+            $endDate = (clone $startDate)->addMonths(12);
 
             $contract = Contract::create([
-                'tenant_id'      => $tenant->id,
-                'room_id'        => $room->id,
-                'start_date'     => $startDate->format('Y-m-d'),
-                'end_date'       => $endDate->format('Y-m-d'),
-                'rent_price'     => $room->monthly_price,
+                'tenant_id' => $tenant->id,
+                'room_id' => $room->id,
+                'start_date' => $startDate->format('Y-m-d'),
+                'end_date' => $endDate->format('Y-m-d'),
+                'rent_price' => $room->monthly_price,
                 'deposit_amount' => $room->deposit_price,
-                'status'         => StatusKontrak::Active,
-                'created_by'     => $admin->id,
+                'status' => StatusKontrak::Active,
+                'created_by' => $admin->id,
             ]);
 
             // Update status kamar jadi occupied
@@ -131,15 +130,15 @@ class DatabaseSeeder extends Seeder
 
         foreach ($activeContracts as $contract) {
             foreach ($bulanTagihan as $bulan) {
-                $isBulanIni     = $bulan->isSameMonth(Carbon::now());
-                $isBulanLalu    = $bulan->isSameMonth(Carbon::now()->subMonth());
-                $isBulan2Lalu   = $bulan->isSameMonth(Carbon::now()->subMonths(2));
+                $isBulanIni = $bulan->isSameMonth(Carbon::now());
+                $isBulanLalu = $bulan->isSameMonth(Carbon::now()->subMonth());
+                $isBulan2Lalu = $bulan->isSameMonth(Carbon::now()->subMonths(2));
 
                 $electricityFee = fake()->numberBetween(500, 1500) * 100;
-                $waterFee       = fake()->numberBetween(100, 500) * 100;
-                $internetFee    = 100_000;
-                $totalAmount    = (float) $contract->rent_price + $electricityFee + $waterFee + $internetFee;
-                $dueDate        = $bulan->copy()->addDays(9);
+                $waterFee = fake()->numberBetween(100, 500) * 100;
+                $internetFee = 100_000;
+                $totalAmount = (float) $contract->rent_price + $electricityFee + $waterFee + $internetFee;
+                $dueDate = $bulan->copy()->addDays(9);
 
                 // Tentukan status tagihan
                 if ($isBulan2Lalu) {
@@ -157,56 +156,56 @@ class DatabaseSeeder extends Seeder
                 }
 
                 $invoice = Invoice::create([
-                    'contract_id'     => $contract->id,
-                    'tenant_id'       => $contract->tenant_id,
-                    'room_id'         => $contract->room_id,
-                    'year'            => (int) $bulan->format('Y'),
-                    'month'           => (int) $bulan->format('n'),
-                    'rent_amount'     => $contract->rent_price,
+                    'contract_id' => $contract->id,
+                    'tenant_id' => $contract->tenant_id,
+                    'room_id' => $contract->room_id,
+                    'year' => (int) $bulan->format('Y'),
+                    'month' => (int) $bulan->format('n'),
+                    'rent_amount' => $contract->rent_price,
                     'electricity_fee' => $electricityFee,
-                    'water_fee'       => $waterFee,
-                    'internet_fee'    => $internetFee,
-                    'penalty_fee'     => $statusTagihan === StatusTagihan::Overdue ? 50_000 : null,
-                    'other_fee'       => null,
-                    'total_amount'    => $statusTagihan === StatusTagihan::Overdue
+                    'water_fee' => $waterFee,
+                    'internet_fee' => $internetFee,
+                    'penalty_fee' => $statusTagihan === StatusTagihan::Overdue ? 50_000 : null,
+                    'other_fee' => null,
+                    'total_amount' => $statusTagihan === StatusTagihan::Overdue
                         ? $totalAmount + 50_000
                         : $totalAmount,
-                    'due_date'        => $dueDate->format('Y-m-d'),
-                    'status'          => $statusTagihan,
+                    'due_date' => $dueDate->format('Y-m-d'),
+                    'status' => $statusTagihan,
                 ]);
 
                 // Buat pembayaran untuk tagihan yang sudah paid
                 if ($statusTagihan === StatusTagihan::Paid) {
                     $metodePembayaran = fake()->randomElement(MetodePembayaran::cases());
-                    $bayarTanggal     = $bulan->copy()->addDays(fake()->numberBetween(1, 8));
+                    $bayarTanggal = $bulan->copy()->addDays(fake()->numberBetween(1, 8));
 
                     Payment::create([
-                        'invoice_id'   => $invoice->id,
-                        'tenant_id'    => $contract->tenant_id,
-                        'amount'       => $invoice->total_amount,
+                        'invoice_id' => $invoice->id,
+                        'tenant_id' => $contract->tenant_id,
+                        'amount' => $invoice->total_amount,
                         'payment_date' => $bayarTanggal->format('Y-m-d'),
-                        'method'       => $metodePembayaran,
-                        'status'       => StatusPembayaran::Verified,
-                        'proof_path'   => $metodePembayaran !== MetodePembayaran::Cash
-                            ? 'payments/bukti-' . uniqid() . '.jpg'
+                        'method' => $metodePembayaran,
+                        'status' => StatusPembayaran::Verified,
+                        'proof_path' => $metodePembayaran !== MetodePembayaran::Cash
+                            ? 'payments/bukti-'.uniqid().'.jpg'
                             : null,
-                        'notes'        => null,
-                        'verified_by'  => $owner->id,
+                        'notes' => null,
+                        'verified_by' => $owner->id,
                     ]);
                 }
 
                 // Buat pembayaran pending untuk tagihan overdue (bukti sudah diupload tapi belum diverifikasi)
                 if ($statusTagihan === StatusTagihan::Overdue) {
                     Payment::create([
-                        'invoice_id'   => $invoice->id,
-                        'tenant_id'    => $contract->tenant_id,
-                        'amount'       => $invoice->total_amount,
+                        'invoice_id' => $invoice->id,
+                        'tenant_id' => $contract->tenant_id,
+                        'amount' => $invoice->total_amount,
                         'payment_date' => Carbon::now()->subDays(2)->format('Y-m-d'),
-                        'method'       => MetodePembayaran::Transfer,
-                        'status'       => StatusPembayaran::Pending,
-                        'proof_path'   => 'payments/bukti-' . uniqid() . '.jpg',
-                        'notes'        => 'Terlambat bayar, mohon diverifikasi',
-                        'verified_by'  => null,
+                        'method' => MetodePembayaran::Transfer,
+                        'status' => StatusPembayaran::Pending,
+                        'proof_path' => 'payments/bukti-'.uniqid().'.jpg',
+                        'notes' => 'Terlambat bayar, mohon diverifikasi',
+                        'verified_by' => null,
                     ]);
                 }
             }
@@ -225,33 +224,33 @@ class DatabaseSeeder extends Seeder
         foreach ($bulanTagihan as $bulan) {
             foreach ($kategoriRutin as $pengeluaran) {
                 Expense::create([
-                    'category'     => $pengeluaran['category'],
-                    'description'  => $pengeluaran['description'],
-                    'amount'       => $pengeluaran['amount'],
+                    'category' => $pengeluaran['category'],
+                    'description' => $pengeluaran['description'],
+                    'amount' => $pengeluaran['amount'],
                     'expense_date' => $bulan->copy()->addDays(5)->format('Y-m-d'),
                     'receipt_path' => null,
-                    'created_by'   => $admin->id,
+                    'created_by' => $admin->id,
                 ]);
             }
         }
 
         // Tambah beberapa pengeluaran non-rutin
         Expense::create([
-            'category'     => 'repair',
-            'description'  => 'Perbaikan AC kamar 203',
-            'amount'       => 350_000,
+            'category' => 'repair',
+            'description' => 'Perbaikan AC kamar 203',
+            'amount' => 350_000,
             'expense_date' => Carbon::now()->subWeeks(3)->format('Y-m-d'),
             'receipt_path' => null,
-            'created_by'   => $admin->id,
+            'created_by' => $admin->id,
         ]);
 
         Expense::create([
-            'category'     => 'repair',
-            'description'  => 'Ganti pompa air',
-            'amount'       => 1_200_000,
+            'category' => 'repair',
+            'description' => 'Ganti pompa air',
+            'amount' => 1_200_000,
             'expense_date' => Carbon::now()->subMonth()->subDays(10)->format('Y-m-d'),
             'receipt_path' => null,
-            'created_by'   => $owner->id,
+            'created_by' => $owner->id,
         ]);
 
         // ── Output ringkasan ───────────────────────────────────────────────────

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\PaymentMethodRequest;
 use App\Models\PaymentMethod;
+use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 
 class PaymentMethodController extends Controller
@@ -14,13 +15,14 @@ class PaymentMethodController extends Controller
     {
         $this->authorize('viewAny', PaymentMethod::class);
         $methods = PaymentMethod::withCount('payments')->paginate(10);
-        
+
         return view('payment_methods.index', compact('methods'));
     }
 
     public function create()
     {
         $this->authorize('create', PaymentMethod::class);
+
         return view('payment_methods.create');
     }
 
@@ -30,12 +32,13 @@ class PaymentMethodController extends Controller
         PaymentMethod::create($request->validated());
 
         return redirect()->route('payment_methods.index')
-                         ->with('success', 'Metode pembayaran berhasil ditambahkan.');
+            ->with('success', 'Metode pembayaran berhasil ditambahkan.');
     }
 
     public function edit(PaymentMethod $paymentMethod)
     {
         $this->authorize('update', $paymentMethod);
+
         return view('payment_methods.edit', compact('paymentMethod'));
     }
 
@@ -45,7 +48,7 @@ class PaymentMethodController extends Controller
         $paymentMethod->update($request->validated());
 
         return redirect()->route('payment_methods.index')
-                         ->with('success', 'Metode pembayaran berhasil diperbarui.');
+            ->with('success', 'Metode pembayaran berhasil diperbarui.');
     }
 
     public function destroy(PaymentMethod $paymentMethod)
@@ -54,12 +57,13 @@ class PaymentMethodController extends Controller
 
         try {
             $paymentMethod->delete();
+
             return redirect()->route('payment_methods.index')
-                             ->with('success', 'Metode pembayaran berhasil dihapus.');
-        } catch (\Illuminate\Database\QueryException $e) {
+                ->with('success', 'Metode pembayaran berhasil dihapus.');
+        } catch (QueryException $e) {
             if ($e->getCode() === '23000') {
                 return redirect()->back()
-                                 ->with('error', 'Metode pembayaran tidak dapat dihapus karena masih digunakan pada data pembayaran.');
+                    ->with('error', 'Metode pembayaran tidak dapat dihapus karena masih digunakan pada data pembayaran.');
             }
             throw $e;
         }

@@ -26,6 +26,7 @@ class InvoiceCrudTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -50,11 +51,11 @@ class InvoiceCrudTest extends TestCase
 
         Contract::factory()->create([
             'room_id' => $room1->id, 'tenant_id' => $tenant1->id,
-            'status' => StatusKontrak::Active->value, 'rent_price' => 1000000
+            'status' => StatusKontrak::Active->value, 'rent_price' => 1000000,
         ]);
         Contract::factory()->create([
             'room_id' => $room2->id, 'tenant_id' => $tenant2->id,
-            'status' => StatusKontrak::Ended->value, 'rent_price' => 2000000
+            'status' => StatusKontrak::Ended->value, 'rent_price' => 2000000,
         ]);
 
         $service = app(GenerateInvoiceService::class);
@@ -64,7 +65,7 @@ class InvoiceCrudTest extends TestCase
         $this->assertDatabaseCount('invoices', 1);
         $this->assertDatabaseHas('invoices', [
             'month' => 10,
-            'year'  => 2026,
+            'year' => 2026,
             'rent_amount' => 1000000,
             'total_amount' => 1000000,
             'status' => StatusTagihan::Pending->value,
@@ -78,7 +79,7 @@ class InvoiceCrudTest extends TestCase
         $contract = Contract::factory()->create(['status' => StatusKontrak::Active->value, 'room_id' => $room->id]);
 
         $service = app(GenerateInvoiceService::class);
-        
+
         // Panggil pertama kali
         $count1 = $service->generateMonthlyInvoices(11, 2026);
         $this->assertEquals(1, $count1);
@@ -94,7 +95,7 @@ class InvoiceCrudTest extends TestCase
     {
         $room = Room::factory()->create(['room_number' => 'INV_R4']);
         $contract = Contract::factory()->create(['room_id' => $room->id]);
-        
+
         // Tagihan pending tapi belum jatuh tempo
         Invoice::factory()->create([
             'room_id' => $room->id,
@@ -128,10 +129,10 @@ class InvoiceCrudTest extends TestCase
     public function test_updating_invoice_recalculates_total_amount()
     {
         $this->authenticate('admin');
-        
+
         $room = Room::factory()->create(['room_number' => 'INV_R5']);
         $contract = Contract::factory()->create(['room_id' => $room->id]);
-        
+
         $invoice = Invoice::factory()->create([
             'room_id' => $room->id,
             'contract_id' => $contract->id,
@@ -143,8 +144,8 @@ class InvoiceCrudTest extends TestCase
 
         $response = $this->patch("/invoices/{$invoice->id}", [
             'electricity_fee' => 150000,
-            'water_fee'       => 50000,
-            'status'          => StatusTagihan::Pending->value,
+            'water_fee' => 50000,
+            'status' => StatusTagihan::Pending->value,
         ]);
 
         $response->assertRedirect('/invoices');
@@ -153,8 +154,8 @@ class InvoiceCrudTest extends TestCase
         $this->assertDatabaseHas('invoices', [
             'id' => $invoice->id,
             'electricity_fee' => 150000,
-            'water_fee'       => 50000,
-            'total_amount'    => 1200000,
+            'water_fee' => 50000,
+            'total_amount' => 1200000,
         ]);
     }
 
@@ -166,13 +167,13 @@ class InvoiceCrudTest extends TestCase
 
         $response = $this->post('/invoices/generate-manual', [
             'month' => 5,
-            'year'  => 2027,
+            'year' => 2027,
         ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('invoices', [
             'month' => 5,
-            'year'  => 2027,
+            'year' => 2027,
         ]);
     }
 }

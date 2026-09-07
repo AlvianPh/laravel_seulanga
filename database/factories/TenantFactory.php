@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\JenisKelamin;
 use App\Models\Tenant;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -49,14 +50,14 @@ class TenantFactory extends Factory
     /** @return array<string, mixed> */
     public function definition(): array
     {
-        $gender  = fake()->randomElement(JenisKelamin::cases());
-        $isPria  = $gender === JenisKelamin::Male;
+        $gender = fake()->randomElement(JenisKelamin::cases());
+        $isPria = $gender === JenisKelamin::Male;
 
-        $namaDepan  = $isPria
+        $namaDepan = $isPria
             ? fake()->randomElement($this->namaDepanPria)
             : fake()->randomElement($this->namaDepanWanita);
         $namaBelakang = fake()->randomElement($this->namaBelakang);
-        $namaLengkap  = $namaDepan . ' ' . $namaBelakang;
+        $namaLengkap = $namaDepan.' '.$namaBelakang;
 
         $kota = fake()->randomElement($this->kotaIndonesia);
         $jalan = fake()->randomElement($this->jalanIndonesia);
@@ -66,25 +67,34 @@ class TenantFactory extends Factory
 
         // Generate NIK 16 digit: 2 digit kode provinsi + 2 kota + 2 kec + 6 tgl lahir + 4 urut
         $nik = (string) fake()->numberBetween(10, 99)
-            . fake()->numberBetween(10, 99)
-            . fake()->numberBetween(10, 99)
-            . ($isPria
-                ? fake()->date('d') . fake()->date('m') . fake()->date('y')
-                : (fake()->numberBetween(41, 71)) . fake()->date('m') . fake()->date('y'))
-            . str_pad((string) fake()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT);
+            .fake()->numberBetween(10, 99)
+            .fake()->numberBetween(10, 99)
+            .($isPria
+                ? fake()->date('d').fake()->date('m').fake()->date('y')
+                : (fake()->numberBetween(41, 71)).fake()->date('m').fake()->date('y'))
+            .str_pad((string) fake()->numberBetween(1, 9999), 4, '0', STR_PAD_LEFT);
 
         return [
-            'name'                   => $namaLengkap,
-            'nik'                    => substr($nik, 0, 16), // pastikan 16 digit
-            'phone'                  => '08' . fake()->numerify('#########'),
-            'email'                  => fake()->unique()->safeEmail(),
-            'gender'                 => $gender,
-            'birth_date'             => fake()->dateTimeBetween('-45 years', '-18 years')->format('Y-m-d'),
-            'address'                => "{$jalan} No. {$nomorJalan} RT {$rt}/RW {$rw}, {$kota}",
-            'ktp_photo_path'         => null,
-            'tenant_photo_path'      => null,
-            'emergency_contact_name' => fake()->randomElement($this->namaDepanPria) . ' ' . fake()->randomElement($this->namaBelakang),
-            'emergency_contact_phone' => '08' . fake()->numerify('#########'),
+            'user_id' => null,
+            'name' => $namaLengkap,
+            'nik' => substr($nik, 0, 16), // pastikan 16 digit
+            'phone' => '08'.fake()->numerify('#########'),
+            'email' => fake()->unique()->safeEmail(),
+            'gender' => $gender,
+            'birth_date' => fake()->dateTimeBetween('-45 years', '-18 years')->format('Y-m-d'),
+            'address' => "{$jalan} No. {$nomorJalan} RT {$rt}/RW {$rw}, {$kota}",
+            'ktp_photo_path' => null,
+            'tenant_photo_path' => null,
+            'emergency_contact_name' => fake()->randomElement($this->namaDepanPria).' '.fake()->randomElement($this->namaBelakang),
+            'emergency_contact_phone' => '08'.fake()->numerify('#########'),
         ];
+    }
+
+    /** State: tautkan dengan akun login User (role Tenant). */
+    public function forUser(?User $user = null): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'user_id' => $user?->id ?? User::factory()->tenant(),
+        ]);
     }
 }

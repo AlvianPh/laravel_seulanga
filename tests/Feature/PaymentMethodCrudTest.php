@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\Models\PaymentMethod;
-use App\Models\Payment;
 use App\Models\Invoice;
-use App\Models\Tenant;
+use App\Models\Payment;
+use App\Models\PaymentMethod;
 use App\Models\Room;
 use App\Models\RoomType;
+use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -24,6 +24,7 @@ class PaymentMethodCrudTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -90,16 +91,16 @@ class PaymentMethodCrudTest extends TestCase
     public function test_cannot_delete_payment_method_used_by_payments()
     {
         $paymentMethod = PaymentMethod::create(['name' => 'Metode Penting']);
-        
+
         $roomType = RoomType::firstOrCreate(['name' => 'Standard'], ['default_price' => 1000000]);
         $room = Room::factory()->create(['room_number' => 'Y001', 'room_type_id' => $roomType->id]);
         $tenant = Tenant::factory()->create();
         $invoice = Invoice::factory()->create(['tenant_id' => $tenant->id, 'room_id' => $room->id]);
-        
+
         Payment::factory()->create([
             'payment_method_id' => $paymentMethod->id,
             'invoice_id' => $invoice->id,
-            'tenant_id' => $tenant->id
+            'tenant_id' => $tenant->id,
         ]);
 
         $this->authenticate('admin');

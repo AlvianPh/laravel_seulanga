@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Notification;
 class NotifyInvoiceDueSoonCommand extends Command
 {
     protected $signature = 'notify:invoice-due-soon';
+
     protected $description = 'Kirim notifikasi untuk tagihan yang jatuh tempo H-3';
 
     public function handle()
     {
         $targetDate = Carbon::today()->addDays(3)->format('Y-m-d');
-        
+
         $invoices = Invoice::where('status', StatusTagihan::Pending)
             ->where('due_date', $targetDate)
             ->get();

@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class ExpenseRequest extends FormRequest
@@ -17,16 +18,16 @@ class ExpenseRequest extends FormRequest
     /**
      * Get the validation rules that apply to the request.
      *
-     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     * @return array<string, ValidationRule|array<mixed>|string>
      */
     public function rules(): array
     {
         return [
             'expense_category_id' => ['required', 'exists:expense_categories,id'],
-            'description'         => ['required', 'string', 'max:255'],
-            'amount'              => ['required', 'numeric', 'min:1'],
-            'expense_date'        => ['required', 'date'],
-            'receipt_photo'       => ['nullable', 'image', 'max:2048'], // Maks 2MB
+            'description' => ['required', 'string', 'max:255'],
+            'amount' => ['required', 'numeric', 'min:1'],
+            'expense_date' => ['required', 'date'],
+            'receipt_photo' => ['nullable', 'image', 'max:2048'], // Maks 2MB
         ];
     }
 }

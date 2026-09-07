@@ -2,8 +2,8 @@
 
 namespace Database\Factories;
 
-use App\Models\RoomPhoto;
 use App\Models\Room;
+use App\Models\RoomPhoto;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,8 +17,8 @@ class RoomPhotoFactory extends Factory
     public function definition(): array
     {
         return [
-            'room_id'    => Room::factory(),
-            'file_path'  => 'rooms/dummy-' . fake()->uuid() . '.jpg',
+            'room_id' => Room::factory(),
+            'file_path' => 'rooms/dummy-'.fake()->uuid().'.jpg',
             'is_primary' => false,
         ];
     }

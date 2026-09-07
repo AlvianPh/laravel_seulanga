@@ -39,8 +39,20 @@
                     d.setMonth(d.getMonth() + months);
                     this.endDate = d.toISOString().split('T')[0];
                 }
-            }" x-init="if(!endDate && startDate) setDuration(1)">
+            }" x-init="
+                if(!endDate && startDate) setDuration(1);
+                $nextTick(() => {
+                    let roomSelect = $el.querySelector('select[name=room_id]');
+                    if (roomSelect && roomSelect.value && !rentPrice) {
+                        updatePrices(roomSelect);
+                    }
+                });
+            ">
                 @csrf
+
+                @if ($applicationId ?? null)
+                    <input type="hidden" name="application_id" value="{{ $applicationId }}">
+                @endif
 
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     
@@ -51,9 +63,9 @@
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Pilih Penghuni <span class="text-red-500">*</span></label>
                             <x-ui.select name="tenant_id" required class="text-sm">
-                                <option value="" disabled selected>-- Pilih Penghuni --</option>
+                                <option value="" disabled {{ !old('tenant_id', $selectedTenantId ?? null) ? 'selected' : '' }}>-- Pilih Penghuni --</option>
                                 @foreach ($tenants as $tenant)
-                                    <option value="{{ $tenant->id }}" {{ old('tenant_id') == $tenant->id ? 'selected' : '' }}>
+                                    <option value="{{ $tenant->id }}" {{ old('tenant_id', $selectedTenantId ?? null) == $tenant->id ? 'selected' : '' }}>
                                         {{ $tenant->name }} (NIK: {{ substr($tenant->nik, 0, 6) }}...)
                                     </option>
                                 @endforeach
@@ -64,12 +76,12 @@
                         <div>
                             <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Pilih Kamar (Tersedia) <span class="text-red-500">*</span></label>
                             <x-ui.select name="room_id" required @change="updatePrices($event.target)" class="text-sm">
-                                <option value="" disabled selected>-- Pilih Kamar --</option>
+                                <option value="" disabled {{ !old('room_id', $selectedRoomId ?? null) ? 'selected' : '' }}>-- Pilih Kamar --</option>
                                 @foreach ($rooms as $room)
                                     <option value="{{ $room->id }}" 
                                             data-rent="{{ (int)$room->monthly_price }}" 
                                             data-deposit="{{ (int)$room->deposit_price }}"
-                                            {{ old('room_id') == $room->id ? 'selected' : '' }}>
+                                            {{ old('room_id', $selectedRoomId ?? null) == $room->id ? 'selected' : '' }}>
                                         Kamar {{ $room->room_number }} - {{ $room->roomType?->name ?? '-' }} (Lt. {{ $room->floor }})
                                     </option>
                                 @endforeach
@@ -124,15 +136,27 @@
 
                 </div>
 
-                <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700/70">
+                <div class="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700/70 space-y-4">
                     <label class="block text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-gray-300 mb-1.5">Catatan Tambahan (Opsional)</label>
                     <x-ui.textarea name="notes" rows="3" class="text-sm" placeholder="Catatan perjanjian khusus sewa...">{{ old('notes') }}</x-ui.textarea>
                     @error('notes') <p class="text-red-500 text-xs mt-1">{{ $message }}</p> @enderror
+
+                    <div class="p-4 rounded-xl bg-amber-50/70 dark:bg-amber-950/30 border border-amber-200/80 dark:border-amber-800/60">
+                        <label class="flex items-start gap-3 cursor-pointer">
+                            <input type="checkbox" name="is_draft" value="1" {{ old('is_draft', ($applicationId ?? null) ? '1' : '') == '1' ? 'checked' : '' }} class="mt-0.5 rounded text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-700">
+                            <div>
+                                <span class="text-xs font-bold text-gray-900 dark:text-white">Simpan Sebagai Draft Kontrak (Onboarding Workflow)</span>
+                                <p class="text-[11px] text-gray-500 dark:text-gray-400 mt-0.5">
+                                    Jika dicentang, kontrak berstatus Draft. Penghuni akan diminta menyetujui tata tertib digital dan melakukan pembayaran awal sebelum kontrak diaktifkan.
+                                </p>
+                            </div>
+                        </label>
+                    </div>
                 </div>
 
                 <div class="flex items-center gap-3 pt-6 border-t border-gray-100 dark:border-gray-700/60">
                     <x-ui.button type="submit" variant="primary">
-                        Buat Kontrak Sewa
+                        Simpan Kontrak
                     </x-ui.button>
                     <x-ui.button variant="secondary" href="{{ route('contracts.index') }}">
                         Batal

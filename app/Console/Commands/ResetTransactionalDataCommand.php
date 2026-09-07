@@ -3,9 +3,9 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
-use Illuminate\Support\Facades\Artisan;
 
 class ResetTransactionalDataCommand extends Command
 {
@@ -29,8 +29,9 @@ class ResetTransactionalDataCommand extends Command
     public function handle()
     {
         $this->warn('This will TRUNCATE transactional tables and reset Rooms and Tenants.');
-        if (!$this->confirm('Are you sure you want to proceed?')) {
+        if (! $this->confirm('Are you sure you want to proceed?')) {
             $this->info('Operation cancelled.');
+
             return;
         }
 
@@ -62,7 +63,7 @@ class ResetTransactionalDataCommand extends Command
 
         $this->info('Running RoomSeeder...');
         Artisan::call('db:seed', ['--class' => 'RoomSeeder']);
-        
+
         $this->info('Running TenantSeeder...');
         Artisan::call('db:seed', ['--class' => 'TenantSeeder']);
 

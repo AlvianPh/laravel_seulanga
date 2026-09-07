@@ -6,17 +6,18 @@ use App\Enums\RoleUser;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
 /**
  * Model User — akun login Owner dan Admin sistem kost.
  *
- * @property int         $id
- * @property string      $name
- * @property string      $email
- * @property string      $password
- * @property RoleUser    $role
+ * @property int $id
+ * @property string $name
+ * @property string $email
+ * @property string $password
+ * @property RoleUser $role
  * @property string|null $email_verified_at
  */
 class User extends Authenticatable
@@ -40,8 +41,8 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
-            'password'          => 'hashed',
-            'role'              => RoleUser::class,
+            'password' => 'hashed',
+            'role' => RoleUser::class,
         ];
     }
 
@@ -65,6 +66,12 @@ class User extends Authenticatable
         return $this->hasMany(Payment::class, 'verified_by');
     }
 
+    /** Data profil penghuni jika user ini ber-role Tenant. */
+    public function tenant(): HasOne
+    {
+        return $this->hasOne(Tenant::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Cek apakah user adalah Owner. */
@@ -77,5 +84,11 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === RoleUser::Admin;
+    }
+
+    /** Cek apakah user adalah Tenant/Penghuni. */
+    public function isTenant(): bool
+    {
+        return $this->role === RoleUser::Tenant;
     }
 }

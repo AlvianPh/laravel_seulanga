@@ -18,10 +18,10 @@ return new class extends Migration
 
         // 2. Mapping data enum lama -> id di payment_methods
         $mapping = [
-            'cash'     => 'Tunai',
+            'cash' => 'Tunai',
             'transfer' => 'Transfer Bank',
-            'qris'     => 'QRIS',
-            'other'    => 'Lainnya',
+            'qris' => 'QRIS',
+            'other' => 'Lainnya',
         ];
 
         $migrated = 0;
@@ -35,7 +35,7 @@ return new class extends Migration
                 $migrated += $updated;
             }
         }
-        
+
         echo "\n[payment_method_id migration] Berhasil migrasi {$migrated} baris pembayaran.\n";
 
         // 3. Ubah kolom payment_method_id menjadi NOT NULL
@@ -57,7 +57,7 @@ return new class extends Migration
             Schema::table('payments', function (Blueprint $table) {
                 $table->dropIndex('payments_method_index');
             });
-        } catch (\Exception $e) {
+        } catch (Exception $e) {
             // Abaikan jika index tidak ada
         }
 
@@ -80,10 +80,10 @@ return new class extends Migration
 
         // Restore data
         $mapping = [
-            'Tunai'         => 'cash',
+            'Tunai' => 'cash',
             'Transfer Bank' => 'transfer',
-            'QRIS'          => 'qris',
-            'Lainnya'       => 'other',
+            'QRIS' => 'qris',
+            'Lainnya' => 'other',
         ];
 
         foreach ($mapping as $methodName => $enumValue) {

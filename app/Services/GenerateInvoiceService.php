@@ -6,11 +6,11 @@ use App\Enums\StatusKontrak;
 use App\Enums\StatusTagihan;
 use App\Models\Contract;
 use App\Models\Invoice;
+use App\Models\User;
+use App\Notifications\InvoiceCreatedNotification;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Notification;
-use App\Models\User;
-use App\Notifications\InvoiceCreatedNotification;
 
 class GenerateInvoiceService
 {
@@ -18,8 +18,8 @@ class GenerateInvoiceService
      * Generate tagihan bulanan untuk semua kontrak yang sedang aktif.
      * Tidak akan menduplikasi jika tagihan untuk bulan & kontrak yang sama sudah ada.
      *
-     * @param int $month Bulan (1-12)
-     * @param int $year Tahun (contoh: 2026)
+     * @param  int  $month  Bulan (1-12)
+     * @param  int  $year  Tahun (contoh: 2026)
      * @return int Jumlah tagihan yang berhasil dibuat
      */
     public function generateMonthlyInvoices(int $month, int $year): int
@@ -43,20 +43,20 @@ class GenerateInvoiceService
             $dueDate = Carbon::create($year, $month, 10)->format('Y-m-d');
 
             $invoice = Invoice::create([
-                'contract_id'     => $contract->id,
-                'tenant_id'       => $contract->tenant_id,
-                'room_id'         => $contract->room_id,
-                'year'            => $year,
-                'month'           => $month,
-                'rent_amount'     => $contract->rent_price, // Copy snapshot harga sewa
+                'contract_id' => $contract->id,
+                'tenant_id' => $contract->tenant_id,
+                'room_id' => $contract->room_id,
+                'year' => $year,
+                'month' => $month,
+                'rent_amount' => $contract->rent_price, // Copy snapshot harga sewa
                 'electricity_fee' => 0,
-                'water_fee'       => 0,
-                'internet_fee'    => 0,
-                'penalty_fee'     => 0,
-                'other_fee'       => 0,
-                'total_amount'    => $contract->rent_price, // Di awal total = rent_amount
-                'due_date'        => $dueDate,
-                'status'          => StatusTagihan::Pending,
+                'water_fee' => 0,
+                'internet_fee' => 0,
+                'penalty_fee' => 0,
+                'other_fee' => 0,
+                'total_amount' => $contract->rent_price, // Di awal total = rent_amount
+                'due_date' => $dueDate,
+                'status' => StatusTagihan::Pending,
             ]);
 
             $generatedCount++;

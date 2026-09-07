@@ -26,7 +26,7 @@ class CheckOverdueInvoicesCommand extends Command
      */
     public function handle(GenerateInvoiceService $service)
     {
-        $this->info("Mengecek tagihan yang jatuh tempo...");
+        $this->info('Mengecek tagihan yang jatuh tempo...');
 
         $count = $service->markOverdueInvoices();
 

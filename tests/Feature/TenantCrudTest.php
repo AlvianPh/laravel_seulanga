@@ -3,6 +3,9 @@
 namespace Tests\Feature;
 
 use App\Enums\JenisKelamin;
+use App\Enums\StatusKontrak;
+use App\Models\Contract;
+use App\Models\Room;
 use App\Models\Tenant;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -22,6 +25,7 @@ class TenantCrudTest extends TestCase
     {
         $user = User::factory()->create(['role' => $role]);
         $this->actingAs($user);
+
         return $user;
     }
 
@@ -44,29 +48,29 @@ class TenantCrudTest extends TestCase
         $this->authenticate('admin');
 
         $response = $this->post('/tenants', [
-            'name'   => 'Budi Santoso',
-            'nik'    => '1234567890123456', // 16 digit
-            'phone'  => '081234567890',     // diawali 08
+            'name' => 'Budi Santoso',
+            'nik' => '1234567890123456', // 16 digit
+            'phone' => '081234567890',     // diawali 08
             'gender' => JenisKelamin::Male->value,
         ]);
 
         $response->assertRedirect('/tenants');
         $this->assertDatabaseHas('tenants', [
             'name' => 'Budi Santoso',
-            'nik'  => '1234567890123456',
+            'nik' => '1234567890123456',
         ]);
     }
 
     public function test_create_tenant_validation_fails_on_duplicate_nik()
     {
         Tenant::factory()->create(['nik' => '1111222233334444']);
-        
+
         $this->authenticate('admin');
 
         $response = $this->post('/tenants', [
-            'name'   => 'Orang Lain',
-            'nik'    => '1111222233334444', // Duplicate
-            'phone'  => '08111222333',
+            'name' => 'Orang Lain',
+            'nik' => '1111222233334444', // Duplicate
+            'phone' => '08111222333',
             'gender' => JenisKelamin::Male->value,
         ]);
 
@@ -78,9 +82,9 @@ class TenantCrudTest extends TestCase
         $this->authenticate('admin');
 
         $response = $this->post('/tenants', [
-            'name'   => 'Salah Nomor',
-            'nik'    => '9999888877776666',
-            'phone'  => '1234567890', // Tidak diawali 08/62
+            'name' => 'Salah Nomor',
+            'nik' => '9999888877776666',
+            'phone' => '1234567890', // Tidak diawali 08/62
             'gender' => JenisKelamin::Female->value,
         ]);
 
@@ -92,9 +96,9 @@ class TenantCrudTest extends TestCase
         $this->authenticate('admin');
 
         $response = $this->post('/tenants', [
-            'name'   => 'Salah NIK',
-            'nik'    => '12345', // Kurang dari 16
-            'phone'  => '08123456789',
+            'name' => 'Salah NIK',
+            'nik' => '12345', // Kurang dari 16
+            'phone' => '08123456789',
             'gender' => JenisKelamin::Male->value,
         ]);
 
@@ -106,23 +110,23 @@ class TenantCrudTest extends TestCase
         Storage::fake('public');
         $this->authenticate('admin');
 
-        $ktpPhoto    = UploadedFile::fake()->image('ktp.jpg');
+        $ktpPhoto = UploadedFile::fake()->image('ktp.jpg');
         $tenantPhoto = UploadedFile::fake()->image('profil.png');
 
         $this->post('/tenants', [
-            'name'         => 'Dengan Foto',
-            'nik'          => '5555666677778888',
-            'phone'        => '08555666777',
-            'gender'       => JenisKelamin::Female->value,
-            'ktp_photo'    => $ktpPhoto,
+            'name' => 'Dengan Foto',
+            'nik' => '5555666677778888',
+            'phone' => '08555666777',
+            'gender' => JenisKelamin::Female->value,
+            'ktp_photo' => $ktpPhoto,
             'tenant_photo' => $tenantPhoto,
         ]);
 
         $tenant = Tenant::where('nik', '5555666677778888')->first();
-        
+
         $this->assertNotNull($tenant->ktp_photo_path);
         $this->assertNotNull($tenant->tenant_photo_path);
-        
+
         Storage::disk('public')->assertExists($tenant->ktp_photo_path);
         Storage::disk('public')->assertExists($tenant->tenant_photo_path);
     }
@@ -133,16 +137,16 @@ class TenantCrudTest extends TestCase
         $this->authenticate('owner');
 
         $response = $this->patch("/tenants/{$tenant->id}", [
-            'name'   => 'Nama Baru',
-            'nik'    => $tenant->nik,
-            'phone'  => '081299998888', // Nomor baru
+            'name' => 'Nama Baru',
+            'nik' => $tenant->nik,
+            'phone' => '081299998888', // Nomor baru
             'gender' => $tenant->gender->value,
         ]);
 
         $response->assertRedirect('/tenants');
         $this->assertDatabaseHas('tenants', [
-            'id'    => $tenant->id,
-            'name'  => 'Nama Baru',
+            'id' => $tenant->id,
+            'name' => 'Nama Baru',
             'phone' => '081299998888',
         ]);
     }
@@ -151,24 +155,24 @@ class TenantCrudTest extends TestCase
     {
         Storage::fake('public');
         $this->authenticate('admin');
-        
+
         // Buat file fake di storage dan hubungkan ke tenant
         $ktpFile = UploadedFile::fake()->image('ktp.jpg');
         $ktpPath = $ktpFile->store('tenants/ktp', 'public');
-        
+
         $tenant = Tenant::factory()->create([
-            'ktp_photo_path' => $ktpPath
+            'ktp_photo_path' => $ktpPath,
         ]);
 
         Storage::disk('public')->assertExists($ktpPath);
 
         $response = $this->delete("/tenants/{$tenant->id}");
-        
+
         $response->assertRedirect('/tenants');
-        
+
         // Tenant should be soft deleted
         $this->assertSoftDeleted('tenants', ['id' => $tenant->id]);
-        
+
         // File fisik KTP tidak dihapus
         Storage::disk('public')->assertExists($ktpPath);
     }
@@ -176,22 +180,22 @@ class TenantCrudTest extends TestCase
     public function test_user_cannot_delete_tenant_with_active_contract()
     {
         $this->authenticate('admin');
-        
+
         $tenant = Tenant::factory()->create();
-        $room = \App\Models\Room::factory()->create(['room_number' => 'R101']);
-        
+        $room = Room::factory()->create(['room_number' => 'R101']);
+
         // Create an active contract for the tenant
-        \App\Models\Contract::factory()->create([
+        Contract::factory()->create([
             'tenant_id' => $tenant->id,
             'room_id' => $room->id,
-            'status' => \App\Enums\StatusKontrak::Active->value,
+            'status' => StatusKontrak::Active->value,
         ]);
 
         $response = $this->delete("/tenants/{$tenant->id}");
-        
+
         // Should return back with error
         $response->assertSessionHas('error', 'Penghuni ini masih memiliki kontrak aktif dan tidak dapat dihapus. Akhiri kontrak terlebih dahulu.');
-        
+
         // Tenant should NOT be deleted
         $this->assertDatabaseHas('tenants', ['id' => $tenant->id, 'deleted_at' => null]);
     }

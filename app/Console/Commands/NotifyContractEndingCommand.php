@@ -13,12 +13,13 @@ use Illuminate\Support\Facades\Notification;
 class NotifyContractEndingCommand extends Command
 {
     protected $signature = 'notify:contract-ending';
+
     protected $description = 'Kirim notifikasi untuk kontrak yang akan habis H-14';
 
     public function handle()
     {
         $targetDate = Carbon::today()->addDays(14)->format('Y-m-d');
-        
+
         $contracts = Contract::where('status', StatusKontrak::Active)
             ->where('end_date', $targetDate)
             ->get();
