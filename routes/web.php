@@ -13,6 +13,7 @@ use App\Http\Controllers\MoveOutController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\Portal\DocumentController;
 use App\Http\Controllers\Portal\MaintenanceController;
 use App\Http\Controllers\Portal\PermissionController;
 use App\Http\Controllers\ProfileController;
@@ -22,6 +23,7 @@ use App\Http\Controllers\RoomTypeController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TenantApplicationController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\TenantDocumentController;
 use App\Http\Controllers\TenantPermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -118,6 +120,14 @@ Route::middleware(['auth', 'verified', 'staff'])->group(function () {
     Route::post('/move-outs/{moveOut}/inspect', [MoveOutController::class, 'inspect'])->name('move-outs.inspect');
     Route::post('/move-outs/{moveOut}/finalize', [MoveOutController::class, 'finalize'])->name('move-outs.finalize');
 
+    // Modul Dokumen Penghuni (F2.8)
+    Route::get('/documents', [TenantDocumentController::class, 'index'])->name('documents.index');
+    Route::get('/documents/{document}', [TenantDocumentController::class, 'show'])->name('documents.show');
+    Route::post('/documents/{document}/review', [TenantDocumentController::class, 'review'])->name('documents.review');
+    Route::get('/documents/{document}/download', [TenantDocumentController::class, 'download'])->name('documents.download');
+    Route::get('/documents/{document}/preview', [TenantDocumentController::class, 'preview'])->name('documents.preview');
+    Route::delete('/documents/{document}', [TenantDocumentController::class, 'destroy'])->name('documents.destroy');
+
     // Modul Laporan (Tahap 5b)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
@@ -174,6 +184,15 @@ Route::middleware(['auth', 'verified', 'tenant'])->prefix('portal')->name('porta
     Route::post('/move-outs', [App\Http\Controllers\Portal\MoveOutController::class, 'store'])->name('move-outs.store');
     Route::get('/move-outs/{moveOut}', [App\Http\Controllers\Portal\MoveOutController::class, 'show'])->name('move-outs.show');
     Route::patch('/move-outs/{moveOut}/cancel', [App\Http\Controllers\Portal\MoveOutController::class, 'cancel'])->name('move-outs.cancel');
+
+    // Dokumen & Berkas Penghuni (F2.8)
+    Route::get('/documents', [DocumentController::class, 'index'])->name('documents.index');
+    Route::get('/documents/create', [DocumentController::class, 'create'])->name('documents.create');
+    Route::post('/documents', [DocumentController::class, 'store'])->name('documents.store');
+    Route::get('/documents/{document}', [DocumentController::class, 'show'])->name('documents.show');
+    Route::get('/documents/{document}/download', [DocumentController::class, 'download'])->name('documents.download');
+    Route::get('/documents/{document}/preview', [DocumentController::class, 'preview'])->name('documents.preview');
+    Route::delete('/documents/{document}', [DocumentController::class, 'destroy'])->name('documents.destroy');
 
     // Profil Mandiri
     Route::get('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'edit'])->name('profile.edit');

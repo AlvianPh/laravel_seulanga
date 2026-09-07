@@ -213,19 +213,19 @@
                     </span>
                 </a>
 
-                <!-- Dokumen Kontrak -->
-                <div class="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm opacity-90">
+                <!-- Dokumen & Berkas (F2.8) -->
+                <a href="{{ route('portal.documents.index') }}" class="p-5 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-emerald-500 transition-all block">
                     <div class="w-10 h-10 rounded-lg bg-purple-50 dark:bg-purple-950/60 text-purple-600 dark:text-purple-400 flex items-center justify-center mb-3">
                         <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
                         </svg>
                     </div>
-                    <h3 class="font-bold text-slate-900 dark:text-white text-sm">Dokumen Sewa</h3>
-                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Arsip surat perjanjian sewa digital.</p>
-                    <span class="inline-block mt-3 text-[10px] font-semibold text-purple-700 dark:text-purple-400 bg-purple-50 dark:bg-purple-950/60 px-2 py-0.5 rounded">
+                    <h3 class="font-bold text-slate-900 dark:text-white text-sm">Dokumen & Berkas</h3>
+                    <p class="text-xs text-slate-500 dark:text-slate-400 mt-1">Unggah KTP, arsip perjanjian sewa, dan kuitansi.</p>
+                    <span class="inline-block mt-3 text-[10px] font-semibold text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-950/60 px-2 py-0.5 rounded">
                         Rilis Fase F2.8
                     </span>
-                </div>
+                </a>
             </div>
         </div>
     </div>

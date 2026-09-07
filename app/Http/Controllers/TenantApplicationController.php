@@ -60,8 +60,8 @@ class TenantApplicationController extends Controller
      * Proses review pengajuan (Approve / Reject).
      */
     public function review(
-        TenantApplication $tenantApplication,
         ReviewTenantApplicationRequest $request,
+        TenantApplication $tenantApplication,
         TenantApplicationService $service
     ): RedirectResponse {
         $user = $request->user();

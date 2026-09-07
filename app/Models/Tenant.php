@@ -103,6 +103,12 @@ class Tenant extends Model
         return $this->hasMany(MoveOutRequest::class);
     }
 
+    /** Semua dokumen berkas milik penghuni ini. */
+    public function documents(): HasMany
+    {
+        return $this->hasMany(TenantDocument::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Ambil kontrak yang sedang aktif (jika ada). */
