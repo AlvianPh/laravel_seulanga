@@ -101,6 +101,12 @@ class Contract extends Model
         return $this->hasMany(Invoice::class);
     }
 
+    /** Semua permohonan izin yang diajukan selama masa kontrak ini. */
+    public function permissions(): HasMany
+    {
+        return $this->hasMany(TenantPermission::class);
+    }
+
     // ─── Helper ──────────────────────────────────────────────────────────────
 
     /** Cek apakah kontrak masih berstatus draft. */

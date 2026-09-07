@@ -13,6 +13,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\Portal\MaintenanceController;
+use App\Http\Controllers\Portal\PermissionController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\RoomController;
@@ -20,6 +21,7 @@ use App\Http\Controllers\RoomTypeController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\TenantApplicationController;
 use App\Http\Controllers\TenantController;
+use App\Http\Controllers\TenantPermissionController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -103,6 +105,11 @@ Route::middleware(['auth', 'verified', 'staff'])->group(function () {
     Route::get('/maintenance/{maintenance}', [MaintenanceRequestController::class, 'show'])->name('maintenance.show');
     Route::patch('/maintenance/{maintenance}/status', [MaintenanceRequestController::class, 'updateStatus'])->name('maintenance.update-status');
 
+    // Modul Permohonan Izin Penghuni (F2.6)
+    Route::get('/permissions', [TenantPermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/permissions/{permission}', [TenantPermissionController::class, 'show'])->name('permissions.show');
+    Route::post('/permissions/{permission}/review', [TenantPermissionController::class, 'review'])->name('permissions.review');
+
     // Modul Laporan (Tahap 5b)
     Route::get('/reports', [ReportController::class, 'index'])->name('reports.index');
     Route::post('/reports/generate', [ReportController::class, 'generate'])->name('reports.generate');
@@ -145,6 +152,13 @@ Route::middleware(['auth', 'verified', 'tenant'])->prefix('portal')->name('porta
     Route::get('/maintenance/create', [MaintenanceController::class, 'create'])->name('maintenance.create');
     Route::post('/maintenance', [MaintenanceController::class, 'store'])->name('maintenance.store');
     Route::get('/maintenance/{maintenance}', [MaintenanceController::class, 'show'])->name('maintenance.show');
+
+    // Permohonan Izin Penghuni (F2.6)
+    Route::get('/permissions', [PermissionController::class, 'index'])->name('permissions.index');
+    Route::get('/permissions/create', [PermissionController::class, 'create'])->name('permissions.create');
+    Route::post('/permissions', [PermissionController::class, 'store'])->name('permissions.store');
+    Route::get('/permissions/{permission}', [PermissionController::class, 'show'])->name('permissions.show');
+    Route::patch('/permissions/{permission}/cancel', [PermissionController::class, 'cancel'])->name('permissions.cancel');
 
     // Profil Mandiri
     Route::get('/profile', [App\Http\Controllers\Portal\ProfileController::class, 'edit'])->name('profile.edit');

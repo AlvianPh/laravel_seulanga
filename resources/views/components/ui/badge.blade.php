@@ -8,7 +8,7 @@
     if ($status) {
         $statusVal = is_object($status) && enum_exists(get_class($status)) ? $status->value : (string) $status;
         $mappedVariant = match (strtolower($statusVal)) {
-            'available', 'active', 'paid', 'verified', 'resolved' => 'success',
+            'available', 'active', 'paid', 'verified', 'resolved', 'approved' => 'success',
             'occupied', 'admin', 'in_progress' => 'info',
             'pending', 'maintenance', 'medium' => 'warning',
             'overdue', 'rejected', 'cancelled', 'urgent', 'high' => 'danger',
